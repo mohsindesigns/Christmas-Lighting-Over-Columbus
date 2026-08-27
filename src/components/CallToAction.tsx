@@ -19,6 +19,7 @@ import { useContent } from "../hooks/useContent";
 interface CTASectionProps {
   isVisible?: boolean;
   onOpenConsultation?: () => void;
+  customData?: any;
 }
 
 // Consultation Modal Component with black input fields
@@ -405,19 +406,19 @@ export const ConsultationModal = ({ isOpen, onClose }: { isOpen: boolean; onClos
   );
 };
 
-const CTASection: React.FC<CTASectionProps> = ({ isVisible = true, onOpenConsultation }) => {
+const CTASection: React.FC<CTASectionProps> = ({ isVisible = true, onOpenConsultation, customData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const content = useContent();
 
-  const ctaData = content.howWeWork?.cta || content.whyChooseUs?.cta || {};
+  const ctaData = customData || content.howWeWork?.cta || content.whyChooseUs?.cta || {};
   const footerContact = content.footer?.contact || {};
 
   const title = ctaData.title || "Ready to Transform Your Home?";
   const rawDesc = ctaData.description || "Join local homeowners who trust us to make their holidays shine";
   const description = typeof rawDesc === "string" ? rawDesc.replace(/<[^>]*>?/gm, '') : "";
 
-  const primaryText = ctaData.buttons?.primary || ctaData.primaryButtonText || "Call Us Now";
-  const secondaryText = ctaData.buttons?.secondary || ctaData.secondaryButtonText || "Schedule Free Consultation";
+  const primaryText = ctaData.primaryButtonText || ctaData.buttons?.primary || "Call Us Now";
+  const secondaryText = ctaData.secondaryButtonText || ctaData.buttons?.secondary || "Schedule Free Consultation";
   const phone = ctaData.phone || footerContact.phone || "(614) 301-7100";
   const phoneClean = phone.replace(/[^0-9+]/g, '');
 
