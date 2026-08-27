@@ -57,9 +57,23 @@ export async function middleware(req: NextRequest) {
     // Allow login page through without auth
     if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) return NextResponse.next();
 
-    // Check for session cookie
-    const session = req.cookies.get(ADMIN_COOKIE);
-    if (!session?.value) {
+    // Check for session cookie or authorization header
+    let token = req.cookies.get(ADMIN_COOKIE)?.value;
+    if (!token) {
+      const authHeader = req.headers.get('authorization');
+      if (authHeader?.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+    if (!token) {
+      const cookieHeader = req.headers.get('cookie');
+      if (cookieHeader) {
+        const match = cookieHeader.match(/admin_session=([^;]+)/);
+        if (match) token = match[1];
+      }
+    }
+
+    if (!token) {
       const loginUrl = new URL('/admin/login', req.url);
       loginUrl.searchParams.set('from', pathname);
       return NextResponse.redirect(loginUrl);
@@ -67,7 +81,7 @@ export async function middleware(req: NextRequest) {
 
     // Validate JWT session
     try {
-      const payload = await verifyToken(session.value);
+      const payload = await verifyToken(token);
       if (!payload) {
         throw new Error('Invalid token');
       }

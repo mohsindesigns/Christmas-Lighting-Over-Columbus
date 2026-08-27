@@ -1,571 +1,435 @@
-import { useRef, useEffect, useState } from "react";
-import Link from 'next/link';
-import Image from 'next/image';
+"use client";
+
+import React, { useRef, useEffect, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import Link from "next/link";
 import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring,
-  useInView,
-  useMotionValue
-} from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Icon } from "../config/icons";
+  FaArrowRight,
+  FaCheckCircle,
+  FaStar,
+  FaRegGem,
+  FaCrown,
+  FaLightbulb,
+  FaShieldAlt,
+} from "react-icons/fa";
+import { GiSparkles } from "react-icons/gi";
 import { useContent } from "../hooks/useContent";
-import RichTextRenderer from "./ui/RichTextRenderer";
-import serviceDetail from "@/assets/fairservice.png";
-// import sharedServicesData from "../data/servicesData.json";
 
-gsap.registerPlugin(ScrollTrigger);
+// Helper icon resolver
+const resolveServiceIcon = (iconName: string | any, index: number) => {
+  if (typeof iconName === "function") {
+    const IconComp = iconName;
+    return <IconComp />;
+  }
 
-const Counter = ({ value, suffix = "" }: { value: number; suffix: string }) => {
-  const ref = useRef(null);
-  const [display, setDisplay] = useState(0);
-  const inView = useInView(ref, { once: true, margin: "-50px" });
+  const normalized = String(iconName || "").toLowerCase();
+  if (normalized.includes("crown") || normalized.includes("residential")) return <FaCrown />;
+  if (normalized.includes("gem") || normalized.includes("commercial") || normalized.includes("building")) return <FaRegGem />;
+  if (normalized.includes("star") || normalized.includes("permanent") || normalized.includes("rgb")) return <FaStar />;
+  if (normalized.includes("shield") || normalized.includes("tree") || normalized.includes("landscape")) return <FaShieldAlt />;
+  if (normalized.includes("sparkle")) return <GiSparkles />;
 
-  useEffect(() => {
-    if (!inView) return;
-
-    let startTime: number;
-    const duration = 2000;
-    const startValue = 0;
-    const endValue = value;
-
-    const animate = (timestamp: number) => {
-      if (startTime === undefined) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime!) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(startValue + (endValue - startValue) * eased);
-      setDisplay(current);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setDisplay(endValue);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }, [inView, value]);
-
-  return <span ref={ref} className="tabular-nums">{display}{suffix}</span>;
+  // Default rotation
+  const icons = [<FaCrown key="1" />, <FaRegGem key="2" />, <FaStar key="3" />, <FaShieldAlt key="4" />];
+  return icons[index % icons.length] || <FaLightbulb />;
 };
 
-const CompactServiceCard = ({ service }: { service: any }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  if (!service) return null;
+const defaultServices = [
+  {
+    title: "Residential Lighting",
+    slug: "residential-lighting",
+    color: "#f59e0b",
+    image: "/images/portfolio/portfolio-1.jpg",
+    icon: "Crown",
+    description: "Custom holiday lighting displays tailored perfectly to your home's rooflines, pathways, and landscape.",
+    features: ["Custom Cut to Roofline", "Commercial Grade C9 LEDs", "Free Maintenance & Takedown"]
+  },
+  {
+    title: "Commercial Lighting",
+    slug: "commercial-lighting",
+    color: "#ef4444",
+    image: "/images/portfolio/portfolio-2.jpg",
+    icon: "Gem",
+    description: "Eye-catching commercial holiday displays that draw customers, increase foot traffic, and spread holiday cheer.",
+    features: ["Storefronts & Plazas", "Fully Insured Installers", "Scheduled Maintenance"]
+  },
+  {
+    title: "Permanent Year-Round Lighting",
+    slug: "permanent-lighting",
+    color: "#10b981",
+    image: "/images/portfolio/portfolio-3.jpg",
+    icon: "Star",
+    description: "Invisible daytime lighting tracks with millions of programmable colors and patterns controlled from your phone.",
+    features: ["Invisible Architectural Tracks", "App-Controlled Automation", "Celebrations for Every Occasion"]
+  },
+  {
+    title: "Tree & Landscape Lighting",
+    slug: "tree-landscape-lighting",
+    color: "#8b5cf6",
+    image: "/images/portfolio/portfolio-4.jpg",
+    icon: "Shield",
+    description: "Stunning canopy wraps, branch lighting, and pathway borders that transform your outdoor grounds into a winter wonderland.",
+    features: ["Trunk & Canopy Wrapping", "Pathway Border Lighting", "Warm White & Multi-Color Glow"]
+  }
+];
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.7, delay: 0.2 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="relative bg-card rounded-xl border border-border hover:border-primary transition-all duration-500 overflow-hidden shadow-md hover:shadow-xl hover:shadow-primary/20 p-6"
-    >
-      <Link href={`/services/${service.slug || '#'}`} className="absolute inset-0 z-20" />
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-primary/5 via-card to-card pointer-events-none"
-        animate={{
-          opacity: isHovered ? 1 : 0,
-          scale: isHovered ? 1.02 : 1
-        }}
-        transition={{ duration: 0.4 }}
-      />
+const fallbackColors = ["#f59e0b", "#ef4444", "#10b981", "#8b5cf6"];
 
-      <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
-        <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-3xl" />
-      </div>
-
-      <div className="relative z-10 flex items-start gap-4">
-        <div className="relative">
-          <Icon name={service.icon} className="w-8 h-8 text-primary" />
-          {isHovered && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="absolute -inset-1 bg-primary/20 rounded-full blur-sm -z-10"
-            />
-          )}
-        </div>
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-1">
-            <h4 className="text-lg font-bold text-card-foreground">{service.title}</h4>
-            <span className="text-[10px] font-mono tracking-wider text-primary bg-primary/5 px-2 py-1 rounded-full">
-              {service.number}
-            </span>
-          </div>
-          <RichTextRenderer
-            content={service.description}
-            className="text-sm text-muted-foreground leading-relaxed line-clamp-2"
-            stripParagraphs={true}
-          />
-          <motion.div
-            className="flex items-center gap-2 mt-3"
-            animate={isHovered ? { x: 5 } : { x: 0 }}
-          >
-            <span className="text-xs font-semibold tracking-wider uppercase text-primary">Learn more</span>
-            <motion.span animate={isHovered ? { x: 3 } : { x: 0 }} className="text-primary">
-              <Icon name="ArrowRight" className="w-4 h-4" />
-            </motion.span>
-          </motion.div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-const ServiceCard = ({ service, index }: { service: any; index: number }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const cardRef = useRef(null);
-
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const springX = useSpring(x, { stiffness: 100, damping: 10 });
-  const springY = useSpring(y, { stiffness: 100, damping: 10 });
-
-  const rotateX = useTransform(springY, [-0.5, 0.5], [4, -4]);
-  const rotateY = useTransform(springX, [-0.5, 0.5], [-4, 4]);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!cardRef.current) return;
-    const rect = (cardRef.current as HTMLElement).getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const xPct = (mouseX / rect.width - 0.5) * 0.4;
-    const yPct = (mouseY / rect.height - 0.5) * 0.4;
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, delay: index * 0.1 }}
-      viewport={{ once: true, margin: "-50px" }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
-      onMouseMove={handleMouseMove}
-      style={{
-        rotateX: rotateX,
-        rotateY: rotateY,
-        transformPerspective: 1000
-      }}
-      className="relative h-[420px] bg-card rounded-2xl border border-border hover:border-primary transition-all duration-700 overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-primary/20 group"
-    >
-      <Link href={`/services/${service.slug || '#'}`} className="absolute inset-0 z-20" />
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-primary/5 via-card to-card pointer-events-none"
-        animate={{ opacity: isHovered ? 1 : 0.3 }}
-        transition={{ duration: 0.5 }}
-      />
-
-      <motion.div
-        className="absolute inset-0 rounded-2xl"
-        animate={{
-          boxShadow: isHovered
-            ? 'inset 0 0 0 2px rgba(36, 48, 210, 0.15), inset 0 0 20px rgba(36, 48, 210, 0.1)'
-            : 'inset 0 0 0 0px rgba(36, 48, 210, 0)'
-        }}
-        transition={{ duration: 0.4 }}
-      />
-
-      <motion.div
-        className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary to-primary"
-        initial={{ scaleX: 0, opacity: 0 }}
-        animate={{ scaleX: isHovered ? 1 : 0, opacity: isHovered ? 1 : 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        style={{ originX: 0 }}
-      />
-
-      {isHovered && (
-        <>
-          {[...Array(3)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 rounded-full bg-primary/30"
-              initial={{
-                x: '50%',
-                y: '50%',
-                scale: 0,
-                opacity: 0.6
-              }}
-              animate={{
-                x: [`50%`, `${20 + (i * 25)}%`],
-                y: [`50%`, `${10 + (i * 20)}%`],
-                scale: [0, 1.5, 0],
-                opacity: [0, 0.3, 0]
-              }}
-              transition={{
-                duration: 1.5,
-                delay: i * 0.2,
-                repeat: Infinity,
-                repeatDelay: 0.5
-              }}
-            />
-          ))}
-        </>
-      )}
-
-      <div className="relative h-full p-8 flex flex-col z-10">
-        <div className="flex items-start justify-between mb-5">
-          <div className="relative">
-            <Icon name={service.icon} className="w-8 h-8 text-primary relative z-10" />
-            <motion.div
-              className="absolute -inset-2 bg-primary/10 rounded-full"
-              initial={{ scale: 0 }}
-              animate={{ scale: isHovered ? 1 : 0 }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-          <div className="flex flex-col items-end">
-            <span className="text-xs font-mono tracking-wider text-primary bg-primary/5 px-3 py-1 rounded-full">
-              {service.number}
-            </span>
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 10 }}
-              transition={{ duration: 0.3 }}
-              className="text-[10px] font-bold tracking-wider uppercase text-primary mt-2"
-            >
-              {service.tag}
-            </motion.span>
-          </div>
-        </div>
-
-        <h3 className="text-xl font-bold text-card-foreground mb-2 leading-tight line-clamp-2">
-          {service.title}
-        </h3>
-
-        <div className="flex-1">
-          <RichTextRenderer
-            content={service.description}
-            className="text-muted-foreground text-sm leading-relaxed line-clamp-3 mb-3"
-            stripParagraphs={true}
-          />
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isHovered ? 1 : 0.7 }}
-            className="space-y-1.5 mt-2"
-          >
-            {(service.overviewStats || service.features)?.slice(0, 4).map((item: any, i: number) => (
-              <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="w-1 h-1 bg-primary rounded-full flex-shrink-0" />
-                <span className="truncate">{typeof item === 'string' ? item : (item.label || item.text)}</span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
-        <motion.div
-          className="flex items-center justify-between mt-4 pt-3 border-t border-border"
-          animate={isHovered ? { y: 0 } : { y: 5 }}
-        >
-          <span className="text-xs font-semibold tracking-wider uppercase text-primary">Explore service</span>
-          <motion.div className="flex items-center gap-1" animate={isHovered ? { x: 5 } : { x: 0 }}>
-            <Icon name="ArrowRight" className={`w-4 h-4 transition-colors ${isHovered ? 'text-primary' : 'text-muted-foreground'}`} />
-          </motion.div>
-        </motion.div>
-      </div>
-
-      <div className="absolute bottom-0 right-0 w-20 h-20 overflow-hidden">
-        <div className="absolute bottom-0 right-0 w-12 h-12 bg-gradient-to-tl from-primary/10 to-transparent rounded-tl-3xl" />
-      </div>
-    </motion.div>
-  );
-};
-
-const Services = () => {
-  const { services: servicesData } = useContent();
-  const sectionRef = useRef<HTMLElement>(null);
+const AwardWinningServicesSection = () => {
+  const containerRef = useRef<HTMLElement>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const isInView = useInView(containerRef, { once: true, amount: 0.2 });
+
+  const content = useContent();
+  const servicesContent = content.services;
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
+  const sectionTitle = 
+    servicesContent?.title || 
+    servicesContent?.headline?.highlight || 
+    "Premium Christmas Lighting Services";
 
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 350,
-    damping: 28,
-    restDelta: 0.001
-  });
+  const rawSubtitle = 
+    servicesContent?.subtitle || 
+    (Array.isArray(servicesContent?.description) ? servicesContent.description[0] : servicesContent?.description) || 
+    "Custom residential and commercial holiday lighting designed, installed, maintained, and stored for you in Columbus, OH.";
+  const subtitle = typeof rawSubtitle === "string" ? rawSubtitle.replace(/<[^>]*>?/gm, '') : "";
 
-  const clipPathLeftToRight = useTransform(
-    smoothProgress,
-    [0, 0.1],
-    ["inset(0% 100% 0% 0%)", "inset(0% 0% 0% 0%)"]
-  );
+  // Get dynamic services from CMS or fallback
+  const rawList = 
+    servicesContent?.services || 
+    (Array.isArray(servicesContent) ? servicesContent : []) || 
+    [];
 
-  const imageScale = useTransform(smoothProgress, [0, 0.1], [1.15, 1]);
-  const overlayOpacity = useTransform(smoothProgress, [0, 0.08], [0.5, 0.1]);
+  const extractImage = (item: any, idx: number) => {
+    if (typeof item.image === "string" && item.image.trim()) return item.image;
+    if (item.image && typeof item.image.src === "string" && item.image.src.trim()) return item.image.src;
+    if (typeof item.iconImage === "string" && item.iconImage.trim()) return item.iconImage;
+    if (typeof item.overviewImage === "string" && item.overviewImage.trim()) return item.overviewImage;
+    if (typeof item.featuredImage === "string" && item.featuredImage.trim()) return item.featuredImage;
+    if (typeof item.heroImage === "string" && item.heroImage.trim()) return item.heroImage;
+    if (item.hero && typeof item.hero.image === "string" && item.hero.image.trim()) return item.hero.image;
+    return `/images/portfolio/portfolio-${(idx % 5) + 1}.jpg`;
+  };
 
-  const {
-    badge = "Premium Services",
-    headline = { prefix: 'Our', highlight: 'Expert', suffix: 'Services' },
-    description: rawDescription = "Professional exterior remodeling with military precision.",
-    highlightText = "",
-    stats = [
-      { value: 500, suffix: "+", label: "Projects" },
-      { value: 50, suffix: "+", label: "Years Combined" },
-      { value: 4.9, suffix: "", label: "Rating" }
-    ],
-    cta = { title: 'Ready to Start?', description: 'Get your free estimate today.', buttonText: 'Contact Us', buttonLink: '/contact-us' }
-  } = (servicesData || {}) as any;
+  const extractFeatures = (item: any) => {
+    const candidateList = item.features || item.overviewStats || item.keyBenefits || item.highlights || item.benefits;
+    if (Array.isArray(candidateList) && candidateList.length > 0) {
+      return candidateList
+        .map((f: any) => {
+          if (typeof f === "string") return f;
+          return f?.text || f?.label || f?.title || f?.name || "";
+        })
+        .filter(Boolean);
+    }
+    return ["Custom Precision Fit", "Commercial Grade Lights", "Complete Takedown & Storage"];
+  };
 
-  const description = Array.isArray(rawDescription)
-    ? rawDescription
-    : typeof rawDescription === 'string'
-      ? [rawDescription]
-      : [];
+  const services = rawList.length > 0
+    ? rawList.map((item: any, idx: number) => {
+        const title = item.title || item.name || `Service ${idx + 1}`;
+        const rawDesc = item.shortDescription || item.description || item.overview || item.summary || "Professional lighting installation, maintenance, and storage.";
+        const cleanDesc = typeof rawDesc === "string" ? rawDesc.replace(/<[^>]*>?/gm, '') : "Professional lighting installation, maintenance, and storage.";
 
-  const servicesListRaw = (
-    servicesData?.services ||
-    (Array.isArray(servicesData) ? servicesData : []) ||
-    []
-  ).filter((s: any) => !s.status || s.status === 'published');
+        return {
+          title,
+          slug: item.slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `service-${idx + 1}`,
+          color: item.color || fallbackColors[idx % fallbackColors.length],
+          image: extractImage(item, idx),
+          icon: item.icon || "Lightbulb",
+          description: cleanDesc,
+          features: extractFeatures(item),
+          number: String(idx + 1).padStart(2, "0")
+        };
+      })
+    : defaultServices.map((item, idx) => ({
+        ...item,
+        number: String(idx + 1).padStart(2, "0")
+      }));
 
-  const servicesList = servicesListRaw.map((s: any, idx: number) => ({
-    ...s,
-    number: String(idx + 1).padStart(2, '0')
-  }));
+  // Fixed positions for floating lights - NO RANDOM
+  const floatingLights = [
+    { left: 5, top: 10, color: '#f59e0b' },
+    { left: 15, top: 25, color: '#ef4444' },
+    { left: 25, top: 40, color: '#10b981' },
+    { left: 35, top: 55, color: '#f59e0b' },
+    { left: 45, top: 70, color: '#ef4444' },
+    { left: 55, top: 85, color: '#10b981' },
+    { left: 65, top: 15, color: '#f59e0b' },
+    { left: 75, top: 30, color: '#ef4444' },
+    { left: 85, top: 45, color: '#10b981' },
+    { left: 95, top: 60, color: '#f59e0b' },
+    { left: 10, top: 75, color: '#ef4444' },
+    { left: 20, top: 90, color: '#10b981' },
+    { left: 30, top: 5, color: '#f59e0b' },
+    { left: 40, top: 20, color: '#ef4444' },
+    { left: 50, top: 35, color: '#10b981' },
+  ];
 
-  // Robust featured service selection
-  const featuredService = servicesList.length > 0 ? servicesList[0] : null;
-  const gridServices = servicesList.length > 1 ? servicesList.slice(1) : servicesList;
+  const animationDelays = [0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8];
+  const animationDurations = [4, 5, 6, 7, 8, 4, 5, 6, 7, 8, 4, 5, 6, 7, 8];
 
-
-
-  useEffect(() => {
-    if (!sectionRef.current || !isClient) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.split-text',
-        { y: 60, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.2,
-          stagger: 0.15,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 85%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [isClient]);
-
-
-  // if (!isClient) return null;
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.15,
+        duration: 0.8,
+        ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number]
+      }
+    }),
+    hover: {
+      y: -8,
+      boxShadow: "0 30px 40px -20px rgba(0,0,0,0.15), 0 0 0 1px rgba(245,158,11,0.3)",
+      transition: {
+        duration: 0.3,
+        ease: "easeOut" as const
+      }
+    }
+  };
 
   return (
     <section
-      ref={sectionRef}
-      className="relative bg-background overflow-hidden py-20 md:py-24"
+      ref={containerRef}
+      id="services"
+      className="relative w-full overflow-hidden bg-white px-3 xs:px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20"
     >
+      {/* Light theme background patterns */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,_hsl(var(--primary)/0.03)_1px,transparent_1px),linear-gradient(to_bottom,_hsl(var(--primary)/0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" />
-        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="absolute bottom-0 right-0 w-full h-64 bg-gradient-to-t from-primary/5 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(#fcd34d20_1px,transparent_1px)] bg-[length:24px_24px] sm:bg-[length:32px_32px]" />
+        <div className="absolute top-0 left-0 right-0 h-32 sm:h-48 lg:h-64 bg-gradient-to-b from-white to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-48 lg:h-64 bg-gradient-to-t from-white to-transparent" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-24">
-          <div className="lg:col-span-5 flex flex-col h-full">
+      {/* Decorative light elements */}
+      <div className="absolute top-20 left-5 sm:left-10 w-40 sm:w-72 lg:w-96 h-40 sm:h-72 lg:h-96 bg-amber-200/30 rounded-full blur-2xl lg:blur-3xl pointer-events-none" />
+      <div className="absolute bottom-20 right-5 sm:right-10 w-48 sm:w-80 lg:w-[500px] h-48 sm:h-80 lg:h-[500px] bg-red-200/30 rounded-full blur-2xl lg:blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[400px] lg:w-[500px] h-[280px] sm:h-[400px] lg:h-[500px] bg-gradient-to-r from-amber-100/30 to-red-100/30 rounded-full blur-2xl lg:blur-3xl pointer-events-none" />
+
+      {/* Floating Christmas lights */}
+      {isClient && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {floatingLights.map((light, i) => (
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="flex flex-col h-full"
-            >
-              <div className="inline-flex items-center gap-2 bg-primary/5 px-4 py-2 rounded-full border border-primary/10 mb-6 w-fit">
-                <Icon name="Award" className="w-4 w-4 text-primary" />
-                <span className="text-primary uppercase tracking-wider text-xs font-semibold">
-                  {badge}
-                </span>
-              </div>
-
-              <div className="overflow-hidden mb-6">
-                <h2 className="split-text text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight">
-                  {headline.prefix}
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-                    {headline.highlight}
-                  </span>
-                  <br />
-                  <span className="text-foreground">{headline.suffix}</span>
-                </h2>
-              </div>
-
-              <div className="overflow-hidden mt-2">
-                <RichTextRenderer
-                  content={description}
-                  className="text-muted-foreground text-lg leading-relaxed"
-                  stripParagraphs={false}
-                />
-                {highlightText && (
-                  <div className="mt-4">
-                    <span className="font-semibold text-primary text-lg">
-                      {highlightText}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center justify-between gap-8 mt-8 pt-6 border-t border-border">
-                {stats.map((stat: any, idx: number) => (
-                  <div key={idx} className="flex-1 text-center">
-                    <div className="text-3xl md:text-4xl font-bold text-primary whitespace-nowrap">
-                      <Counter value={stat.value} suffix={stat.suffix} />
-                    </div>
-                    <div className="text-xs font-semibold tracking-wider uppercase text-muted-foreground mt-1">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {featuredService ? (
-                <div className="mt-8">
-                  <CompactServiceCard service={featuredService} />
-                </div>
-              ) : (
-                <div className="mt-8 p-6 rounded-xl border border-dashed border-border/40 text-center">
-                  <p className="text-muted-foreground text-sm">Select a featured service in the dashboard</p>
-                </div>
-              )}
-            </motion.div>
-          </div>
-
-          <div className="lg:col-span-6 lg:col-start-7">
-            <div className="relative h-full flex items-center">
-              <div className="relative w-full">
-                <motion.div
-                  className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/15"
-                  style={{ clipPath: clipPathLeftToRight }}
-                >
-                  <div className="relative aspect-[4/5]">
-                    <motion.div
-                      className="absolute inset-0 w-full h-full"
-                      style={{ scale: imageScale }}
-                    >
-                      {servicesData.image?.src ? (
-                        servicesData.image.src.startsWith('http') || servicesData.image.src.startsWith('/uploads') || servicesData.image.src.startsWith('/cdn-images') ? (
-                          <img
-                            src={servicesData.image.src}
-                            alt={servicesData.image.alt || "Eagle Revolution Services"}
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <Image
-                            src={servicesData.image.src}
-                            alt={servicesData.image.alt || "Eagle Revolution Services"}
-                            fill
-                            className="object-cover"
-                            priority
-                            quality={100}
-                          />
-                        )
-                      ) : (
-                        <Image
-                          src={serviceDetail}
-                          alt="Eagle Revolution Services"
-                          fill
-                          className="object-cover"
-                          priority
-                          quality={100}
-                        />
-                      )}
-                    </motion.div>
-
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-tr from-primary/30 via-transparent to-transparent"
-                      style={{ opacity: overlayOpacity }}
-                    />
-                  </div>
-                </motion.div>
-
-                <div className="absolute -bottom-4 -right-4 w-20 h-20 border-b-2 border-r-2 border-primary/30 rounded-br-2xl" />
-                <div className="absolute -top-4 -left-4 w-20 h-20 border-t-2 border-l-2 border-primary/30 rounded-tl-2xl" />
-              </div>
-            </div>
-          </div>
+              key={i}
+              className="absolute w-1.5 h-1.5 rounded-full"
+              style={{
+                left: `${light.left}%`,
+                top: `${light.top}%`,
+                background: light.color,
+                opacity: 0.2,
+              }}
+              animate={{
+                y: [0, -20, 0],
+                opacity: [0.2, 0.5, 0.2],
+              }}
+              transition={{
+                duration: animationDurations[i % animationDurations.length],
+                repeat: Infinity,
+                delay: animationDelays[i % animationDelays.length],
+              }}
+            />
+          ))}
         </div>
+      )}
 
-        <div className="mb-24">
-          <div className="flex items-center gap-3 mb-10">
-            <div className="w-10 h-0.5 bg-gradient-to-r from-primary to-primary/60" />
-            <span className="text-xs font-semibold tracking-wider uppercase text-primary">
-              Exterior Remodeling Services
+      <div className="relative z-10 max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center mb-8 sm:mb-14 lg:mb-16"
+        >
+          {/* Title */}
+          <h2 className="text-center font-montserrat text-4xl md:text-5xl font-extrabold mb-4 sm:mb-6 leading-tight">
+            <span className="bg-gradient-to-r from-red-600 via-amber-500 to-emerald-600 bg-clip-text text-transparent">
+              {sectionTitle}
             </span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {gridServices.map((service: any, index: number) => (
-              <ServiceCard key={index} service={service} index={index} />
-            ))}
-          </div>
+          </h2>
+
+          {/* Subtitle */}
+          {subtitle && (
+            <p className="text-gray-600 font-montserrat text-sm sm:text-base lg:text-lg max-w-3xl mx-auto leading-relaxed font-normal px-3 sm:px-4">
+              <span>{subtitle}</span>
+            </p>
+          )}
+        </motion.div>
+
+        {/* Services Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 xl:gap-10">
+          {services.map((service: any, index: number) => {
+            const serviceUrl = `/services/${service.slug || ''}`;
+
+            return (
+              <motion.div
+                key={index}
+                custom={index}
+                variants={cardVariants}
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
+                whileHover="hover"
+                onHoverStart={() => setActiveIndex(index)}
+                onHoverEnd={() => setActiveIndex(null)}
+                className="group relative h-full"
+              >
+                <Link href={serviceUrl} className="block h-full">
+                  <div className="relative bg-white rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-xl overflow-hidden border border-gray-100 h-full min-h-[380px] sm:min-h-[420px] lg:min-h-[440px] flex flex-col cursor-pointer transition-all duration-300 hover:shadow-2xl">
+                    {/* Top color bar */}
+                    <motion.div
+                      className="h-1.5 sm:h-2 w-full flex-shrink-0"
+                      style={{ backgroundColor: service.color }}
+                      animate={activeIndex === index ? { height: "4px" } : { height: "2px" }}
+                    />
+
+                    {/* Image + Content row */}
+                    <div className="flex flex-col sm:flex-row flex-1">
+                      {/* Image section */}
+                      <div className="sm:w-2/5 w-full">
+                        <div className="relative w-full h-48 sm:h-full min-h-[180px] sm:min-h-full overflow-hidden bg-slate-100">
+                          <img
+                            src={service.image}
+                            alt={service.title}
+                            className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                        </div>
+                      </div>
+
+                      {/* Content section */}
+                      <div className="flex-1 p-4 sm:p-5 lg:p-6 xl:p-8 flex flex-col justify-between">
+                        <div>
+                          {/* Icon and title row */}
+                          <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
+                            <motion.div
+                              className="w-10 sm:w-12 h-10 sm:h-12 rounded-xl flex items-center justify-center text-base sm:text-lg shadow-md flex-shrink-0"
+                              style={{
+                                background: `linear-gradient(135deg, ${service.color}15, white)`,
+                                color: service.color,
+                                boxShadow: `0 5px 10px -5px ${service.color}80`,
+                              }}
+                              whileHover={{ rotate: 360 }}
+                              transition={{ duration: 0.5 }}
+                            >
+                              <div className="flex items-center justify-center w-full h-full">
+                                {resolveServiceIcon(service.icon, index)}
+                              </div>
+                            </motion.div>
+
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-800 leading-tight">
+                                {service.title}
+                              </h3>
+                              <motion.div
+                                className="h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent mt-1"
+                                animate={activeIndex === index ? { scaleX: 1 } : { scaleX: 0 }}
+                                transition={{ duration: 0.3 }}
+                              />
+                            </div>
+
+                            <span
+                              className="text-xl sm:text-2xl lg:text-3xl font-black opacity-10 flex-shrink-0"
+                              style={{ color: service.color }}
+                            >
+                              {service.number}
+                            </span>
+                          </div>
+
+                          {/* Description */}
+                          <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed line-clamp-3">
+                            {service.description.replace(/<[^>]*>?/gm, '')}
+                          </p>
+
+                          {/* Features */}
+                          <ul className="space-y-1.5 sm:space-y-2 mb-4 lg:mb-6">
+                            {service.features.slice(0, 3).map((feature: string, idx: number) => (
+                              <motion.li
+                                key={idx}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                                transition={{ delay: index * 0.1 + idx * 0.1 }}
+                                className="flex items-center gap-2"
+                              >
+                                <FaCheckCircle
+                                  className="text-xs sm:text-sm flex-shrink-0"
+                                  style={{ color: service.color }}
+                                />
+                                <span className="text-gray-700 text-xs sm:text-sm">{feature}</span>
+                              </motion.li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {/* CTA Button */}
+                        <motion.div
+                          className="relative w-full overflow-hidden rounded-xl font-semibold text-xs sm:text-sm py-2.5 sm:py-3 px-4 flex items-center justify-center gap-2 transition-all mt-auto"
+                          style={{
+                            background: `linear-gradient(135deg, ${service.color}10, ${service.color}20)`,
+                            color: service.color,
+                            border: `1px solid ${service.color}30`,
+                          }}
+                          whileHover={{
+                            scale: 1.02,
+                            background: `linear-gradient(135deg, ${service.color}20, ${service.color}30)`,
+                          }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <span>View Details</span>
+                          <FaArrowRight className="text-xs transition-transform duration-300 group-hover:translate-x-1" />
+
+                          {/* Shine effect */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+                            animate={{
+                              x: ['-100%', '100%'],
+                            }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              repeatDelay: 2,
+                            }}
+                          />
+                        </motion.div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
 
-        <div className="mt-16 text-center">
-          <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{cta.title}</h3>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
-            {cta.description}
-          </p>
-          <Link href={cta.buttonLink}>
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.8, duration: 0.8 }}
+          className="mt-10 sm:mt-14 lg:mt-16 text-center"
+        >
+          <Link href={servicesContent?.cta?.buttonLink || "/services"}>
             <motion.div
+              className="group relative px-6 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-amber-500 to-red-500 rounded-xl text-white font-bold text-sm sm:text-base lg:text-lg shadow-lg hover:shadow-xl cursor-pointer inline-flex items-center"
               whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              className="inline-block px-8 py-4 bg-primary text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:text-white"
+              whileTap={{ scale: 0.95 }}
             >
-              {cta.buttonText}
+              <span className="relative z-10 flex items-center gap-2">
+                <FaLightbulb className="text-yellow-200 text-sm sm:text-base" />
+                <span>{servicesContent?.cta?.buttonText || "View All Services"}</span>
+                <FaStar className="text-yellow-200 text-sm sm:text-base" />
+              </span>
             </motion.div>
           </Link>
-        </div>
-      </div>
-
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden pointer-events-none">
-        <svg
-          viewBox="0 0 1440 60"
-          className="relative block w-full h-10 md:h-12"
-          preserveAspectRatio="none"
-        >
-          <path
-            fill="url(#redGradient)"
-            d="M0,24L60,26.7C120,29,240,34,360,34C480,34,600,29,720,26.7C840,24,960,24,1080,26.7C1200,29,1320,34,1380,36.7L1440,39L1440,60L1380,60C1320,60,1200,60,1080,60C960,60,840,60,720,60C600,60,480,60,360,60C240,60,120,60,60,60L0,60Z"
-          />
-          <defs>
-            <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.04" />
-              <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity="0.06" />
-              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.04" />
-            </linearGradient>
-          </defs>
-        </svg>
+        </motion.div>
       </div>
     </section>
   );
 };
 
-export default Services;
+export default AwardWinningServicesSection;

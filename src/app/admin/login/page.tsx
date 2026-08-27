@@ -39,8 +39,15 @@ function LoginForm() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        router.push(from);
-        router.refresh();
+        if (data.token) {
+          try {
+            localStorage.setItem("admin_token", data.token);
+            document.cookie = `admin_session=${data.token}; path=/; max-age=604800; SameSite=Lax`;
+          } catch (e) {
+            // ignore
+          }
+        }
+        window.location.href = from;
       } else {
         setError(data.error || "Invalid credentials. Please try again.");
       }

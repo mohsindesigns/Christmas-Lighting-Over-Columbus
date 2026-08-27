@@ -1,427 +1,671 @@
-import { useRef, useEffect, useState, useCallback } from "react";
+"use client";
+
 import {
   motion,
+  useMotionValue,
+  useSpring,
   AnimatePresence,
 } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Icon } from "../config/icons";
+import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useContent } from "../hooks/useContent";
-import RichTextRenderer from "./ui/RichTextRenderer";
 
-gsap.registerPlugin(ScrollTrigger);
-
-const TestimonialCard = ({ testimonial, isActive }: { testimonial: any; isActive?: boolean }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const cardRef = useRef(null);
-
-  if (!testimonial) return null;
-
-  return (
-    <motion.div
-      ref={cardRef}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="relative w-full"
-    >
-      <motion.div
-        className={`
-          relative bg-gradient-to-br from-card to-card/80 backdrop-blur-sm
-          rounded-2xl p-8 lg:p-10
-          border transition-all duration-500
-          min-h-[400px] lg:min-h-[440px]
-          flex flex-col
-          ${isActive
-            ? 'border-primary/40 shadow-2xl shadow-primary/20'
-            : 'border-primary/10 shadow-xl hover:shadow-2xl'
-          }
-        `}
-        animate={{
-          boxShadow: isHovered ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' : '0 10px 30px -15px rgba(0, 0, 0, 0.1)'
-        }}
-      >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-
-        <div className="mb-6 relative">
-          <Icon name="Quote" className="w-12 h-12 text-primary/30" />
-        </div>
-
-        <div className="flex-1 mb-6 overflow-y-auto pr-2 custom-scrollbar">
-          <div className="text-foreground/90 text-lg lg:text-xl leading-relaxed font-light italic">
-            <RichTextRenderer content={testimonial.text} stripParagraphs={true} />
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between gap-4 mt-auto pt-4 border-t border-primary/10">
-          <div className="flex items-center gap-4 min-w-0">
-            <div className="relative flex-shrink-0">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/50 rounded-full blur-md opacity-50" />
-              <div className="relative w-12 h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-semibold text-lg border border-primary/20">
-                {testimonial.avatar && (testimonial.avatar.startsWith('http') || testimonial.avatar.startsWith('/uploads') || testimonial.avatar.startsWith('/cdn-images')) ? (
-                  <img src={testimonial.avatar} alt={testimonial.name} className="w-full h-full object-cover" />
-                ) : (
-                  testimonial.avatar || testimonial.name.charAt(0)
-                )}
-              </div>
-            </div>
-
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h4 className="font-semibold text-foreground text-base lg:text-lg truncate">
-                  {testimonial.name}
-                </h4>
-                <span className="flex-shrink-0">
-                  <Icon name="Verified" className="w-5 h-5 text-primary" />
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground truncate">
-                {testimonial.position}, {testimonial.company}
-              </p>
-              <div className="flex items-center gap-1 mt-1">
-                {[...Array(5)].map((_, i) => (
-                  <Icon key={i} name="Star" className={`w-4 h-4 ${i < (testimonial.rating || 5) ? "text-primary fill-primary" : "text-primary/20 fill-transparent"}`} />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="absolute top-6 right-6 w-8 h-8 border-t-2 border-r-2 border-primary/20" />
-        <div className="absolute bottom-6 left-6 w-8 h-8 border-b-2 border-l-2 border-primary/20" />
-      </motion.div>
-    </motion.div>
-  );
+// Color palette from heading gradient
+const BRAND_COLORS = {
+  red: "#DC2626",
+  amber: "#F59E0B",
+  emerald: "#059669",
+  dark: "#1F2937",
+  light: "#FFFFFF",
+  lightGray: "#F9FAFB",
+  gray: "#6B7280",
+  border: "#E5E7EB",
+  gradientAmber: "linear-gradient(135deg, #DC2626, #F59E0B)",
+  gradientLight: "linear-gradient(135deg, #FFFFFF, #F9FAFB)",
 };
 
-const scrollbarStyles = `
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
+const CARD_WIDTH = 380;
+const CARD_GAP = 24;
+const DRAG_THRESHOLD = 50;
+const AUTO_ROTATE_INTERVAL = 5000;
+
+const defaultTestimonialsList = [
+  {
+    id: "1",
+    author: "Sarah & Michael Jenkins",
+    role: "Homeowner",
+    company: "",
+    location: "Dublin, OH",
+    service: "Residential Lighting",
+    quote: "Our house was the highlight of the neighborhood! The crew was prompt, respectful, and the lights looked breathtaking all season long without a single bulb going out.",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+  },
+  {
+    id: "2",
+    author: "David Miller",
+    role: "Property Manager",
+    company: "Metro Commercial",
+    location: "New Albany, OH",
+    service: "Commercial Display",
+    quote: "They handled our entire shopping center plaza display with incredible professionalism. Commercial-grade lighting, fast installation, and zero hassle.",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+  },
+  {
+    id: "3",
+    author: "Emily Thompson",
+    role: "Homeowner",
+    company: "",
+    location: "Bexley, OH",
+    service: "Permanent Lighting",
+    quote: "We upgraded to the permanent lighting system and couldn't be happier. We switch between holiday colors and warm architectural lighting with the phone app!",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
+  },
+  {
+    id: "4",
+    author: "Robert Henderson",
+    role: "Estate Owner",
+    company: "",
+    location: "Upper Arlington, OH",
+    service: "Holiday Magic",
+    quote: "The team took down and packed everything away neatly in January. We didn't have to climb a ladder once. Worth every penny for the peace of mind.",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
+  },
+  {
+    id: "5",
+    author: "Jessica Williams",
+    role: "Homeowner",
+    company: "",
+    location: "Powell, OH",
+    service: "Custom Design",
+    quote: "From the custom design consultation to the takedown service, CLOC provided 5-star service. Our children were mesmerized by the roofline and tree wraps.",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
+  },
+];
+
+// Get sequential color based on index
+const getColorForIndex = (index: number) => {
+  const colorArray = [
+    BRAND_COLORS.red,
+    BRAND_COLORS.amber,
+    BRAND_COLORS.emerald,
+  ];
+  return colorArray[index % colorArray.length];
+};
+
+const getInitials = (name?: string) => {
+  if (!name) return "??";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
   }
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: hsl(var(--muted));
-    border-radius: 4px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: hsl(var(--primary));
-    border-radius: 4px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary)/0.8);
-  }
-`;
+  return name.trim().slice(0, 2).toUpperCase();
+};
 
 const Testimonials = () => {
-  const { testimonials: testimonialsData } = useContent();
-  const sectionRef = useRef(null);
-  const [isClient, setIsClient] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+  const [current, setCurrent] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isAutoRotating, setIsAutoRotating] = useState(true);
+  const [activeStarCount, setActiveStarCount] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autoRotateTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const dragStartX = useRef(0);
 
-  const { 
-    section = { badge: '', headline: '', description: '', featured: '' }, 
-    testimonials = [], 
-    stats = { subscribers: '0' } 
-  } = testimonialsData || {};
+  const dragX = useMotionValue(0);
+  const dragXSpring = useSpring(dragX, { stiffness: 250, damping: 25 });
 
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = scrollbarStyles;
-    document.head.appendChild(style);
-    return () => style.remove();
+  const content = useContent();
+  const rawTestimonials = content.testimonials || {};
+
+  const badge = rawTestimonials.badge || rawTestimonials.section?.badge || "CLIENT SUCCESS STORIES";
+  const titleLine1 = rawTestimonials.title?.line1 || rawTestimonials.section?.headlinePrefix || "Transforming Columbus Homes";
+  const titleLine2 = rawTestimonials.title?.line2 || rawTestimonials.section?.headlineHighlight || rawTestimonials.section?.headline || "One Holiday at a Time";
+  const rawSubtitle = rawTestimonials.subtitle || rawTestimonials.section?.description || "Read what your neighbors in New Albany, Dublin, and Bexley have to say about our premium Christmas lighting services.";
+  const subtitle = typeof rawSubtitle === "string" ? rawSubtitle.replace(/<[^>]*>?/gm, '') : "";
+
+  // Combine items from CMS with fallback
+  const rawItems = Array.isArray(rawTestimonials.items) && rawTestimonials.items.length > 0
+    ? rawTestimonials.items
+    : (Array.isArray(rawTestimonials.testimonials) && rawTestimonials.testimonials.length > 0 ? rawTestimonials.testimonials : defaultTestimonialsList);
+
+  const testimonialsList = rawItems.map((item: any, index: number) => ({
+    id: item.id || item._id || String(index + 1),
+    author: item.author || item.name || "Valued Client",
+    role: item.role || item.position || "Homeowner",
+    company: item.company || "",
+    location: item.location || "Columbus, OH",
+    service: item.service || (index % 3 === 0 ? "Residential Lighting" : index % 3 === 1 ? "Commercial Display" : "Permanent Lighting"),
+    quote: typeof item.quote === "string" ? item.quote.replace(/<[^>]*>?/gm, '') : (typeof item.text === "string" ? item.text.replace(/<[^>]*>?/gm, '') : ""),
+    rating: Number(item.rating) || 5,
+    image: item.image || item.avatar || defaultTestimonialsList[index % defaultTestimonialsList.length]?.image,
+    color: getColorForIndex(index),
+  }));
+
+  const animateStars = useCallback(() => {
+    setActiveStarCount(0);
+
+    const starCount = 5;
+    const starDelay = 150;
+
+    for (let i = 1; i <= starCount; i++) {
+      setTimeout(() => {
+        setActiveStarCount(i);
+      }, i * starDelay);
+    }
   }, []);
 
-  const nextTestimonial = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % testimonials.length);
-  }, [testimonials.length]);
+  const next = useCallback(() => {
+    if (testimonialsList.length === 0) return;
+    setCurrent((prev) => (prev + 1) % testimonialsList.length);
+  }, [testimonialsList.length]);
 
-  const prevTestimonial = useCallback(() => {
-    setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  }, [testimonials.length]);
+  const prev = useCallback(() => {
+    if (testimonialsList.length === 0) return;
+    setCurrent(
+      (prev) => (prev - 1 + testimonialsList.length) % testimonialsList.length,
+    );
+  }, [testimonialsList.length]);
 
-  const toggleAutoPlay = () => {
-    setIsAutoPlaying(!isAutoPlaying);
-  };
+  const goTo = useCallback((index: number) => {
+    setCurrent(index);
+  }, []);
 
+  // Auto-rotate functionality
   useEffect(() => {
-    if (isAutoPlaying && testimonials.length > 0) {
-      autoPlayRef.current = setInterval(() => {
-        nextTestimonial();
-      }, 5000);
-    }
+    if (!isAutoRotating || testimonialsList.length === 0) return;
+
+    const startAutoRotate = () => {
+      if (autoRotateTimerRef.current) {
+        clearInterval(autoRotateTimerRef.current);
+      }
+
+      autoRotateTimerRef.current = setInterval(() => {
+        next();
+      }, AUTO_ROTATE_INTERVAL);
+    };
+
+    startAutoRotate();
 
     return () => {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
+      if (autoRotateTimerRef.current) {
+        clearInterval(autoRotateTimerRef.current);
       }
     };
-  }, [isAutoPlaying, nextTestimonial, testimonials.length]);
+  }, [isAutoRotating, next, testimonialsList.length]);
 
-  const handleMouseEnter = () => {
-    if (autoPlayRef.current) {
-      clearInterval(autoPlayRef.current);
+  // Animate stars when current card changes
+  useEffect(() => {
+    if (testimonialsList.length > 0) {
+      animateStars();
     }
+  }, [current, animateStars, testimonialsList.length]);
+
+  const handleDragStart = (event: any) => {
+    setIsDragging(true);
+    setIsAutoRotating(false);
+    dragStartX.current = event.clientX;
   };
 
-  const handleMouseLeave = () => {
-    if (isAutoPlaying) {
-      autoPlayRef.current = setInterval(() => {
-        nextTestimonial();
-      }, 5000);
+  const handleDragEnd = (event: any, info: any) => {
+    setIsDragging(false);
+    setIsAutoRotating(true);
+
+    const offset = info.offset.x;
+    const velocity = info.velocity.x;
+
+    if (Math.abs(offset) > DRAG_THRESHOLD || Math.abs(velocity) > 500) {
+      if (offset > 0 || velocity > 500) {
+        prev();
+      } else {
+        next();
+      }
     }
+
+    dragX.set(0);
   };
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const getCardStyle = (index: number) => {
+    const diff = index - current;
+    const total = testimonialsList.length;
 
-  useEffect(() => {
-    if (!sectionRef.current || !isClient) return;
+    if (total === 0) return {};
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.reveal-element',
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.12,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse"
-          }
-        }
+    let normalizedDiff = diff;
+    if (diff > total / 2) normalizedDiff = diff - total;
+    if (diff < -total / 2) normalizedDiff = diff + total;
+
+    const distance = Math.abs(normalizedDiff);
+    const isActive = index === current;
+
+    // Calculate position based on index difference
+    const baseX = normalizedDiff * (CARD_WIDTH + CARD_GAP);
+
+    // Add drag offset only to the active card when dragging
+    const dragOffset = isActive && isDragging ? dragX.get() : 0;
+
+    return {
+      x: baseX + dragOffset,
+      scale: distance === 0 ? 1 : distance === 1 ? 0.85 : 0.7,
+      opacity: distance >= 2 ? 0 : distance === 1 ? 0.5 : 1,
+      zIndex: 100 - distance,
+      filter: isActive ? "none" : `blur(${distance * 0.5}px)`,
+    };
+  };
+
+  const renderStars = (
+    rating = 5,
+    isActive = false,
+    color = BRAND_COLORS.amber,
+  ) => {
+    if (!isActive) {
+      return (
+        <div className="flex items-center gap-1 h-[30px]">
+          {[...Array(rating)].map((_, i) => (
+            <Star
+              key={i}
+              className="w-5 h-5 md:w-6 md:h-6"
+              style={{
+                fill: color + "30",
+                stroke: color + "30",
+                strokeWidth: 1.5,
+              }}
+            />
+          ))}
+        </div>
       );
-    }, sectionRef);
+    }
 
-    return () => ctx.revert();
-  }, [isClient]);
+    return (
+      <div className="flex items-center gap-1 h-[30px]">
+        {[...Array(rating)].map((_, i) => {
+          const starNumber = i + 1;
+          const isFilled = starNumber <= activeStarCount;
 
-  if (!isClient) return null;
+          return (
+            <motion.div
+              key={i}
+              className="relative"
+              animate={{
+                scale: isFilled ? [0.8, 1.2, 1] : 1,
+              }}
+              transition={{
+                delay: i * 0.15,
+                duration: 0.3,
+              }}
+            >
+              <Star
+                className="w-5 h-5 md:w-6 md:h-6"
+                style={{
+                  fill: isFilled ? color : "transparent",
+                  stroke: isFilled ? color : color + "30",
+                  strokeWidth: 2,
+                }}
+              />
+            </motion.div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const currentTestimonial = testimonialsList[current] || {
+    color: BRAND_COLORS.amber,
+  };
 
   return (
     <section
-      ref={sectionRef}
-      className="relative bg-background py-20 md:py-28 lg:py-32 overflow-hidden"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      id="testimonials"
+      className="py-8 lg:py-12 relative overflow-hidden bg-white min-h-[700px]"
+      ref={containerRef}
     >
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `
-                repeating-linear-gradient(45deg, hsl(var(--primary)) 0px, hsl(var(--primary)) 1px, transparent 1px, transparent 40px),
-                repeating-linear-gradient(135deg, hsl(var(--primary)) 0px, hsl(var(--primary)) 1px, transparent 1px, transparent 40px)
-              `,
-            }}
-          />
-        </div>
+      <div className="container mx-auto px-4 relative max-w-7xl">
+        {/* Header Section */}
+        <div className="text-center mb-6 lg:mb-8">
+          {/* Badge */}
+          {badge && (
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600/10 via-amber-500/10 to-emerald-600/10 rounded-full shadow-sm mb-6 border border-amber-500/30">
+              <span className="text-xs font-medium text-gray-700 uppercase tracking-wider">
+                {badge}
+              </span>
+            </div>
+          )}
 
-        <motion.div
-          animate={{
-            x: [0, 100, 0, -100, 0],
-            y: [0, -50, 100, 50, 0],
-          }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          className="absolute top-1/4 -left-1/4 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl"
-        />
-
-        <motion.div
-          animate={{
-            x: [0, -100, 50, 100, 0],
-            y: [0, 50, -100, -50, 0],
-          }}
-          transition={{ duration: 35, repeat: Infinity, ease: "linear", delay: 2 }}
-          className="absolute bottom-1/4 -right-1/4 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl"
-        />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-3xl mx-auto text-center mb-16 md:mb-20 reveal-element">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4"
-          >
-            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-primary">
-              {section?.badge}
-            </span>
-          </motion.div>
-
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 tracking-tight">
-            {(section?.headlinePrefix || section?.headlineHighlight || section?.headlineSuffix) ? (
-              <>
-                {section?.headlinePrefix && (
-                  <span>{section.headlinePrefix} </span>
-                )}
-                {section?.headlineHighlight && (
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-                    {section.headlineHighlight}
-                  </span>
-                )}
-                {section?.headlineSuffix && (
-                  <span> {section.headlineSuffix}</span>
-                )}
-              </>
-            ) : (
-              <span>{section.headline}</span>
+          <h2 className="text-4xl font-montserrat md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-4">
+            <span className="block">{titleLine1}</span>
+            {titleLine2 && (
+              <span className="block mt-2 bg-gradient-to-r from-red-600 via-amber-500 to-emerald-600 bg-clip-text text-transparent">
+                {titleLine2}
+              </span>
             )}
           </h2>
 
-          <div className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            <RichTextRenderer content={section.description} stripParagraphs={true} />
-          </div>
+          {subtitle && (
+            <p className="text-lg md:text-xl font-montserrat text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              {subtitle}
+            </p>
+          )}
 
-          <div className="flex items-center justify-center gap-3 mt-6">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-card/50 rounded-full border border-primary/10">
-              <Icon name="Google" className="w-5 h-5" />
-              <span className="text-xs text-muted-foreground">{section.featured}</span>
-            </div>
-            <div className="w-px h-4 bg-primary/20" />
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Icon key={i} name="Star" className="w-4 h-4 text-primary fill-primary" />
-              ))}
-              <span className="text-xs font-medium text-foreground ml-1">{stats.subscribers}</span>
-            </div>
-          </div>
-
-          <div className="w-20 h-0.5 bg-gradient-to-r from-primary to-primary/40 mx-auto mt-8 rounded-full" />
+          {/* Decorative divider */}
+          <div className="mt-8 h-px w-24 mx-auto bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
         </div>
 
-        {testimonials.length > 0 && (
-          <div className="max-w-5xl mx-auto mb-16 lg:mb-20 reveal-element">
-            <div className="relative">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeIndex}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-                >
-                  <TestimonialCard
-                    testimonial={testimonials[activeIndex]}
-                    isActive={true}
-                  />
-                </motion.div>
-              </AnimatePresence>
+        {/* Coverflow Carousel */}
+        <div className="relative h-[500px] w-full overflow-visible">
+          <motion.div
+            className="relative w-full h-full flex items-center justify-center"
+            style={{ perspective: "1200px" }}
+          >
+            {/* Drag overlay - only for active card */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              style={{ x: dragXSpring }}
+            />
 
-              <div className="flex items-center justify-between mt-8">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl font-mono font-bold text-primary">
-                      {String(activeIndex + 1).padStart(2, '0')}
-                    </span>
-                    <span className="text-sm font-mono text-muted-foreground">/</span>
-                    <span className="text-sm font-mono text-muted-foreground">
-                      {String(testimonials.length).padStart(2, '0')}
-                    </span>
-                  </div>
+            {/* Cards container */}
+            <div className="relative w-full h-full flex items-center justify-center">
+              <AnimatePresence>
+                {testimonialsList.map((testimonial: any, index: number) => {
+                  const style = getCardStyle(index);
+                  const isActive = index === current;
 
-                  <div className="w-px h-6 bg-primary/20 mx-2" />
-
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={toggleAutoPlay}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card/50 border border-primary/10 hover:border-primary/30 transition-all"
-                  >
-                    {isAutoPlaying ? <Icon name="Pause" className="w-4 h-4" /> : <Icon name="Play" className="w-4 h-4" />}
-                    <span className="text-xs text-muted-foreground">
-                      {isAutoPlaying ? 'Auto' : 'Manual'}
-                    </span>
-                  </motion.button>
-                </div>
-
-                <div className="flex gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={prevTestimonial}
-                    className="w-10 h-10 rounded-full border border-primary/20 bg-card/50 hover:bg-primary hover:border-primary hover:text-white transition-all duration-300 flex items-center justify-center"
-                  >
-                    <Icon name="ChevronLeft" className="w-5 h-5" />
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={nextTestimonial}
-                    className="w-10 h-10 rounded-full border border-primary/20 bg-card/50 hover:bg-primary hover:border-primary hover:text-white transition-all duration-300 flex items-center justify-center"
-                  >
-                    <Icon name="ChevronRight" className="w-5 h-5" />
-                  </motion.button>
-                </div>
-              </div>
-
-              <div className="absolute -bottom-12 left-0 right-0">
-                <div className="flex gap-1 justify-center">
-                  {(testimonials as any[]).map((_: any, idx: number) => (
-                    <motion.button
-                      key={`dot-${idx}`}
-                      onClick={() => setActiveIndex(idx)}
-                      className="group cursor-pointer"
+                  return (
+                    <motion.div
+                      key={testimonial.id}
+                      className="absolute"
+                      initial={false}
+                      animate={style}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 30,
+                        mass: 0.8,
+                      }}
+                      style={{
+                        width: CARD_WIDTH,
+                        transformStyle: "preserve-3d",
+                        transformOrigin: "center center",
+                        cursor: isActive ? "grab" : "pointer",
+                      }}
+                      whileTap={{ cursor: "grabbing" }}
+                      {...(isActive && {
+                        drag: "x",
+                        dragConstraints: {
+                          left: -CARD_WIDTH * 0.5,
+                          right: CARD_WIDTH * 0.5,
+                        },
+                        dragElastic: 0.1,
+                        dragMomentum: false,
+                        onDragStart: handleDragStart,
+                        onDragEnd: handleDragEnd,
+                        whileDrag: { scale: 1.02 },
+                      })}
+                      onClick={() => !isDragging && !isActive && goTo(index)}
                     >
-                      <div
-                        className={`
-                          h-1 rounded-full transition-all duration-300
-                          ${idx === activeIndex
-                            ? 'w-8 bg-primary'
-                            : 'w-4 bg-primary/20 group-hover:bg-primary/40'
-                          }
-                        `}
-                      />
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+                      {/* Card Container */}
+                      <div className="relative">
+                        <div
+                          className="p-6 md:p-8 rounded-2xl relative overflow-hidden"
+                          style={{
+                            background: BRAND_COLORS.gradientLight,
+                            border: `1px solid ${isActive ? testimonial.color + "30" : BRAND_COLORS.border}`,
+                            boxShadow: isActive
+                              ? `0 25px 50px -12px ${testimonial.color}25, 
+                                 0 8px 24px -8px rgba(0, 0, 0, 0.15)`
+                              : "0 10px 30px -15px rgba(0, 0, 0, 0.1)",
+                            height: "420px",
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          {/* Card top accent */}
+                          <div
+                            className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl"
+                            style={{
+                              background: isActive
+                                ? `linear-gradient(to right, ${testimonial.color}, ${testimonial.color}80)`
+                                : "transparent",
+                            }}
+                          />
 
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-8 border-t border-primary/10 reveal-element">
-          <div className="flex items-center gap-3">
-            <div className="flex -space-x-2">
-              {testimonials.slice(0, 5).map((t: any, i: number) => (
-                <motion.div
-                  key={`avatar-${i}`}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primary/20 to-primary/10 border-2 border-card flex items-center justify-center text-primary text-xs font-medium shadow-sm"
-                >
-                  {t.avatar && (t.avatar.startsWith('http') || t.avatar.startsWith('/uploads') || t.avatar.startsWith('/cdn-images')) ? (
-                    <img src={t.avatar} alt={t.name} className="w-full h-full object-cover" />
-                  ) : (
-                    t.avatar || t.name.charAt(0)
-                  )}
-                </motion.div>
-              ))}
+                          {/* Service Badge */}
+                          {testimonial.service && (
+                            <div
+                              className="absolute top-6 left-6 px-3 py-1.5 rounded-full text-xs font-medium text-white shadow-sm"
+                              style={{
+                                background: testimonial.color,
+                              }}
+                            >
+                              {testimonial.service}
+                            </div>
+                          )}
+
+                          {/* Quote Icon */}
+                          <div
+                            className="absolute top-6 right-6 opacity-5 pointer-events-none"
+                            style={{ color: testimonial.color }}
+                          >
+                            <Quote className="w-10 h-10" />
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex flex-col h-full pt-12">
+                            {/* Stars */}
+                            <div className="flex flex-col items-center mb-6">
+                              <div className="mb-2" style={{ height: "30px" }}>
+                                {renderStars(
+                                  testimonial.rating,
+                                  isActive,
+                                  testimonial.color,
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Quote */}
+                            <div className="flex-grow min-h-0 mb-6">
+                              <blockquote
+                                className="text-lg md:text-xl text-gray-700 leading-relaxed font-light relative h-full"
+                                style={{
+                                  display: "-webkit-box",
+                                  WebkitLineClamp: 4,
+                                  WebkitBoxOrient: "vertical",
+                                  overflow: "hidden",
+                                }}
+                              >
+                                <span
+                                  className="absolute -left-2 -top-2 text-3xl opacity-20"
+                                  style={{ color: testimonial.color }}
+                                >
+                                  "
+                                </span>
+                                {testimonial.quote}
+                                <span
+                                  className="absolute -right-2 -bottom-2 text-3xl opacity-20"
+                                  style={{ color: testimonial.color }}
+                                >
+                                  "
+                                </span>
+                              </blockquote>
+                            </div>
+
+                            {/* Author Info */}
+                            <div className="pt-6 border-t border-gray-100">
+                              <div className="flex items-center gap-4">
+                                <div className="relative w-14 h-14 shrink-0">
+                                  {testimonial.image ? (
+                                    <img
+                                      src={testimonial.image}
+                                      alt={testimonial.author}
+                                      className="rounded-full object-cover w-full h-full border-2"
+                                      style={{
+                                        borderColor: testimonial.color + "30",
+                                      }}
+                                      onError={(e: any) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+                                      }}
+                                    />
+                                  ) : (
+                                    <div 
+                                      className="w-full h-full rounded-full flex items-center justify-center font-bold text-white text-sm"
+                                      style={{ backgroundColor: testimonial.color }}
+                                    >
+                                      {getInitials(testimonial.author)}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div
+                                    className="font-bold text-base truncate text-gray-900"
+                                    style={{
+                                      color: isActive
+                                        ? testimonial.color
+                                        : BRAND_COLORS.dark,
+                                    }}
+                                  >
+                                    {testimonial.author}
+                                  </div>
+                                  <div className="text-sm truncate text-gray-600">
+                                    {testimonial.role}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {testimonial.company && (
+                                      <div className="text-xs truncate flex-1 text-gray-500">
+                                        {testimonial.company}
+                                      </div>
+                                    )}
+                                    {testimonial.location && (
+                                      <div
+                                        className="text-xs px-2 py-1 rounded-full"
+                                        style={{
+                                          backgroundColor:
+                                            testimonial.color + "10",
+                                          color: testimonial.color,
+                                          border:
+                                            "1px solid " +
+                                            testimonial.color +
+                                            "20",
+                                        }}
+                                      >
+                                        {testimonial.location}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
-            <div className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">{stats.subscribers}</span> satisfied customers
+          </motion.div>
+        </div>
+
+        {/* Navigation Controls */}
+        <div className="flex flex-col items-center gap-8 mt-8">
+          <div className="flex items-center justify-center gap-6">
+            <button
+              onClick={() => {
+                prev();
+                setIsAutoRotating(false);
+                setTimeout(() => setIsAutoRotating(true), 1000);
+              }}
+              className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
+              style={{
+                background: "white",
+                border: `1px solid ${BRAND_COLORS.amber}30`,
+                color: currentTestimonial.color,
+                boxShadow: `0 4px 12px -2px ${currentTestimonial.color}15`,
+              }}
+              aria-label="Previous testimonial"
+              disabled={testimonialsList.length === 0}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            {/* Dots Indicator */}
+            <div className="flex items-center gap-3 mx-4">
+              {testimonialsList.map((testimonial: any, index: number) => {
+                const isActive = index === current;
+                const isAdjacent =
+                  Math.abs(index - current) === 1 ||
+                  Math.abs(index - current) === testimonialsList.length - 1;
+
+                return (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      goTo(index);
+                      setIsAutoRotating(false);
+                      setTimeout(() => setIsAutoRotating(true), 1000);
+                    }}
+                    className={`rounded-full transition-all duration-300 cursor-pointer ${
+                      isActive ? "w-12 h-2" : "w-2 h-2"
+                    }`}
+                    style={{
+                      backgroundColor: isActive
+                        ? testimonial.color
+                        : isAdjacent
+                          ? testimonial.color + "40"
+                          : BRAND_COLORS.gray + "20",
+                    }}
+                    aria-label={`Go to testimonial ${index + 1}`}
+                    disabled={testimonialsList.length === 0}
+                  />
+                );
+              })}
             </div>
+
+            <button
+              onClick={() => {
+                next();
+                setIsAutoRotating(false);
+                setTimeout(() => setIsAutoRotating(true), 1000);
+              }}
+              className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
+              style={{
+                background: "white",
+                border: `1px solid ${BRAND_COLORS.amber}30`,
+                color: currentTestimonial.color,
+                boxShadow: `0 4px 12px -2px ${currentTestimonial.color}15`,
+              }}
+              aria-label="Next testimonial"
+              disabled={testimonialsList.length === 0}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
 
-          <div className="flex items-center gap-3 text-sm">
+          {/* Counter with auto-rotate indicator */}
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-gray-500">
+              <span
+                className="font-semibold"
+                style={{ color: currentTestimonial.color }}
+              >
+                {current + 1}
+              </span>
+              <span className="mx-1">/</span>
+              <span>{testimonialsList.length}</span>
+            </div>
             <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              <span className="text-muted-foreground">Veteran Owned Business</span>
-            </div>
-            <div className="w-px h-4 bg-primary/20" />
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Icon key={i} name="Star" className="w-4 h-4 text-primary fill-primary" />
-              ))}
-              <span className="font-semibold text-foreground ml-1">5.0</span>
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  isAutoRotating ? "animate-pulse" : ""
+                }`}
+                style={{
+                  backgroundColor: isAutoRotating
+                    ? currentTestimonial.color
+                    : BRAND_COLORS.gray,
+                }}
+              />
             </div>
           </div>
         </div>

@@ -1,9 +1,16 @@
 const { MongoClient } = require('mongodb');
+const dns = require('dns');
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env.local') });
 
+try {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {
+    // ignore
+}
+
 const uri = process.env.MONGODB_URI;
-const dbName = 'eagle_revolution';
+const dbName = process.env.MONGODB_DB || 'cloc_cms';
 
 async function seedPages() {
     if (!uri) {

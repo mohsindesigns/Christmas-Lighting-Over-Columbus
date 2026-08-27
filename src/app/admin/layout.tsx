@@ -48,7 +48,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       return;
     }
 
-    fetch("/api/admin/me")
+    const storedToken = typeof window !== 'undefined' ? localStorage.getItem("admin_token") : null;
+    const headers: Record<string, string> = { "Cache-Control": "no-cache" };
+    if (storedToken) {
+      headers["Authorization"] = `Bearer ${storedToken}`;
+    }
+
+    fetch("/api/admin/me", {
+      credentials: "include",
+      headers
+    })
       .then(res => res.json())
       .then(data => {
         if (data.error) {
@@ -67,8 +76,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const filteredNav = navItems.filter(item => {
     if (item.module === 'dashboard') return true;
+    if (!user || user.roleName === 'Admin') return true;
+    if (!user.permissions) return true;
     const perms = user.permissions[item.module];
-    return perms && perms.read;
+    return perms ? !!perms.read : true;
   });
 
   return (

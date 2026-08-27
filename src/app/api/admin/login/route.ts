@@ -57,11 +57,26 @@ export async function POST(req: NextRequest) {
     user.lastLogin = new Date();
     await user.save();
 
+    const userRole = user.role || {};
+    const roleName = userRole.name || 'Admin';
+    const defaultPermissions = {
+      pages: { create: true, read: true, update: true, delete: true, publish: true },
+      media: { create: true, read: true, update: true, delete: true },
+      seo: { read: true, update: true },
+      blog: { create: true, read: true, update: true, delete: true, publish: true },
+      submissions: { read: true, delete: true },
+      settings: { read: true, update: true },
+      users: { read: true, create: true, update: true, delete: true },
+      logs: { read: true }
+    };
+    const rolePermissions = userRole.permissions ? JSON.parse(JSON.stringify(userRole.permissions)) : defaultPermissions;
+
     const token = await signToken({
       userId: user._id.toString(),
       username: user.username,
-      roleName: user.role.name,
-      permissions: user.customPermissions || user.role.permissions
+      email: user.email,
+      roleName: roleName,
+      permissions: user.customPermissions || rolePermissions
     });
 
     await recordActivity({
@@ -74,19 +89,20 @@ export async function POST(req: NextRequest) {
 
     const response = NextResponse.json({ 
       success: true,
+      token,
       user: {
         username: user.username,
         email: user.email,
-        role: user.role.name
+        role: roleName
       }
     });
 
     response.cookies.set('admin_session', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      httpOnly: false,
+      secure: false,
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 8, // 8 hours
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
     return response;

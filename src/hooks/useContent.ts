@@ -70,48 +70,170 @@ export const useContent = () => {
             section: { badge: "", headline: "", description: "" },
             ceo: { name: "", title: "", image: { src: "" }, badges: { top: "", bottom: "" }, quotes: [], description: "", socials: [] }
         }),
+        serviceAreas: getSafe(completeData, 'serviceAreas', {
+            badge: "SERVICE AREAS",
+            title: "Areas We Are Serving",
+            subtitle: "Custom lighting installed by professionals.",
+            mapImage: "/images/realmap.jpeg",
+            vehicleImage: "/images/car2.png",
+            steps: [
+                {
+                    number: "01",
+                    title: "Multiple Locations",
+                    description: "With strategically located stores across the region, we deliver premium service right at your doorstep—fast, reliable, and professional.",
+                    icon: "FaMapMarkerAlt",
+                    color: "#EF4444",
+                    features: ["4+ store locations", "Local service teams", "Fast response times"]
+                },
+                {
+                    number: "02",
+                    title: "24/7 Availability",
+                    description: "Our dedicated team is available around the clock to handle your Christmas lighting needs, ensuring timely service whenever you need it.",
+                    icon: "FaClock",
+                    color: "#F59E0B",
+                    features: ["Always available", "Emergency services", "Flexible scheduling"]
+                },
+                {
+                    number: "03",
+                    title: "Fast Response",
+                    description: "We pride ourselves on quick response times with an average of 30 minutes from inquiry to on-site assessment for your lighting project.",
+                    icon: "FaCar",
+                    color: "#10B981",
+                    features: ["30min avg response", "Quick assessments", "Rapid installation"]
+                }
+            ]
+        }),
         portfolio: (() => {
             const p = getSafe(completeData, 'portfolio', {});
+            const ws = getSafe(completeData, 'workShowcase', {});
             const selectedProjects = Array.isArray(p.projects) ? p.projects : [];
 
-            // If no projects specifically selected for home, use from galleryPage
-            if (selectedProjects.length === 0) {
-                const galleryProjects = completeData?.galleryPage?.projects || [];
-                if (Array.isArray(galleryProjects) && galleryProjects.length > 0) {
-                    return {
-                        ...p,
-                        projects: galleryProjects.slice(0, 8) // Show up to 8 featured
-                    };
-                }
-            }
+            const merged = {
+                ...p,
+                ...ws,
+                badge: ws.badge || p.section?.badge || "OUR WORK",
+                title: {
+                    prefix: ws.title?.prefix || p.section?.prefix || p.section?.headlinePrefix || "EXPERIENCE THE MAGIC",
+                    main: ws.title?.main || ws.title?.headline || p.section?.headline || p.section?.title || "PORTFOLIO"
+                },
+                description: ws.description || p.section?.description || "Browse our recent holiday lighting displays and permanent architectural lighting installations across Columbus.",
+                cta: ws.cta || p.button?.text || "View Full Gallery",
+                ctaLink: ws.ctaLink || p.button?.link || "/gallery",
+                images: Array.isArray(ws.images) && ws.images.length > 0
+                    ? ws.images
+                    : (Array.isArray(p.images) && p.images.length > 0 ? p.images : selectedProjects.map((proj: any) => proj.image || proj.src || proj.overviewImage || "").filter(Boolean)),
+                projects: selectedProjects
+            };
+
+            return merged;
+        })(),
+        workShowcase: (() => {
+            const p = getSafe(completeData, 'portfolio', {});
+            const ws = getSafe(completeData, 'workShowcase', {});
+            const selectedProjects = Array.isArray(p.projects) ? p.projects : [];
 
             return {
-                ...p,
+                badge: ws.badge || p.section?.badge || "OUR WORK",
+                title: {
+                    prefix: ws.title?.prefix || p.section?.prefix || p.section?.headlinePrefix || "EXPERIENCE THE MAGIC",
+                    main: ws.title?.main || ws.title?.headline || p.section?.headline || p.section?.title || "PORTFOLIO"
+                },
+                description: ws.description || p.section?.description || "Browse our recent holiday lighting displays and permanent architectural lighting installations across Columbus.",
+                cta: ws.cta || p.button?.text || "View Full Gallery",
+                ctaLink: ws.ctaLink || p.button?.link || "/gallery",
+                images: Array.isArray(ws.images) && ws.images.length > 0
+                    ? ws.images
+                    : (Array.isArray(p.images) && p.images.length > 0 ? p.images : selectedProjects.map((proj: any) => proj.image || proj.src || proj.overviewImage || "").filter(Boolean)),
                 projects: selectedProjects
             };
         })(),
-        testimonials: getSafe(completeData, 'testimonials', {
-            section: { badge: "", headline: "", description: "" },
-            items: []
-        }),
+        testimonials: (() => {
+            const raw = getSafe(completeData, 'testimonials', {});
+            const badge = raw.badge || raw.section?.badge || "CLIENT SUCCESS STORIES";
+            const titleLine1 = raw.title?.line1 || raw.section?.headlinePrefix || "Transforming Columbus Homes";
+            const titleLine2 = raw.title?.line2 || raw.section?.headlineHighlight || raw.section?.headline || "One Holiday at a Time";
+            const subtitle = raw.subtitle || raw.section?.description || "Read what your neighbors in New Albany, Dublin, and Bexley have to say about our premium Christmas lighting services.";
+            const rawItems = Array.isArray(raw.items) && raw.items.length > 0
+                ? raw.items
+                : (Array.isArray(raw.testimonials) && raw.testimonials.length > 0 ? raw.testimonials : []);
+
+            return {
+                ...raw,
+                badge,
+                title: {
+                    line1: titleLine1,
+                    line2: titleLine2
+                },
+                subtitle,
+                items: rawItems
+            };
+        })(),
         whyChooseUs: getSafe(completeData, 'whyChooseUs', {
             section: { badge: "", headline: "", description: "" },
             features: [],
             stats: [],
             cta: { badge: "", title: "", description: "", trustBadges: [], buttons: [] }
         }),
-        faq: getSafe(completeData, 'faq', {
-            section: { badge: "", headline: "", title: "", description: "" },
-            categories: [],
-            items: []
+        howWeWork: getSafe(completeData, 'howWeWork', completeData?.whyChooseUs || {
+            badge: "Simple 3-Step Process",
+            title: "Working With Us Couldn't Be Easier",
+            subtitle: "From your initial free quote to final takedown in January, we make holiday lighting completely stress-free.",
+            steps: []
         }),
+        faq: (() => {
+            const raw = getSafe(completeData, 'faq', {});
+            const title = raw.title || raw.section?.headline || raw.section?.title || "Questions & Answers";
+            const subtitle = raw.subtitle || raw.section?.description || "Got questions about our Columbus holiday lighting services? We have all the answers.";
+            const rawItems = Array.isArray(raw.items) && raw.items.length > 0
+                ? raw.items
+                : (Array.isArray(raw.faqs) && raw.faqs.length > 0 ? raw.faqs : []);
+
+            return {
+                ...raw,
+                title,
+                subtitle,
+                items: rawItems
+            };
+        })(),
         quote: getSafe(completeData, 'quote', {
-            section: { badge: "", headline: "", description: "" },
-            services: [],
-            projectTypes: [],
-            timelines: [],
-            success: { title: "", message: "", response: "", buttonText: "" }
+            section: { badge: "Get A Fast Quote", headline: "Get Your Fast Quote", description: "We are so excited to light up your property 🙂" },
+            badge: "Get A Fast Quote",
+            title: "Get Your Fast Quote",
+            subtitle: "We are so excited to light up your property 🙂",
+            benefits: [
+                { text: "Custom Lighting Design & Layout" },
+                { text: "Commercial-Grade LED Lights & Custom Wiring" },
+                { text: "Professional Installation & Heavy-Duty Clips" },
+                { text: "Proactive In-Season Maintenance (24h Guarantee)" },
+                { text: "Timely Takedown in January" },
+                { text: "Safe Climate-Controlled Storage Included" }
+            ],
+            contactInfo: {
+                phone: "(614) 301-7100",
+                email: "Info@lightsovercolumbus.com"
+            }
         }),
+        quoteForm: (() => {
+            const raw = getSafe(completeData, 'quoteForm', getSafe(completeData, 'quote', {}));
+            return {
+                ...raw,
+                badge: raw.badge || raw.section?.badge || "Get A Fast Quote",
+                title: raw.title || raw.headline || raw.section?.headline || raw.section?.title || "Get Your Fast Quote",
+                subtitle: raw.subtitle || raw.description || raw.section?.description || "We are so excited to light up your property 🙂",
+                benefits: Array.isArray(raw.benefits) && raw.benefits.length > 0 ? raw.benefits : [
+                    { text: "Custom Lighting Design & Layout" },
+                    { text: "Commercial-Grade LED Lights & Custom Wiring" },
+                    { text: "Professional Installation & Heavy-Duty Clips" },
+                    { text: "Proactive In-Season Maintenance (24h Guarantee)" },
+                    { text: "Timely Takedown in January" },
+                    { text: "Safe Climate-Controlled Storage Included" }
+                ],
+                contactInfo: raw.contactInfo || {
+                    phone: "(614) 301-7100",
+                    email: "Info@lightsovercolumbus.com"
+                }
+            };
+        })(),
         footer: {
             ...footer,
             services: footerServices,
@@ -175,5 +297,6 @@ export const useContent = () => {
             selectedPosts: []
         }),
         allBlogs: Array.isArray(completeData?.allBlogs) ? completeData.allBlogs : [],
+        ...(completeData || {}),
     };
 };
