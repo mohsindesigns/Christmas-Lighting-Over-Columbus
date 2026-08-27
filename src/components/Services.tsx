@@ -290,17 +290,15 @@ const ServiceCard = ({ service, index }: { service: any; index: number }) => {
 
 const Services = () => {
   const { services: servicesData } = useContent();
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const [isClient, setIsClient] = useState(false);
-  const [scrollTarget, setScrollTarget] = useState<any>(undefined);
 
   useEffect(() => {
     setIsClient(true);
-    setScrollTarget(sectionRef);
   }, []);
 
   const { scrollYProgress } = useScroll({
-    target: scrollTarget,
+    target: sectionRef,
     offset: ["start end", "end start"]
   });
 

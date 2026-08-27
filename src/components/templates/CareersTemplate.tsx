@@ -1,34 +1,11 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Upload, Send, Briefcase, FileText, User, Mail, Phone, CheckCircle, ArrowRight } from 'lucide-react';
 import { useContent } from "../../hooks/useContent";
 import RichTextRenderer from '../ui/RichTextRenderer';
 import PageInlineFaqs from "@/components/PageInlineFaqs";
-
-const Images = {
-  Pattern: "https://images.unsplash.com/photo-1502691876148-a84978e59af8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-};
-
-const ParallaxLayer = ({ children, speed = 0.1, className = "", sectionRef }: any) => {
-  const ref = useRef<any>(null);
-  const [scrollTarget, setScrollTarget] = useState<any>(undefined);
-  useEffect(() => {
-    setScrollTarget(sectionRef);
-  }, [sectionRef]);
-
-  const { scrollYProgress } = useScroll({
-    target: scrollTarget,
-    offset: ["start start", "end end"]
-  });
-  const y = useTransform(scrollYProgress, [0, 1], [0, speed * 50]);
-  return (
-    <motion.div ref={ref} style={{ y }} className={`absolute inset-0 will-change-transform ${className}`}>
-      {children}
-    </motion.div>
-  );
-};
 
 export default function CareersTemplate({ pageData, params }: { pageData?: any, params?: any }) {
   const { careers: globalCareersData } = useContent();

@@ -1,7 +1,15 @@
 import mongoose from 'mongoose';
+import dns from 'dns';
+
+// Ensure SRV DNS lookup resolves reliably on all networks/Windows environments
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch {
+  // Ignore in environments where setting DNS servers is restricted
+}
 
 const MONGODB_URI = process.env.MONGODB_URI || "";
-const MONGODB_DB = process.env.MONGODB_DB || "eagle_revolution";
+const MONGODB_DB = process.env.MONGODB_DB || "cloc_cms";
 
 if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable inside .env.local');

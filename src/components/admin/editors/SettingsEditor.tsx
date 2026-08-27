@@ -154,25 +154,23 @@ export default function SettingsEditor({ pageId, data, setData }: { pageId: stri
               <div className="space-y-6">
                  <div className="max-w-3xl space-y-6">
                     <div className={UI.card + " space-y-5"}>
-                       <label className={UI.sectionHeader}>Header Action</label>
+                       <label className={UI.sectionHeader}>Header Action & Contact</label>
                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-1.5">
                              <label className={UI.label}>Navbar CTA Text</label>
-                             <input type="text" value={data.navbar?.ctaText || ""} onChange={(e) => updateNested(["navbar", "ctaText"], e.target.value)} className={UI.input} />
+                             <input type="text" placeholder="e.g. Call Now (614) 301-7100" value={data.navbar?.ctaText || ""} onChange={(e) => updateNested(["navbar", "ctaText"], e.target.value)} className={UI.input} />
                           </div>
                           <div className="space-y-1.5">
                              <label className={UI.label}>Navbar CTA Link</label>
-                             <select 
-                               value={data.navbar?.ctaLink || ""} 
-                               onChange={(e) => updateNested(["navbar", "ctaLink"], e.target.value)} 
-                               className={UI.input}
-                             >
-                                <option value="/contact-us">Contact Portal (Default)</option>
-                                <option value="/gallery">Gallery Portfolio</option>
-                                {publishedPages.map(p => (
-                                  <option key={p._id} value={`/${p.slug}`}>{p.title}</option>
-                                ))}
-                             </select>
+                             <input type="text" placeholder="e.g. tel:+16143017100 or /contact" value={data.navbar?.ctaLink || ""} onChange={(e) => updateNested(["navbar", "ctaLink"], e.target.value)} className={UI.input} />
+                          </div>
+                          <div className="space-y-1.5">
+                             <label className={UI.label}>Phone Number</label>
+                             <input type="text" placeholder="(614) 301-7100" value={data.navbar?.phone || ""} onChange={(e) => updateNested(["navbar", "phone"], e.target.value)} className={UI.input} />
+                          </div>
+                          <div className="space-y-1.5">
+                             <label className={UI.label}>Contact Email</label>
+                             <input type="text" placeholder="Info@lightsovercolumbus.com" value={data.navbar?.email || ""} onChange={(e) => updateNested(["navbar", "email"], e.target.value)} className={UI.input} />
                           </div>
                        </div>
                     </div>
@@ -257,96 +255,114 @@ export default function SettingsEditor({ pageId, data, setData }: { pageId: stri
                  </div>
               </div>
             )}
-
-            {/* FOOTER TAB */}
+            {/* FOOTER TAB */}
             {activeTab === "footer" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
                  <div className="space-y-6">
                     <div className="space-y-4">
-                       <label className={UI.label}>Footer Identity</label>
+                       <label className={UI.label}>Footer Contact & Vitals</label>
                        <div className={UI.card + " space-y-4"}>
-                          <div className="space-y-1.5">
-                             <label className={UI.label}>Footer Narrative</label>
-                             <RichTextEditor 
-                               content={data.footer?.company?.description || ""} 
-                               onChange={(val) => updateNested(["footer", "company", "description"], val)} 
-                             />
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                             <div className="space-y-1.5">
+                                <label className={UI.label}>Phone Number</label>
+                                <input type="text" placeholder="(614) 301-7100" value={data.footer?.contact?.phone || ""} onChange={(e) => updateNested(["footer", "contact", "phone"], e.target.value)} className={UI.input} />
+                             </div>
+                             <div className="space-y-1.5">
+                                <label className={UI.label}>Working / Call Hours</label>
+                                <input type="text" placeholder="Mon - Sun: 8:00 AM - 8:00 PM" value={data.footer?.contact?.hours || ""} onChange={(e) => updateNested(["footer", "contact", "hours"], e.target.value)} className={UI.input} />
+                             </div>
+                             <div className="space-y-1.5">
+                                <label className={UI.label}>Contact Email</label>
+                                <input type="text" placeholder="Info@lightsovercolumbus.com" value={data.footer?.contact?.email || ""} onChange={(e) => updateNested(["footer", "contact", "email"], e.target.value)} className={UI.input} />
+                             </div>
+                             <div className="space-y-1.5">
+                                <label className={UI.label}>Support Tagline</label>
+                                <input type="text" placeholder="24/7 Customer Support" value={data.footer?.contact?.support || ""} onChange={(e) => updateNested(["footer", "contact", "support"], e.target.value)} className={UI.input} />
+                             </div>
                           </div>
-                           <ImageField label="Footer Specific Logo" value={data.footer?.company?.logo || ""} onChange={(url: string) => updateNested(["footer", "company", "logo"], url)} />
+                          <div className="space-y-1.5 pt-2 border-t border-[#f0f0f1]">
+                             <label className={UI.label}>Certifications & Guarantee Notice</label>
+                             <input type="text" placeholder="Licensed, Bonded & Insured • Certified Lighting Specialists • 100% Satisfaction Guaranteed" value={typeof data.footer?.certifications === 'string' ? data.footer?.certifications : ""} onChange={(e) => updateNested(["footer", "certifications"], e.target.value)} className={UI.input} />
+                          </div>
                        </div>
                     </div>
 
                     <div className="space-y-4">
-                       <label className={UI.label}>Marquee Text Bar</label>
+                       <label className={UI.label}>Social Media Profiles</label>
                        <div className={UI.card + " space-y-3"}>
-                          {(data.footer?.marquee?.texts || []).map((text: string, idx: number) => (
-                            <div key={idx} className="flex gap-2">
-                               <input type="text" value={text || ""} onChange={(e) => {
-                                  const newT = [...(data.footer?.marquee?.texts || [])]; newT[idx] = e.target.value; updateNested(["footer", "marquee", "texts"], newT);
-                               }} className={UI.input + " font-bold uppercase tracking-widest text-[11px]"} />
+                          {(data.footer?.social || []).map((s: any, idx: number) => (
+                            <div key={idx} className="flex gap-2 items-center">
+                               <select 
+                                 value={s.icon || s.platform || "FaFacebookF"} 
+                                 onChange={(e) => {
+                                   const newS = [...(data.footer?.social || [])];
+                                   newS[idx].icon = e.target.value;
+                                   newS[idx].platform = e.target.value;
+                                   updateNested(["footer", "social"], newS);
+                                 }}
+                                 className={UI.input + " py-1 text-[11px] w-36"}
+                               >
+                                  <option value="FaFacebookF">Facebook</option>
+                                  <option value="FaInstagram">Instagram</option>
+                                  <option value="FaTwitter">Twitter / X</option>
+                                  <option value="BsPinterest">Pinterest</option>
+                                  <option value="SiTiktok">TikTok</option>
+                                  <option value="FaLinkedinIn">LinkedIn</option>
+                                  <option value="FaYoutube">YouTube</option>
+                               </select>
+                               <input type="text" placeholder="https://..." value={s.href || ""} onChange={(e) => {
+                                  const newS = [...(data.footer?.social || [])];
+                                  newS[idx].href = e.target.value;
+                                  updateNested(["footer", "social"], newS);
+                               }} className={UI.input + " py-1 text-[11px] flex-1"} />
                                <button onClick={() => {
-                                 const newT = (data.footer?.marquee?.texts || []).filter((_: any, i: number) => i !== idx); updateNested(["footer", "marquee", "texts"], newT);
+                                 const newS = (data.footer?.social || []).filter((_: any, i: number) => i !== idx);
+                                 updateNested(["footer", "social"], newS);
                                }} className="text-slate-400 hover:text-[#d63638]"><Trash2 className="w-4 h-4" /></button>
                             </div>
                           ))}
-                          <button onClick={() => updateNested(["footer", "marquee", "texts"], [...(data.footer?.marquee?.texts || []), "NEW VALUE"])} className="text-[10px] font-bold text-[#2271b1] uppercase hover:underline">+ Add Word</button>
+                          <button onClick={() => updateNested(["footer", "social"], [...(data.footer?.social || []), { key: `social-${Date.now()}`, icon: "FaFacebookF", platform: "Facebook", href: "https://" }])} className="text-[10px] font-bold text-[#2271b1] uppercase hover:underline">+ Add Social Profile</button>
                        </div>
                     </div>
                  </div>
 
                  <div className="space-y-6">
                     <div className="space-y-4">
-                       <label className={UI.label}>Bottom Bar & Links</label>
+                       <label className={UI.label}>Footer Identity & Logo</label>
+                       <div className={UI.card + " space-y-4"}>
+                          <div className="space-y-1.5">
+                             <label className={UI.label}>Company Display Name</label>
+                             <input type="text" value={data.footer?.company?.name || ""} onChange={(e) => updateNested(["footer", "company", "name"], e.target.value)} className={UI.input} placeholder="Luminous Holiday" />
+                          </div>
+                          <ImageField label="Footer Logo" value={data.footer?.company?.logo || ""} onChange={(url: string) => updateNested(["footer", "company", "logo"], url)} />
+                       </div>
+                    </div>
+
+                    <div className="space-y-4">
+                       <label className={UI.label}>Bottom Bar & Legal Links</label>
                        <div className={UI.card + " space-y-5"}>
                           <div className="space-y-1.5">
                              <label className={UI.label}>Copyright Text</label>
-                             <input type="text" value={data.footer?.bottom?.copyright || ""} onChange={(e) => updateNested(["footer", "bottom", "copyright"], e.target.value)} className={UI.input} />
+                             <input type="text" value={data.footer?.bottom?.copyright || ""} onChange={(e) => updateNested(["footer", "bottom", "copyright"], e.target.value)} className={UI.input} placeholder="© 2026 Luminous Holiday" />
                           </div>
                           <div className="space-y-2">
-                             <label className={UI.label}>Secondary Bar Links</label>
+                             <label className={UI.label}>Legal & Secondary Links</label>
                              <div className="space-y-2">
                                 {(data.footer?.bottom?.links || []).map((link: any, idx: number) => (
                                    <div key={idx} className="flex gap-2 items-center">
                                       <input type="text" value={link.label || ""} onChange={(e) => {
                                          const newL = [...(data.footer?.bottom?.links || [])]; newL[idx].label = e.target.value; updateNested(["footer", "bottom", "links"], newL);
                                       }} className={UI.input + " py-1 text-[11px]"} placeholder="Label" />
-                                      <select 
-                                        value={link.href} 
-                                        onChange={(e) => {
-                                           const newL = [...(data.footer?.bottom?.links || [])]; newL[idx].href = e.target.value; updateNested(["footer", "bottom", "links"], newL);
-                                        }} 
-                                        className={UI.input + " py-1 text-[11px]"}
-                                      >
-                                         <option value="/">Home</option>
-                                         <option value="/privacy">Privacy Policy</option>
-                                         <option value="/terms">Terms of Service</option>
-                                         <optgroup label="Published Content">
-                                           {publishedPages.map(p => (
-                                             <option key={p._id} value={`/${p.slug}`}>{p.title}</option>
-                                           ))}
-                                         </optgroup>
-                                      </select>
+                                      <input type="text" value={link.href || ""} onChange={(e) => {
+                                         const newL = [...(data.footer?.bottom?.links || [])]; newL[idx].href = e.target.value; updateNested(["footer", "bottom", "links"], newL);
+                                      }} className={UI.input + " py-1 text-[11px] flex-1"} placeholder="/privacy" />
                                       <button onClick={() => {
                                          const newL = (data.footer?.bottom?.links || []).filter((_: any, i: number) => i !== idx); updateNested(["footer", "bottom", "links"], newL);
                                       }} className="text-slate-400 hover:text-[#d63638]"><X className="w-4 h-4" /></button>
                                    </div>
-                                 ))}
-                                <button onClick={() => updateNested(["footer", "bottom", "links"], [...(data.footer?.bottom?.links || []), { label: "Legal", href: "/legal" }])} className="text-[10px] font-bold text-[#2271b1] uppercase hover:underline">+ Add Legal Link</button>
+                                ))}
+                                <button onClick={() => updateNested(["footer", "bottom", "links"], [...(data.footer?.bottom?.links || []), { label: "Privacy", href: "/privacy" }])} className="text-[10px] font-bold text-[#2271b1] uppercase hover:underline">+ Add Link</button>
                              </div>
-                          </div>
-                       </div>
-                    </div>
-
-                    <div className="space-y-4">
-                       <label className={UI.label}>Newsletter Config</label>
-                       <div className={UI.card + " grid grid-cols-1 sm:grid-cols-2 gap-4"}>
-                          <div className="space-y-1.5">
-                             <label className={UI.label}>Placeholder</label>
-                             <input type="text" value={data.footer?.newsletter?.placeholder || ""} onChange={(e) => updateNested(["footer", "newsletter", "placeholder"], e.target.value)} className={UI.input} />
-                          </div>
-                          <div className="space-y-1.5">
-                             <label className={UI.label}>Btn Text</label>
-                             <input type="text" value={data.footer?.newsletter?.buttonText || ""} onChange={(e) => updateNested(["footer", "newsletter", "buttonText"], e.target.value)} className={UI.input} />
                           </div>
                        </div>
                     </div>

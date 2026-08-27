@@ -120,87 +120,116 @@ export default function HomeEditor({ pageId, data, setData }: { pageId: string, 
                {activeTab === "hero" && (
                   <div className="space-y-12">
                      <div className="space-y-6">
-                        <h3 className={UI.sectionHeader}>1. Branding</h3>
-                        <div className="space-y-1.5"><label className={UI.label}>Badge</label><input type="text" value={data.hero?.badge || ""} onChange={(e) => updateSection("hero", "badge", e.target.value)} className={UI.input} /></div>
-                     </div>
-                     <div className="space-y-8">
-                        <h3 className={UI.sectionHeader}>2. Animated Headline</h3>
-                        <div className="space-y-4">
-                           {(data.hero?.headlines || []).map((h: any, i: number) => (
-                              <div key={i} className={UI.card + " space-y-4"}>
-                                 <div className="flex justify-between items-center border-b border-[#f0f0f1] pb-2">
-                                    <span className="text-[10px] font-bold text-[#646970]">Line #{i + 1}</span>
-                                    <button onClick={() => {
-                                       const newH = data.hero.headlines.filter((_: any, idx: number) => idx !== i); updateSection("hero", "headlines", newH);
-                                    }} className="text-[#d63638]"><Trash2 className="w-4 h-4" /></button>
-                                 </div>
-                                 <input type="text" value={h.text || ""} onChange={(e) => {
-                                    const newH = [...data.hero.headlines]; newH[i].text = e.target.value; updateSection("hero", "headlines", newH);
-                                 }} className={UI.input + " font-bold"} />
-                                 <label className="flex items-center gap-2 cursor-pointer text-[12px]">
-                                    <input type="checkbox" checked={h.highlight} onChange={(e) => {
-                                       const newH = [...data.hero.headlines]; newH[i].highlight = e.target.checked; updateSection("hero", "headlines", newH);
-                                    }} /> Highlighted Style
-                                 </label>
-                              </div>
-                           ))}
-                           <button onClick={() => updateSection("hero", "headlines", [...(data.hero?.headlines || []), { text: "", highlight: false }])} className={UI.buttonAdd}>+ Add Line</button>
+                        <h3 className={UI.sectionHeader}>1. Main Headline (3-Part Structured)</h3>
+                        <div className={UI.card + " space-y-4"}>
+                           <div className="space-y-1.5">
+                              <label className={UI.label}>Part 1 (White Intro Line)</label>
+                              <input 
+                                 type="text" 
+                                 value={data.hero?.title?.part1 ?? data.hero?.headlines?.[0]?.text ?? "Illuminate Your"} 
+                                 onChange={(e) => updateSection("hero", "title", { ...(data.hero?.title || {}), part1: e.target.value })} 
+                                 className={UI.input} 
+                                 placeholder="Illuminate Your" 
+                              />
+                           </div>
+                           <div className="space-y-1.5">
+                              <label className={UI.label}>Part 2 (Gold/Red Highlighted Line)</label>
+                              <input 
+                                 type="text" 
+                                 value={data.hero?.title?.part2 ?? data.hero?.headlines?.[1]?.text ?? "Holiday Season"} 
+                                 onChange={(e) => updateSection("hero", "title", { ...(data.hero?.title || {}), part2: e.target.value })} 
+                                 className={UI.input + " font-bold text-amber-600 border-amber-300"} 
+                                 placeholder="Holiday Season" 
+                              />
+                           </div>
+                           <div className="space-y-1.5">
+                              <label className={UI.label}>Part 3 (Gold/Red Accent Line)</label>
+                              <input 
+                                 type="text" 
+                                 value={data.hero?.title?.part3 ?? data.hero?.headlines?.[2]?.text ?? "With Custom Magic"} 
+                                 onChange={(e) => updateSection("hero", "title", { ...(data.hero?.title || {}), part3: e.target.value })} 
+                                 className={UI.input + " font-bold text-amber-600 border-amber-300"} 
+                                 placeholder="With Custom Magic" 
+                              />
+                           </div>
                         </div>
                      </div>
+
                      <div className="space-y-6">
-                        <RichTextEditor
-                           label="3. Description Narrative"
-                           content={data.hero?.description || ""}
-                           onChange={(html) => updateSection("hero", "description", html)}
-                        />
-                     </div>
-                     <div className="space-y-6">
-                        <h3 className={UI.sectionHeader}>4. Buttons</h3>
-                        <div className="space-y-4">
-                           {(data.hero?.buttons || []).map((btn: any, i: number) => (
-                              <div key={i} className={UI.card + " space-y-4"}>
-                                 <div className="space-y-1.5"><label className={UI.label}>Text</label><input type="text" value={btn.text || ""} onChange={(e) => { const newB = [...data.hero.buttons]; newB[i].text = e.target.value; updateSection("hero", "buttons", newB); }} className={UI.input} /></div>
-                                 <div className="space-y-1.5"><label className={UI.label}>Link</label><input type="text" value={btn.href || ""} onChange={(e) => { const newB = [...data.hero.buttons]; newB[i].href = e.target.value; updateSection("hero", "buttons", newB); }} className={UI.input} /></div>
-                                 <div className="space-y-1.5"><label className={UI.label}>Icon Name</label><input type="text" value={btn.icon || ""} onChange={(e) => { const newB = [...data.hero.buttons]; newB[i].icon = e.target.value; updateSection("hero", "buttons", newB); }} className={UI.input} placeholder="e.g. ArrowRight" /></div>
-                                 <label className="flex items-center gap-2 cursor-pointer text-[12px]"><input type="checkbox" checked={btn.primary} onChange={(e) => { const newB = [...data.hero.buttons]; newB[i].primary = e.target.checked; updateSection("hero", "buttons", newB); }} /> Primary Style</label>
-                                 <button onClick={() => { const newB = data.hero.buttons.filter((_: any, idx: number) => idx !== i); updateSection("hero", "buttons", newB); }} className="text-[#d63638] text-[11px] font-bold">Remove Button</button>
-                              </div>
-                           ))}
-                           <button onClick={() => updateSection("hero", "buttons", [...(data.hero?.buttons || []), { text: "", href: "", primary: false, icon: "" }])} className={UI.buttonAdd}>+ Add Button</button>
+                        <h3 className={UI.sectionHeader}>2. Subtitle & Narrative</h3>
+                        <div className={UI.card}>
+                           <textarea
+                              rows={3}
+                              value={data.hero?.subtitle ?? data.hero?.description ?? ""}
+                              onChange={(e) => {
+                                 updateSection("hero", "subtitle", e.target.value);
+                                 updateSection("hero", "description", e.target.value);
+                              }}
+                              className={UI.input + " resize-y"}
+                              placeholder="Commercial & residential holiday lighting designed, installed, maintained, and stored for you."
+                           />
                         </div>
                      </div>
+
                      <div className="space-y-6">
-                        <h3 className={UI.sectionHeader}>5. Trust Stats</h3>
-                        <div className="space-y-4">
-                           {(data.hero?.stats || []).map((s: any, i: number) => (
-                              <div key={i} className={UI.card + " space-y-4"}>
-                                 <div className="flex justify-between items-center pb-2 border-b border-[#f0f0f1]">
-                                    <span className="text-[10px] font-bold text-[#646970] uppercase">Stat #{i + 1}</span>
-                                    <button onClick={() => { updateSection("hero", "stats", (prev: any[]) => prev.filter((_: any, idx: number) => idx !== i)); }} className="text-[#d63638]"><Trash2 className="w-4 h-4" /></button>
-                                 </div>
-                                 <div className="space-y-1.5"><label className={UI.label}>Value</label><input type="text" value={s.value || ""} onChange={(e) => { const val = e.target.value; updateSection("hero", "stats", (prev: any[]) => { const newS = [...prev]; newS[i].value = val; return newS; }); }} className={UI.inputLarge} /></div>
-                                 <div className="space-y-1.5"><label className={UI.label}>Label</label><input type="text" value={s.label || ""} onChange={(e) => { const val = e.target.value; updateSection("hero", "stats", (prev: any[]) => { const newS = [...prev]; newS[i].label = val; return newS; }); }} className={UI.input} /></div>
-                                 <IconSelector label="Icon" value={s.icon} onChange={(val) => { updateSection("hero", "stats", (prev: any[]) => { const newS = [...prev]; newS[i].icon = val; return newS; }); }} />
+                        <h3 className={UI.sectionHeader}>3. Call-To-Action (CTA)</h3>
+                        <div className={UI.card + " space-y-4"}>
+                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="space-y-1.5">
+                                 <label className={UI.label}>Button Text</label>
+                                 <input 
+                                    type="text" 
+                                    value={data.hero?.cta?.subtext ?? data.hero?.cta?.text ?? data.hero?.buttons?.[0]?.text ?? "Get My Free Quote"} 
+                                    onChange={(e) => {
+                                       const val = e.target.value;
+                                       updateSection("hero", "cta", { ...(data.hero?.cta || {}), text: val, subtext: val });
+                                    }} 
+                                    className={UI.input} 
+                                    placeholder="Get My Free Quote" 
+                                 />
                               </div>
-                           ))}
-                           <button onClick={() => updateSection("hero", "stats", (prev: any[]) => [...(prev || []), { value: "", label: "", icon: "Star" }])} className={UI.buttonAdd}>+ Add Stat</button>
+                              <div className="space-y-1.5">
+                                 <label className={UI.label}>Target Link / Anchor</label>
+                                 <input 
+                                    type="text" 
+                                    value={data.hero?.cta?.link ?? data.hero?.buttons?.[0]?.href ?? "#freequote"} 
+                                    onChange={(e) => {
+                                       updateSection("hero", "cta", { ...(data.hero?.cta || {}), link: e.target.value });
+                                    }} 
+                                    className={UI.input} 
+                                    placeholder="#freequote or /contact" 
+                                 />
+                              </div>
+                           </div>
                         </div>
                      </div>
+
                      <div className="space-y-6">
-                        <h3 className={UI.sectionHeader}>6. Media</h3>
-                        <ImageField
-                           label="Background Image"
-                           value={data.hero?.images?.[0]}
-                           onChange={(url) => {
-                              updateSection("hero", "images", (prev: any[]) => {
-                                 const next = [...(prev || [])];
-                                 next[0] = url;
-                                 return next;
-                              });
-                           }}
-                           altValue={data.hero?.bgImageAlt || ""}
-                           onAltChange={(alt) => updateSection("hero", "bgImageAlt", alt)}
-                        />
+                        <h3 className={UI.sectionHeader}>4. Hero Visual Assets</h3>
+                        <div className="grid grid-cols-1 gap-6">
+                           <ImageField
+                              label="Main Background Image"
+                              value={data.hero?.bgImage || data.hero?.images?.[0] || ""}
+                              onChange={(url) => {
+                                 updateSection("hero", "bgImage", url);
+                                 updateSection("hero", "images", [url]);
+                              }}
+                              altValue={data.hero?.bgImageAlt || ""}
+                              onAltChange={(alt) => updateSection("hero", "bgImageAlt", alt)}
+                           />
+                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <ImageField
+                                 label="Left Christmas Tree Image"
+                                 value={data.hero?.leftTreeImage || ""}
+                                 onChange={(url) => updateSection("hero", "leftTreeImage", url)}
+                              />
+                              <ImageField
+                                 label="Right Christmas Tree Image"
+                                 value={data.hero?.rightTreeImage || ""}
+                                 onChange={(url) => updateSection("hero", "rightTreeImage", url)}
+                              />
+                           </div>
+                        </div>
                      </div>
                   </div>
                )}

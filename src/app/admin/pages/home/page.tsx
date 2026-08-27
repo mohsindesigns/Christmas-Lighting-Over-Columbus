@@ -133,175 +133,115 @@ export default function HomeEditor() {
               <motion.div key="hero" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
                 <h2 className="text-2xl font-extrabold text-slate-900 mb-8 border-b border-slate-100 pb-6">Hero Section</h2>
 
-                {/* Background Image */}
-                <ImageField 
-                  label="Background Image"
-                  value={data.hero?.images?.[0] || ""}
-                  onChange={(url) => {
-                    const currentImages = Array.isArray(data.hero?.images) ? data.hero.images : [];
-                    const newImages = [...currentImages];
-                    newImages[0] = url;
-                    updateSection("hero", "images", newImages);
-                  }}
-                  altValue={data.hero?.bgImageAlt || ""}
-                  onAltChange={(alt) => updateSection("hero", "bgImageAlt", alt)}
-                  description="Choose a high-quality background for the homepage hero. Optimal size: 1920x1080px."
-                />
-
-                {/* Badge & Description */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Badge</label>
-                    <input
-                      type="text"
-                      value={data.hero?.badge || ""}
-                      onChange={(e) => updateSection("hero", "badge", e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none shadow-sm transition-all"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Description</label>
-                    <RichTextEditor 
-                      content={data.hero?.description || ""} 
-                      onChange={(v) => updateSection("hero", "description", v)} 
-                    />
-                  </div>
-                </div>
-
-                {/* Headlines */}
-                <div className="space-y-4 pt-4 border-t border-gray-200">
-                  <h3 className="text-sm font-semibold text-gray-900">Headlines</h3>
-                  {(data.hero?.headlines || []).map((line: any, idx: number) => (
-                    <div key={idx} className="flex gap-4 items-center">
-                      <div className="flex-1 space-y-2">
-                        <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Line {idx + 1} Text</label>
-                        <input
-                          type="text"
-                          value={line.text || ""}
-                          onChange={(e) => {
-                            const newHeadlines = [...data.hero.headlines];
-                            newHeadlines[idx].text = e.target.value;
-                            updateSection("hero", "headlines", newHeadlines);
-                          }}
-                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none shadow-sm transition-all"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2 items-center justify-center pt-6">
-                        <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Highlight?</label>
-                        <input
-                          type="checkbox"
-                          checked={line.highlight || false}
-                          onChange={(e) => {
-                            const newHeadlines = [...data.hero.headlines];
-                            newHeadlines[idx].highlight = e.target.checked;
-                            updateSection("hero", "headlines", newHeadlines);
-                          }}
-                          className="w-5 h-5 accent-primary"
-                        />
-                      </div>
+                {/* Main Headline (3-Part Structured) */}
+                <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 space-y-4">
+                  <h3 className="text-sm font-bold text-gray-900">Main Headline (3-Part Structured)</h3>
+                  <div className="space-y-3">
+                    <div className="space-y-1.5">
+                      <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Part 1 (White Intro Line)</label>
+                      <input
+                        type="text"
+                        value={data.hero?.title?.part1 ?? data.hero?.headlines?.[0]?.text ?? "Illuminate Your"}
+                        onChange={(e) => updateSection("hero", "title", { ...(data.hero?.title || {}), part1: e.target.value })}
+                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 text-sm focus:border-primary focus:outline-none"
+                        placeholder="Illuminate Your"
+                      />
                     </div>
-                  ))}
-                </div>
-
-                {/* Buttons (CTAs) */}
-                <div className="space-y-4 pt-4 border-t border-gray-200">
-                  <h3 className="text-sm font-semibold text-gray-900">Call to Action Buttons</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {(data.hero?.buttons || []).map((btn: any, idx: number) => (
-                      <div key={idx} className="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-3">
-                        <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">Button {idx + 1}</p>
-                        <div className="space-y-2">
-                          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Label</label>
-                          <input
-                            type="text"
-                            value={btn.text || ""}
-                            onChange={(e) => {
-                              const newBtns = [...data.hero.buttons];
-                              newBtns[idx].text = e.target.value;
-                              updateSection("hero", "buttons", newBtns);
-                            }}
-                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-gray-900 text-sm focus:border-primary/50 focus:outline-none"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Link (href)</label>
-                          <input
-                            type="text"
-                            value={btn.href || ""}
-                            onChange={(e) => {
-                              const newBtns = [...data.hero.buttons];
-                              newBtns[idx].href = e.target.value;
-                              updateSection("hero", "buttons", newBtns);
-                            }}
-                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-gray-900 text-sm focus:border-primary/50 focus:outline-none"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Icon Name</label>
-                          <input
-                            type="text"
-                            value={btn.icon || ""}
-                            onChange={(e) => {
-                              const newBtns = [...data.hero.buttons];
-                              newBtns[idx].icon = e.target.value;
-                              updateSection("hero", "buttons", newBtns);
-                            }}
-                            placeholder="e.g. ArrowRight, Phone, Calendar"
-                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-gray-900 text-sm focus:border-primary/50 focus:outline-none"
-                          />
-                          <p className="text-[11px] text-slate-400 italic">Leave blank for no icon. Uses Lucide icon names.</p>
-                        </div>
-                        <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-slate-600">
-                          <input
-                            type="checkbox"
-                            checked={btn.primary || false}
-                            onChange={(e) => {
-                              const newBtns = [...data.hero.buttons];
-                              newBtns[idx].primary = e.target.checked;
-                              updateSection("hero", "buttons", newBtns);
-                            }}
-                          />
-                          Primary Style (filled background)
-                        </label>
-                      </div>
-                    ))}
+                    <div className="space-y-1.5">
+                      <label className="text-xs uppercase tracking-wider text-amber-600 font-bold">Part 2 (Gold/Red Highlighted Line)</label>
+                      <input
+                        type="text"
+                        value={data.hero?.title?.part2 ?? data.hero?.headlines?.[1]?.text ?? "Holiday Season"}
+                        onChange={(e) => updateSection("hero", "title", { ...(data.hero?.title || {}), part2: e.target.value })}
+                        className="w-full bg-white border border-amber-300 font-bold text-amber-700 rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+                        placeholder="Holiday Season"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs uppercase tracking-wider text-amber-600 font-bold">Part 3 (Gold/Red Accent Line)</label>
+                      <input
+                        type="text"
+                        value={data.hero?.title?.part3 ?? data.hero?.headlines?.[2]?.text ?? "With Custom Magic"}
+                        onChange={(e) => updateSection("hero", "title", { ...(data.hero?.title || {}), part3: e.target.value })}
+                        className="w-full bg-white border border-amber-300 font-bold text-amber-700 rounded-xl px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+                        placeholder="With Custom Magic"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                {/* Stats */}
-                <div className="space-y-4 pt-4 border-t border-gray-200">
-                  <h3 className="text-sm font-semibold text-gray-900">Hero Stats</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {(data.hero?.stats || []).map((stat: any, idx: number) => (
-                      <div key={idx} className="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-3">
-                        <div className="space-y-2">
-                          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Value</label>
-                          <input
-                            type="text"
-                            value={stat.value || ""}
-                            onChange={(e) => {
-                              const newStats = [...data.hero.stats];
-                              newStats[idx].value = e.target.value;
-                              updateSection("hero", "stats", newStats);
-                            }}
-                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-gray-900 text-sm font-bold focus:border-primary/50 focus:outline-none"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Label</label>
-                          <input
-                            type="text"
-                            value={stat.label || ""}
-                            onChange={(e) => {
-                              const newStats = [...data.hero.stats];
-                              newStats[idx].label = e.target.value;
-                              updateSection("hero", "stats", newStats);
-                            }}
-                            className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-gray-900 text-sm focus:border-primary/50 focus:outline-none"
-                          />
-                        </div>
-                      </div>
-                    ))}
+                {/* Subtitle / Description */}
+                <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 space-y-2">
+                  <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Subtitle & Narrative</label>
+                  <textarea
+                    rows={3}
+                    value={data.hero?.subtitle ?? data.hero?.description ?? ""}
+                    onChange={(e) => {
+                      updateSection("hero", "subtitle", e.target.value);
+                      updateSection("hero", "description", e.target.value);
+                    }}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 text-sm focus:border-primary focus:outline-none"
+                    placeholder="Commercial & residential holiday lighting designed, installed, maintained, and stored for you."
+                  />
+                </div>
+
+                {/* CTA Buttons */}
+                <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 space-y-4">
+                  <h3 className="text-sm font-bold text-gray-900">Call-To-Action (CTA)</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Button Text</label>
+                      <input
+                        type="text"
+                        value={data.hero?.cta?.subtext ?? data.hero?.cta?.text ?? data.hero?.buttons?.[0]?.text ?? "Get My Free Quote"}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          updateSection("hero", "cta", { ...(data.hero?.cta || {}), text: val, subtext: val });
+                        }}
+                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 text-sm focus:border-primary focus:outline-none"
+                        placeholder="Get My Free Quote"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs uppercase tracking-wider text-slate-500 font-bold">Target Link / Anchor</label>
+                      <input
+                        type="text"
+                        value={data.hero?.cta?.link ?? data.hero?.buttons?.[0]?.href ?? "#freequote"}
+                        onChange={(e) => updateSection("hero", "cta", { ...(data.hero?.cta || {}), link: e.target.value })}
+                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 text-sm focus:border-primary focus:outline-none"
+                        placeholder="#freequote or /contact"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Imagery */}
+                <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 space-y-4">
+                  <h3 className="text-sm font-bold text-gray-900">Hero Imagery & Christmas Tree Assets</h3>
+                  <ImageField 
+                    label="Main Background Image"
+                    value={data.hero?.bgImage || data.hero?.images?.[0] || ""}
+                    onChange={(url) => {
+                      updateSection("hero", "bgImage", url);
+                      updateSection("hero", "images", [url]);
+                    }}
+                    altValue={data.hero?.bgImageAlt || ""}
+                    onAltChange={(alt) => updateSection("hero", "bgImageAlt", alt)}
+                    description="High-resolution hero background night image."
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <ImageField 
+                      label="Left Christmas Tree Image"
+                      value={data.hero?.leftTreeImage || ""}
+                      onChange={(url) => updateSection("hero", "leftTreeImage", url)}
+                      description="Left bottom corner tree graphic."
+                    />
+                    <ImageField 
+                      label="Right Christmas Tree Image"
+                      value={data.hero?.rightTreeImage || ""}
+                      onChange={(url) => updateSection("hero", "rightTreeImage", url)}
+                      description="Right bottom corner tree graphic."
+                    />
                   </div>
                 </div>
               </motion.div>

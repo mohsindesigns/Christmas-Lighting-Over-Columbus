@@ -383,15 +383,10 @@ const Portfolio = () => {
   const { portfolio: portfolioData } = useContent();
   const sectionRef = useRef<HTMLElement>(null);
   const [lightbox, setLightbox] = useState<any>(null);
-  const [scrollTarget, setScrollTarget] = useState<any>(undefined);
   const router = useRouter();
 
-  useEffect(() => {
-    setScrollTarget(sectionRef);
-  }, []);
-
   const { scrollYProgress } = useScroll({
-    target: scrollTarget,
+    target: sectionRef,
     offset: ["start end", "end start"],
   });
 
@@ -421,9 +416,8 @@ const Portfolio = () => {
   const row1 = projects.length > 0 ? projects.slice(0, half) : [];
   const row2 = projects.length > half ? projects.slice(half) : [];
 
-  // Don't render marquee if no projects
   if (projects.length === 0) {
-    return null;
+    return <div ref={sectionRef as any} className="hidden" />;
   }
 
   return (

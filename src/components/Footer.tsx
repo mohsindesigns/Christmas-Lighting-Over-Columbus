@@ -1,433 +1,325 @@
 "use client";
 
-import { useState, Fragment } from "react";
-import { Icon } from "../config/icons";
-import { useContent } from "../hooks/useContent";
-import Image from "next/image";
+import { useState, useEffect, memo } from "react";
 import Link from "next/link";
-import RichTextRenderer from "./ui/RichTextRenderer";
+import Image from "next/image";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTwitter,
+  FaEnvelope,
+  FaLinkedinIn,
+  FaYoutube,
+} from "react-icons/fa";
+import { BsPinterest, BsFillTelephoneFill } from "react-icons/bs";
+import { SiTiktok } from "react-icons/si";
+import { useContent } from "../hooks/useContent";
 
-const NewsletterForm = () => {
-  const { footer } = useContent();
-  const [email, setEmail] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
+interface LightPosition {
+  id: number;
+  left: string;
+  top: string;
+  color: string;
+  animationDelay: string;
+  duration: string;
+}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      try {
-        await fetch('/api/send', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            type: 'Newsletter',
-            subject: 'New Newsletter Subscription',
-            name: 'Newsletter Subscriber',
-            email: email,
-            message: `New subscription from: ${email}`
-          })
-        });
-      } catch (error) {
-        console.error('Newsletter submission failed:', error);
-      }
-      setIsSubscribed(true);
-      setEmail('');
-      setTimeout(() => setIsSubscribed(false), 3000);
-    }
-  };
-
-  return (
-    <div className="relative">
-      <form onSubmit={handleSubmit} className="relative">
-        <div className={`
-          relative flex items-center bg-muted backdrop-blur-sm rounded-full border transition-all duration-300
-          ${isFocused
-            ? 'border-primary/50 shadow-[0_0_30px_hsl(var(--primary)/0.1)]'
-            : 'border-border hover:border-border/80'
-          }
-        `}>
-          <input
-            type="email"
-            placeholder={footer.newsletter?.placeholder || "Enter your email"}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className="w-full bg-transparent px-6 py-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
-            required
-          />
-          <button
-            type="submit"
-            className="absolute right-2 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-full hover:bg-primary/90 transition-all duration-300 flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
-          >
-            {footer.newsletter?.buttonText || "Subscribe"}
-            <Icon name="ArrowRight" className="w-4 h-4" />
-          </button>
-        </div>
-      </form>
-
-      {isSubscribed && (
-        <div className="absolute -bottom-8 left-0 right-0 text-center">
-          <span className="text-xs text-primary">
-            ✓ Thank you for subscribing
-          </span>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const ServiceLinks = () => {
-  const { services: servicesData, footer } = useContent();
-  const dynamicServicesRaw = ((servicesData as any).services || []).filter((s: any) => s.status === 'published' || s.status === undefined);
-  const selectedServices = footer?.services?.selectedServices || [];
-  
-  const dynamicServices = selectedServices.length > 0 
-    ? dynamicServicesRaw.filter((s: any) => selectedServices.includes(s._id))
-    : dynamicServicesRaw;
-
-  const footerServices = footer?.services || { title: "Our Services" };
-
-  return (
-    <div className="space-y-4">
-      <h4 className="text-xs font-mono tracking-[0.2em] uppercase text-muted-foreground flex items-center gap-2">
-        <Icon name="Sparkles" className="w-4 h-4" />
-        {footerServices.title}
-      </h4>
-      <div className="grid grid-cols-1 gap-2">
-        {dynamicServices.map((service: any) => (
-          <Link
-            key={service.slug}
-            href={`/services/${service.slug}`}
-            className="inline-flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-all duration-300 group py-1"
-          >
-            <span className="text-muted-foreground/60 group-hover:text-primary transition-colors">
-              <Icon name={service.icon || "Layout"} className="w-5 h-5" />
-            </span>
-            <span>{service.title}</span>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const MaterialsSection = () => {
-  const { footer } = useContent();
-  const services = footer?.services || { materials: { title: "Materials", items: [] } };
-  const materials = services.materials || { title: "Materials", items: [] };
-
-  return (
-    <div className="space-y-3 mt-8 border-t border-border/40 pt-6">
-      <h5 className="text-[10px] font-mono tracking-[0.2em] uppercase text-primary/60">
-        {materials.title}
-      </h5>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
-        {(materials.items || []).map((material: any, idx: number) => (
-          <Fragment key={material.label}>
-            {idx > 0 && <span className="text-muted-foreground/30 font-light">•</span>}
-            <Link
-              href={material.href || '#'}
-              className="text-muted-foreground hover:text-primary transition-colors py-0.5"
-            >
-              {material.label}
-            </Link>
-          </Fragment>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const ContactInfo = () => {
-  const { footer, hours } = useContent();
-  const contact = footer?.contact || { title: "Contact Us", email: "", phone: "", address: "", emergency: "", areas: "" };
-
-  return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h4 className="text-xs font-mono tracking-[0.2em] uppercase text-muted-foreground flex items-center gap-2">
-          <Icon name="Sparkles" className="w-4 h-4" />
-          {contact.title}
-        </h4>
-        <div className="space-y-4">
-          <div className="flex items-start gap-3 text-sm text-muted-foreground group">
-            <span className="text-muted-foreground/60 group-hover:text-primary mt-0.5 flex-shrink-0">
-              <Icon name="Mail" className="w-5 h-5" />
-            </span>
-            <div className="[&_a]:text-muted-foreground [&_a]:no-underline [&_a]:hover:text-primary [&_a]:transition-colors">
-              <RichTextRenderer content={contact.email} className="!text-muted-foreground [&_p]:m-0" />
-            </div>
-          </div>
-          <div className="flex items-start gap-3 text-sm text-muted-foreground group">
-            <span className="text-muted-foreground/60 group-hover:text-primary mt-0.5 flex-shrink-0">
-              <Icon name="Phone" className="w-5 h-5" />
-            </span>
-            <div className="[&_a]:text-muted-foreground [&_a]:no-underline [&_a]:hover:text-primary [&_a]:transition-colors">
-              <RichTextRenderer content={contact.phone} className="!text-muted-foreground [&_p]:m-0" />
-            </div>
-          </div>
-          <div className="flex items-start gap-3 text-sm text-muted-foreground group">
-            <span className="text-muted-foreground/60 group-hover:text-primary mt-0.5 flex-shrink-0">
-              <Icon name="MapPin" className="w-5 h-5" />
-            </span>
-            <div className="[&_a]:text-muted-foreground [&_a]:no-underline [&_a]:hover:text-primary [&_a]:transition-colors">
-              <RichTextRenderer content={contact.address} className="!text-muted-foreground [&_p]:m-0" />
-            </div>
-          </div>
-          <div className="flex items-start gap-3 text-sm text-muted-foreground group">
-            <span className="text-muted-foreground/60 group-hover:text-primary mt-0.5 flex-shrink-0">
-              <Icon name="Infinity" className="w-5 h-5" />
-            </span>
-            <div className="[&_a]:text-muted-foreground [&_a]:no-underline [&_a]:hover:text-primary [&_a]:transition-colors">
-              <RichTextRenderer content={contact.emergency} className="!text-muted-foreground [&_p]:m-0" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {hours && (
-        <div className="space-y-3">
-          <h5 className="text-[10px] font-mono tracking-[0.2em] uppercase text-primary/60">
-            Office Hours
-          </h5>
-          <div className="space-y-1 text-xs text-muted-foreground">
-            <div className="flex justify-between">
-              <span>Monday - Friday:</span>
-              <span>{hours.monday}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Saturday:</span>
-              <span>{hours.saturday}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Sunday:</span>
-              <span>{hours.sunday}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="space-y-3">
-        <h5 className="text-[10px] font-mono tracking-[0.2em] uppercase text-primary/60">
-          Service Areas
-        </h5>
-        <div className="text-sm leading-relaxed">
-          <RichTextRenderer content={contact.areas} className="!text-muted-foreground [&_p]:m-0" />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const SocialLinks = () => {
-  const { footer } = useContent();
-  const social = footer?.social || [];
-
-  const getIconName = (item: any) => {
-    return item.icon || item.platform;
-  };
-
-  return (
-    <div className="flex items-center gap-3 flex-wrap">
-      {social.map((socialItem: any) => (
-        <a
-          key={socialItem.platform}
-          href={socialItem.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all duration-300 group"
-          aria-label={socialItem.platform}
-        >
-          <Icon name={getIconName(socialItem)} className="w-5 h-5" />
-        </a>
-      ))}
-    </div>
-  );
-};
-
-const LegacyMarquee = () => {
-  const { footer } = useContent();
-  const certifications = footer?.certifications || [];
-
-  if (certifications.length === 0) return null;
-
-  return (
-    <div className="relative overflow-hidden py-12 border-t border-border bg-muted/10">
-      <div className="animate-marquee flex whitespace-nowrap">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="flex items-center gap-16 px-8 flex-shrink-0">
-            {certifications.map((cert: any, idx: number) => (
-              <div key={`${i}-${idx}`} className="flex items-center gap-5 group">
-                <div className="w-12 h-12 rounded-2xl bg-card flex items-center justify-center text-muted-foreground group-hover:text-primary transition-all duration-500 border border-border group-hover:border-primary/30 shadow-sm group-hover:shadow-md">
-                  <Icon name={cert.icon} className="w-6 h-6" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60 group-hover:text-foreground transition-colors">{cert.cert}</span>
-                  <span className="text-[10px] font-mono text-muted-foreground/40 mt-0.5">{cert.number}</span>
-                </div>
-                <div className="ml-12 opacity-20">
-                  <Icon name="Sparkles" className="w-3 h-3 text-primary" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-    </div>
-  );
+const iconMap: Record<string, any> = {
+  FaFacebookF,
+  FaInstagram,
+  FaTwitter,
+  FaEnvelope,
+  FaLinkedinIn,
+  FaYoutube,
+  BsPinterest,
+  BsFillTelephoneFill,
+  SiTiktok,
+  facebook: FaFacebookF,
+  instagram: FaInstagram,
+  twitter: FaTwitter,
+  pinterest: BsPinterest,
+  tiktok: SiTiktok,
+  linkedin: FaLinkedinIn,
+  youtube: FaYoutube,
 };
 
 const Footer = () => {
-  const { footer } = useContent();
+  const currentYear = new Date().getFullYear();
+  const [lightPositions, setLightPositions] = useState<LightPosition[]>([]);
+  const content = useContent();
+  const { footer, settings, navbar, services: servicesData } = content;
 
-  const company = footer?.company || { name: "Eagle Revolution", tagline: "", description: "" };
-  const bottom = footer?.bottom || { copyright: "", rights: "", links: [], tagline: "" };
+  useEffect(() => {
+    // Generate fewer lights for better performance on small screens
+    const positions: LightPosition[] = Array.from({ length: 10 }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      color: Math.random() > 0.5 ? "#FFD700" : "#FF0000",
+      animationDelay: `${Math.random() * 2}s`,
+      duration: `${2 + Math.random() * 3}s`,
+    }));
+    setLightPositions(positions);
+  }, []);
+
+  const companyName = footer?.company?.name || settings?.siteTitle || "Luminous Holiday";
+  const logoSrc = footer?.company?.logo || navbar?.logo || "/images/mainlogo.png";
+  const year = footer?.bottom?.year || currentYear;
+  
+  // Contact details
+  const phone = footer?.contact?.phone || navbar?.phone || settings?.phone || "(614) 301-7100";
+  const phoneHours = footer?.contact?.hours || "Mon - Sun: 8:00 AM - 8:00 PM";
+  const email = footer?.contact?.email || navbar?.email || settings?.email || "Info@lightsovercolumbus.com";
+  const emailSupport = footer?.contact?.support || "24/7 Customer Support";
+
+  // Published services from CMS
+  const publishedServices = (servicesData?.services || []).filter(
+    (s: any) => !s.status || s.status === "published"
+  );
+
+  const dynamicServicesLinks = publishedServices.length > 0
+    ? publishedServices.map((s: any) => ({
+        label: s.title,
+        href: `/services/${s.slug}`,
+      }))
+    : [
+        { label: "Residential Lighting", href: "/services/residential-lighting" },
+        { label: "Commercial Lighting", href: "/services/commercial-lighting" },
+        { label: "Permanent Lighting", href: "/services/permanent-lighting" },
+      ];
+
+  const quickLinks = (footer?.bottom?.links && footer.bottom.links.length > 0)
+    ? footer.bottom.links
+    : [
+        { label: "Home", href: "/" },
+        { label: "About Us", href: "/about" },
+        { label: "Gallery", href: "/gallery" },
+        { label: "Service Area", href: "/service-area" },
+        { label: "Contact Us", href: "/contact" },
+      ];
+
+  // Dynamic link categories
+  const categoriesLinks: Record<string, { label: string; href: string }[]> = footer?.links || {
+    "Our Services": dynamicServicesLinks,
+    "Quick Links": quickLinks,
+  };
+
+  // Social media links
+  const socialMediaList = (footer?.social && Array.isArray(footer.social) && footer.social.length > 0)
+    ? footer.social
+    : [
+        { key: "fb", href: "https://facebook.com", icon: "FaFacebookF", label: "Facebook" },
+        { key: "ig", href: "https://instagram.com", icon: "FaInstagram", label: "Instagram" },
+        { key: "tw", href: "https://twitter.com", icon: "FaTwitter", label: "Twitter" },
+        { key: "pin", href: "https://pinterest.com", icon: "BsPinterest", label: "Pinterest" },
+        { key: "tik", href: "https://tiktok.com", icon: "SiTiktok", label: "TikTok" },
+      ];
+
+  const certificationsText = typeof footer?.certifications === "string"
+    ? footer.certifications
+    : Array.isArray(footer?.certifications) && footer.certifications.length > 0
+    ? footer.certifications.map((c: any) => c.cert || c).join(" • ")
+    : "Licensed, Bonded & Insured • Certified Lighting Specialists • 100% Satisfaction Guaranteed";
 
   return (
-    <footer className="relative bg-background overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, hsl(var(--primary)) 1px, transparent 1px),
-              linear-gradient(to bottom, hsl(var(--primary)) 1px, transparent 1px)
-            `,
-            backgroundSize: '60px 60px',
-          }}
-        />
+    <footer className="bg-[#0a1128] border-t border-[#ff0000]/30 relative overflow-hidden text-[#f5f5dc]">
+      {/* Background Pattern - Optimized for mobile */}
+      <div className="absolute inset-0 -z-10 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a1128] via-[#0a1128] to-[#0a1128]/95"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#ff0000]/5 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-[#ffd700]/5 via-transparent to-transparent"></div>
+
+        {/* Christmas Lights */}
+        <div className="hidden sm:block absolute inset-0 overflow-hidden pointer-events-none">
+          {lightPositions.length > 0 &&
+            lightPositions.map((light) => (
+              <div
+                key={`light-${light.id}`}
+                className="absolute rounded-full"
+                style={{
+                  left: light.left,
+                  top: light.top,
+                  width: "4px",
+                  height: "4px",
+                  background: `radial-gradient(circle, ${light.color} 40%, transparent 70%)`,
+                  filter: "blur(1px)",
+                  animationName: "twinkle",
+                  animationDuration: light.duration,
+                  animationIterationCount: "infinite",
+                  animationDirection: "alternate",
+                  animationTimingFunction: "ease-in-out",
+                  animationDelay: light.animationDelay,
+                }}
+              />
+            ))}
+        </div>
       </div>
 
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-primary/5 to-transparent opacity-60 blur-3xl" />
-
-      <div className="max-w-7xl mx-auto px-6 md:px-8 relative z-30">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pt-24 pb-16 border-b border-border">
-          <div className="lg:col-span-3 space-y-8">
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                {footer.company?.logo ? (
-                  <div className="relative w-12 h-12 rounded-xl overflow-hidden">
-                    <Image src={footer.company.logo} alt={footer.company.name} fill className="object-contain" />
-                  </div>
+      {/* Main Container */}
+      <div className="w-full mx-auto px-4 py-8 sm:px-6 sm:py-10 md:px-8 md:py-12 lg:px-12 lg:py-16 xl:px-16 2xl:px-20 relative z-10">
+        {/* Main Footer Content - Three columns layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 mb-8 lg:mb-16">
+          {/* Column 1: Brand Column - Logo only */}
+          <div className="lg:col-span-3 flex flex-col items-center lg:items-start">
+            <Link href="/" className="block">
+              <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36">
+                {logoSrc.startsWith("http") || logoSrc.startsWith("/uploads") || logoSrc.startsWith("/cdn-images") ? (
+                  <img
+                    src={logoSrc}
+                    alt={companyName}
+                    className="object-contain w-full h-full drop-shadow-xl"
+                  />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-2xl shadow-primary/30">
-                    <span className="text-primary-foreground font-bold text-sm text-center leading-tight">ER</span>
-                  </div>
+                  <Image
+                    src={logoSrc}
+                    alt={companyName}
+                    width={144}
+                    height={144}
+                    className="object-contain w-full h-full drop-shadow-xl"
+                    priority={false}
+                  />
                 )}
-                <div>
-                  <span className="text-foreground font-light text-lg block">{company.name}</span>
-                  <span className="text-[10px] text-primary/60 font-mono tracking-wider">{company.tagline}</span>
+              </div>
+            </Link>
+          </div>
+
+          {/* Column 2: Links/Services Column */}
+          <div className="lg:col-span-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+              {Object.entries(categoriesLinks).map(([category, linkItems]) => (
+                <div key={`category-${category}`} className="col-span-1">
+                  <h4 className="text-white font-semibold text-base sm:text-lg md:text-xl mb-3 pb-2 border-b border-[#ffd700]/20 relative">
+                    <span>{category}</span>
+                    <div className="absolute bottom-0 left-0 w-12 h-0.5 bg-gradient-to-r from-[#ff0000] to-[#ffd700]"></div>
+                  </h4>
+                  <ul className="space-y-2">
+                    {(Array.isArray(linkItems) ? linkItems : []).map((link: any, lIdx: number) => (
+                      <li key={`link-${link.label || lIdx}`}>
+                        <Link
+                          href={link.href || "#"}
+                          className="text-white/70 hover:text-[#ffd700] transition-all duration-200 flex items-center group text-sm sm:text-base hover:pl-2"
+                        >
+                          <span className="w-1.5 h-0.5 bg-gradient-to-r from-[#ff0000] to-[#ffd700] opacity-0 group-hover:opacity-100 mr-2 transition-all duration-200"></span>
+                          <span className="break-words">{link.label}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
-
-              <div className="text-muted-foreground text-sm leading-relaxed font-light [&_p]:m-0">
-                <RichTextRenderer content={company.description} />
-              </div>
-
-              <SocialLinks />
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground">
-                Subscribe to insights
-              </h4>
-              <NewsletterForm />
+              ))}
             </div>
           </div>
 
-          <div className="lg:col-span-3">
-            <ServiceLinks />
-            <MaterialsSection />
-          </div>
-
-          <div className="lg:col-span-3">
-            <ContactInfo />
-          </div>
-
-          <div className="lg:col-span-3">
+          {/* Column 3: Get in Touch Column */}
+          <div className="lg:col-span-4">
+            <h3 className="text-white font-bold text-lg sm:text-xl md:text-2xl mb-4 text-center lg:text-left">
+              Get in Touch
+            </h3>
             <div className="space-y-4">
-              <h4 className="text-xs font-mono tracking-[0.2em] uppercase text-muted-foreground flex items-center gap-2">
-                <Icon name="MapPin" className="w-4 h-4" />
-                Our Location
-              </h4>
-              <div className="relative w-full aspect-square lg:aspect-auto lg:h-[350px] rounded-2xl overflow-hidden border border-border shadow-2xl group transition-all duration-500 hover:border-primary/30">
-                <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3109.2535729046463!2d-90.68510192536498!3d38.803742752226945!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xa84c3b8dec6bf3f%3A0x18a7936317172933!2sEagle%20Revolution!5e0!3m2!1sen!2s!4v1778495491394!5m2!1sen!2s" 
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 0 }} 
-                  allowFullScreen={true} 
-                  loading="lazy" 
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="grayscale hover:grayscale-0 transition-all duration-700"
-                />
-                <div className="absolute inset-0 pointer-events-none border-[12px] border-background/20 rounded-2xl" />
-              </div>
-              <p className="text-[10px] text-muted-foreground font-mono mt-2">
-                1077 E Terra Ln, O&apos;Fallon, MO 63366
+              <a
+                href={`tel:${phone.replace(/[^0-9+]/g, "")}`}
+                className="flex items-center space-x-3 text-white/80 group hover:text-white transition-colors duration-200"
+              >
+                <BsFillTelephoneFill className="text-[#ffd700] flex-shrink-0 text-base sm:text-lg" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm sm:text-base break-words font-medium">
+                    {phone}
+                  </div>
+                  <div className="text-xs sm:text-sm text-white/60">
+                    {phoneHours}
+                  </div>
+                </div>
+              </a>
+
+              <a
+                href={`mailto:${email}`}
+                className="flex items-center space-x-3 text-white/80 group hover:text-white transition-colors duration-200"
+              >
+                <FaEnvelope className="text-[#ff0000] flex-shrink-0 text-base sm:text-lg" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm sm:text-base break-words font-medium">
+                    {email}
+                  </div>
+                  <div className="text-xs sm:text-sm text-white/60">
+                    {emailSupport}
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="pt-6 sm:pt-8 lg:pt-12 border-t border-[#ff0000]/20">
+          {/* Social Media */}
+          <div className="mb-6">
+            <h4 className="text-white font-semibold text-base sm:text-lg mb-3 text-center lg:text-left">
+              Follow Our Journey
+            </h4>
+            <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
+              {socialMediaList.map((social: any, sIdx: number) => {
+                const IconComponent =
+                  iconMap[social.icon] || iconMap[social.platform] || FaFacebookF;
+                return (
+                  <a
+                    key={social.key || social.platform || sIdx}
+                    href={social.href || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-lg border border-[#ffd700]/30 bg-[#0a1128]/50 backdrop-blur-sm text-[#ffd700] hover:bg-gradient-to-r hover:from-[#ff0000] hover:via-[#ffd700] hover:to-[#ff0000] hover:text-[#0a1128] transition-all duration-300 flex items-center justify-center hover:scale-110 hover:shadow-lg hover:shadow-[#ffd700]/20 text-sm sm:text-base"
+                    aria-label={social.label || social.platform || "Social Media"}
+                  >
+                    <IconComponent />
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+            <div className="text-center sm:text-left">
+              <p className="text-white/60 text-sm sm:text-base">
+                © {year} {companyName}. Designed by{" "}
+                <a
+                  href="https://mohsindesigns.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/80 hover:text-white transition-colors duration-300 font-medium hover:underline underline-offset-2"
+                >
+                  Mohsin Designs
+                </a>
+                . All rights reserved.
               </p>
             </div>
-          </div>
-        </div>
 
-        <LegacyMarquee />
-
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-6 text-[10px] text-muted-foreground">
-          <div className="flex items-center gap-4 flex-wrap">
-            <span>{bottom.copyright}</span>
-            <span className="w-1 h-1 rounded-full bg-border" />
-            <span>{bottom.rights}</span>
-            <span className="w-1 h-1 rounded-full bg-border" />
-            <span>
-              Designed by{" "}
-              <a
-                href="https://mohsindesigns.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors font-medium"
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+              <Link
+                href="/privacy"
+                className="text-white/60 hover:text-[#ffd700] transition-all duration-200 text-sm sm:text-base whitespace-nowrap"
               >
-                Mohsin Designs
-              </a>
-            </span>
+                Privacy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-white/60 hover:text-[#ff0000] transition-all duration-200 text-sm sm:text-base whitespace-nowrap"
+              >
+                Terms
+              </Link>
+            </div>
           </div>
-          <div className="flex items-center gap-6 flex-wrap justify-center">
-            {bottom.links.map((link: any) => (
-              <Link key={link.label} href={link.href} className="hover:text-primary transition-colors">{link.label}</Link>
-            ))}
-          </div>
-          <div className="text-muted-foreground/60">
-            <span className="font-mono">{bottom.tagline}</span>
-          </div>
-        </div>
-      </div>
 
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden pointer-events-none">
-        <svg
-          viewBox="0 0 1440 120"
-          className="relative block w-full h-20 md:h-24"
-          preserveAspectRatio="none"
-        >
-          <path
-            fill="url(#footerWave)"
-            d="M0,64L60,69.3C120,75,240,85,360,80C480,75,600,53,720,48C840,43,960,53,1080,58.7C1200,64,1320,64,1380,64L1440,64L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z"
-          />
-          <defs>
-            <linearGradient id="footerWave" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.03" />
-              <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity="0.05" />
-              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.03" />
-            </linearGradient>
-          </defs>
-        </svg>
+          {/* Certifications */}
+          {certificationsText && (
+            <div className="mt-6 sm:mt-8 text-center">
+              <p className="text-white/40 text-xs sm:text-sm px-4">
+                {certificationsText}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </footer>
   );
 };
 
-export default Footer;
+export default memo(Footer);

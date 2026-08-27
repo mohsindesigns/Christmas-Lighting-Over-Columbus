@@ -65,25 +65,6 @@ const Icons = {
   ),
 };
 
-const ParallaxLayer = ({ children, speed = 0.1, className = "", sectionRef }: any) => {
-  const ref = useRef<any>(null);
-  const [scrollTarget, setScrollTarget] = useState<any>(undefined);
-  useEffect(() => {
-    setScrollTarget(sectionRef);
-  }, [sectionRef]);
-
-  const { scrollYProgress } = useScroll({
-    target: scrollTarget,
-    offset: ["start start", "end end"]
-  });
-  const y = useTransform(scrollYProgress, [0, 1], [0, speed * 50]);
-  return (
-    <motion.div ref={ref} style={{ y }} className={`absolute inset-0 will-change-transform ${className}`}>
-      {children}
-    </motion.div>
-  );
-};
-
 const TeamPortrait = ({ image, title, badge1, badge2, alignRight = false }: any) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);

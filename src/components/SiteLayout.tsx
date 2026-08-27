@@ -15,26 +15,14 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div className="relative min-h-screen bg-background">
-      <div className="relative min-h-screen">
-        {/* 
-          Keep the layout structure static and only animate children.
-          This prevents the Navbar/Footer from flashing during transitions.
-        */}
-        <div className="relative z-10 flex flex-col min-h-screen opacity-100">
-          <div className="z-50">
-            <Navbar />
-          </div>
-          
-          <main className="flex-grow">
-            <PageTransition>{children}</PageTransition>
-          </main>
-          
-          <div>
-            <Footer />
-          </div>
-        </div>
-      </div>
+    <div className="relative min-h-screen bg-background flex flex-col">
+      <Navbar />
+      
+      <main className="flex-grow">
+        <PageTransition>{children}</PageTransition>
+      </main>
+      
+      <Footer />
     </div>
   );
 }

@@ -4,14 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import { Icon } from "../config/icons";
 
 export default function BrandStore() {
-    const containerRef = useRef(null);
-    const [scrollTarget, setScrollTarget] = useState<any>(undefined);
-    useEffect(() => {
-        setScrollTarget(containerRef);
-    }, []);
+    const containerRef = useRef<HTMLElement>(null);
 
     const { scrollYProgress } = useScroll({
-        target: scrollTarget,
+        target: containerRef,
         offset: ["start end", "end start"]
     });
 

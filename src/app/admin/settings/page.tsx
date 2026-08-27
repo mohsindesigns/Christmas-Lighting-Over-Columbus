@@ -354,6 +354,12 @@ export default function SettingsEditor() {
                      <input type="text" placeholder="Link" value={data.navbar?.ctaLink || ""} onChange={(e) => updateData("navbar", "ctaLink", e.target.value)} className="flex-1 border border-[#8c8f94] px-3 py-1.5 text-[14px] rounded-[3px]" />
                   </div>
                </SettingsRow>
+               <SettingsRow label="Header Phone & Email">
+                  <div className="flex gap-4">
+                     <input type="text" placeholder="Phone (e.g. (614) 301-7100)" value={data.navbar?.phone || ""} onChange={(e) => updateData("navbar", "phone", e.target.value)} className="flex-1 border border-[#8c8f94] px-3 py-1.5 text-[14px] rounded-[3px]" />
+                     <input type="text" placeholder="Email (e.g. Info@lightsovercolumbus.com)" value={data.navbar?.email || ""} onChange={(e) => updateData("navbar", "email", e.target.value)} className="flex-1 border border-[#8c8f94] px-3 py-1.5 text-[14px] rounded-[3px]" />
+                  </div>
+               </SettingsRow>
                
                <div className="mt-8 pt-8 border-t border-[#c3c4c7]">
                   <div className="flex items-center justify-between mb-4">
@@ -702,6 +708,59 @@ export default function SettingsEditor() {
                         </div>
                      ))}
                      <button onClick={() => updateData("footer", "certifications", [...(data.footer.certifications || []), { cert: "New Cert", number: "#123456", icon: "ShieldCheck" }])} className="text-[#2271b1] text-[13px] hover:underline">+ Add Certification</button>
+                  </div>
+               </SettingsRow>
+               <SettingsRow label="Footer Contact & Hours" description="Direct contact numbers, operating hours, and support line.">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <div className="space-y-1">
+                        <label className="text-[11px] font-bold">Phone Number</label>
+                        <input type="text" placeholder="(614) 301-7100" value={data.footer?.contact?.phone || ""} onChange={(e) => updateData("footer", "contact", { ...data.footer?.contact, phone: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                     </div>
+                     <div className="space-y-1">
+                        <label className="text-[11px] font-bold">Operating / Call Hours</label>
+                        <input type="text" placeholder="Mon - Sun: 8:00 AM - 8:00 PM" value={data.footer?.contact?.hours || ""} onChange={(e) => updateData("footer", "contact", { ...data.footer?.contact, hours: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                     </div>
+                     <div className="space-y-1">
+                        <label className="text-[11px] font-bold">Contact Email</label>
+                        <input type="text" placeholder="Info@lightsovercolumbus.com" value={data.footer?.contact?.email || ""} onChange={(e) => updateData("footer", "contact", { ...data.footer?.contact, email: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                     </div>
+                     <div className="space-y-1">
+                        <label className="text-[11px] font-bold">Support Tagline</label>
+                        <input type="text" placeholder="24/7 Customer Support" value={data.footer?.contact?.support || ""} onChange={(e) => updateData("footer", "contact", { ...data.footer?.contact, support: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                     </div>
+                  </div>
+               </SettingsRow>
+               <SettingsRow label="Copyright & Legal Links">
+                  <div className="space-y-3">
+                     <div className="space-y-1">
+                        <label className="text-[11px] font-bold">Copyright Notice</label>
+                        <input type="text" placeholder="© 2026 Luminous Holiday" value={data.footer?.bottom?.copyright || ""} onChange={(e) => updateData("footer", "bottom", { ...data.footer?.bottom, copyright: e.target.value })} className="w-full max-w-md border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                     </div>
+                     <div className="space-y-2 pt-2">
+                        <label className="text-[11px] font-bold">Footer Links (Privacy, Terms, Quick Links)</label>
+                        {(data.footer?.bottom?.links || []).map((link: any, idx: number) => (
+                           <div key={idx} className="flex gap-2 items-center">
+                              <input type="text" placeholder="Label" value={link.label || ""} onChange={(e) => {
+                                 const nl = [...(data.footer?.bottom?.links || [])];
+                                 nl[idx] = { ...nl[idx], label: e.target.value };
+                                 updateData("footer", "bottom", { ...data.footer?.bottom, links: nl });
+                              }} className="w-40 border border-[#8c8f94] px-2 py-1 text-[12px] rounded-[3px]" />
+                              <input type="text" placeholder="URL (/privacy)" value={link.href || ""} onChange={(e) => {
+                                 const nl = [...(data.footer?.bottom?.links || [])];
+                                 nl[idx] = { ...nl[idx], href: e.target.value };
+                                 updateData("footer", "bottom", { ...data.footer?.bottom, links: nl });
+                              }} className="flex-1 border border-[#8c8f94] px-2 py-1 text-[12px] rounded-[3px]" />
+                              <button onClick={() => {
+                                 const nl = (data.footer?.bottom?.links || []).filter((_: any, i: number) => i !== idx);
+                                 updateData("footer", "bottom", { ...data.footer?.bottom, links: nl });
+                              }} className="text-[#d63638] text-xs">Remove</button>
+                           </div>
+                        ))}
+                        <button onClick={() => {
+                           const nl = [...(data.footer?.bottom?.links || []), { label: "New Link", href: "/" }];
+                           updateData("footer", "bottom", { ...data.footer?.bottom, links: nl });
+                        }} className="text-[#2271b1] text-xs underline font-bold">+ Add Footer Link</button>
+                     </div>
                   </div>
                </SettingsRow>
             </motion.div>

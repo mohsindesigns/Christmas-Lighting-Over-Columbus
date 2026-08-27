@@ -68,6 +68,12 @@ export default {
                     border: "hsl(var(--sidebar-border))",
                     ring: "hsl(var(--sidebar-ring))",
                 },
+                // Holiday Theme Colors
+                "dark-navy": "#0a1128",
+                "holiday-red": "#ff0000",
+                "holiday-gold": "#ffd700",
+                "holiday-green": "#006400",
+                "warm-white": "#f5f5dc",
                 // American Flag Colors - Direct hex values for custom use
                 american: {
                     red: "#E32B2B",
