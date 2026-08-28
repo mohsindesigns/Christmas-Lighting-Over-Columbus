@@ -221,12 +221,24 @@ export default function SettingsEditor() {
   };
 
   useEffect(() => {
-    fetch("/api/content").then((res) => res.json()).then((json) => {
-        const d = { ...json };
-        if (!d.settings) d.settings = { siteTitle: "Eagle Revolution", siteTemplate: "%s | Eagle Revolution", favicon: "/eagle-logo.png" };
-        if (!d.navbar) d.navbar = { companyLinks: [], ctaText: "Book Now", ctaLink: "/contact-us", logo: "/eagle-logo.png" };
+    fetch("/api/content")
+      .then((res) => res.json())
+      .then((json) => {
+        const d = { ...(json || {}) };
+        if (!d.settings) d.settings = { siteTitle: "Christmas Lights Over Columbus", siteTemplate: "%s | Christmas Lights Over Columbus", favicon: "/images/logo.png" };
+        if (!d.navbar) d.navbar = { companyLinks: [], ctaText: "Get Free Quote", ctaLink: "/contact-us", logo: "/images/logo.png", phone: "(614) 301-7100", email: "info@lightsovercolumbus.com" };
+        if (!d.footer) d.footer = {};
+        if (!d.footer.company) d.footer.company = { name: "Christmas Lights Over Columbus", logo: "/images/logo.png", description: "" };
+        if (!d.footer.services) d.footer.services = { title: "Our Services", selectedServices: [], materials: { title: "Company", items: [] } };
+        if (!d.footer.marquee) d.footer.marquee = { texts: [] };
+        if (!d.footer.certifications) d.footer.certifications = [];
+        if (!d.footer.contact) d.footer.contact = { phone: "(614) 301-7100", hours: "Mon - Sun: 8:00 AM - 8:00 PM", email: "info@lightsovercolumbus.com", support: "24/7 Customer Support", address: "", emergency: "", areas: "" };
+        if (!d.footer.bottom) d.footer.bottom = { copyright: "© 2026 Christmas Lights Over Columbus", links: [] };
+        if (!d.footer.social) d.footer.social = [];
         setData(d);
-      });
+      })
+      .catch((err) => console.error("Error loading settings content:", err));
+
     Promise.all([
       fetch("/api/admin/pages").then(res => res.json()),
       fetch("/api/content").then(res => res.json())
@@ -261,7 +273,13 @@ export default function SettingsEditor() {
   };
 
   const updateData = (section: string, field: string | null, value: any) => {
-    setData((prev: any) => ({ ...prev, [section]: field ? { ...prev[section], [field]: value } : value }));
+    setData((prev: any) => {
+      const currentSection = prev?.[section] || {};
+      return {
+        ...prev,
+        [section]: field ? { ...currentSection, [field]: value } : value
+      };
+    });
   };
 
   if (!data) return <div className="flex h-screen items-center justify-center text-[#646970] font-serif">Loading...</div>;
@@ -509,15 +527,15 @@ export default function SettingsEditor() {
             <motion.div key="footer" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                <h2 className="text-xl font-normal text-[#1d2327] mb-6 font-serif">Footer Content</h2>
                <SettingsRow label="Footer Logo">
-                  <ImageField value={data.footer?.company?.logo || ""} onChange={(val) => updateData("footer", "company", { ...data.footer.company, logo: val })} label="Logo" />
+                  <ImageField value={data.footer?.company?.logo || ""} onChange={(val) => updateData("footer", "company", { ...(data.footer?.company || {}), logo: val })} label="Logo" />
                </SettingsRow>
                <SettingsRow label="Company Name">
-                  <input type="text" value={data.footer?.company?.name || ""} onChange={(e) => updateData("footer", "company", { ...data.footer.company, name: e.target.value })} className="w-full max-w-md border border-[#8c8f94] px-3 py-1.5 text-[14px] rounded-[3px]" />
+                  <input type="text" value={data.footer?.company?.name || ""} onChange={(e) => updateData("footer", "company", { ...(data.footer?.company || {}), name: e.target.value })} className="w-full max-w-md border border-[#8c8f94] px-3 py-1.5 text-[14px] rounded-[3px]" />
                </SettingsRow>
                <SettingsRow label="Footer Description">
                   <RichTextEditor 
                     content={data.footer?.company?.description || ""} 
-                    onChange={(v) => updateData("footer", "company", { ...data.footer.company, description: v })} 
+                    onChange={(v) => updateData("footer", "company", { ...(data.footer?.company || {}), description: v })} 
                   />
                </SettingsRow>
                <SettingsRow label="Marquee Text" description="Add messages for the scrolling bottom bar.">
@@ -525,21 +543,21 @@ export default function SettingsEditor() {
                      {(data.footer?.marquee?.texts || []).map((t: string, i: number) => (
                         <div key={i} className="flex gap-2">
                            <input type="text" value={t} onChange={(e) => {
-                              const nt = [...data.footer.marquee.texts];
+                              const nt = [...(data.footer?.marquee?.texts || [])];
                               nt[i] = e.target.value;
-                              updateData("footer", "marquee", { ...data.footer.marquee, texts: nt });
+                              updateData("footer", "marquee", { ...(data.footer?.marquee || {}), texts: nt });
                            }} className="flex-1 border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                            <button onClick={() => {
-                              const nt = data.footer.marquee.texts.filter((_:any, idx:number) => idx !== i);
-                              updateData("footer", "marquee", { ...data.footer.marquee, texts: nt });
+                              const nt = (data.footer?.marquee?.texts || []).filter((_:any, idx:number) => idx !== i);
+                              updateData("footer", "marquee", { ...(data.footer?.marquee || {}), texts: nt });
                            }} className="text-[#d63638] text-xs">Remove</button>
                         </div>
                      ))}
-                     <button onClick={() => updateData("footer", "marquee", { ...data.footer.marquee, texts: [...(data.footer.marquee?.texts || []), "New Announcement"] })} className="text-[#2271b1] text-xs underline">+ Add Item</button>
+                     <button onClick={() => updateData("footer", "marquee", { ...(data.footer?.marquee || {}), texts: [...(data.footer?.marquee?.texts || []), "New Announcement"] })} className="text-[#2271b1] text-xs underline">+ Add Item</button>
                   </div>
                </SettingsRow>
                <SettingsRow label="Services Menu Title" description="The title for the dynamic services list in the footer.">
-                  <input type="text" value={data.footer?.services?.title || "Our Services"} onChange={(e) => updateData("footer", "services", { ...data.footer.services, title: e.target.value })} className="w-full max-w-md border border-[#8c8f94] px-3 py-1.5 text-[14px] rounded-[3px]" />
+                  <input type="text" value={data.footer?.services?.title || "Our Services"} onChange={(e) => updateData("footer", "services", { ...(data.footer?.services || {}), title: e.target.value })} className="w-full max-w-md border border-[#8c8f94] px-3 py-1.5 text-[14px] rounded-[3px]" />
                </SettingsRow>
                <SettingsRow label="Selected Footer Services" description="Select which services to display in the footer. If none are selected, all published services will be shown.">
                   <div className="flex flex-wrap gap-2">
@@ -553,9 +571,9 @@ export default function SettingsEditor() {
                                  onChange={(e) => {
                                     const selected = data.footer?.services?.selectedServices || [];
                                     if (e.target.checked) {
-                                       updateData("footer", "services", { ...data.footer.services, selectedServices: [...selected, service._id] });
+                                       updateData("footer", "services", { ...(data.footer?.services || {}), selectedServices: [...selected, service._id] });
                                     } else {
-                                       updateData("footer", "services", { ...data.footer.services, selectedServices: selected.filter((id: string) => id !== service._id) });
+                                       updateData("footer", "services", { ...(data.footer?.services || {}), selectedServices: selected.filter((id: string) => id !== service._id) });
                                     }
                                  }}
                               />
@@ -570,7 +588,7 @@ export default function SettingsEditor() {
                            onChange={(e) => {
                               const selected = data.footer?.services?.selectedServices || [];
                               if(e.target.value && !selected.includes(e.target.value)) {
-                                 updateData("footer", "services", { ...data.footer.services, selectedServices: [...selected, e.target.value] });
+                                 updateData("footer", "services", { ...(data.footer?.services || {}), selectedServices: [...selected, e.target.value] });
                               }
                            }}
                         >
@@ -589,7 +607,7 @@ export default function SettingsEditor() {
                      onChange={(e) => {
                        const materials = data.footer?.services?.materials || { title: "Company", items: [] };
                        updateData("footer", "services", {
-                         ...data.footer.services,
+                         ...(data.footer?.services || {}),
                          materials: { ...materials, title: e.target.value }
                        });
                      }}
@@ -606,11 +624,12 @@ export default function SettingsEditor() {
                                  type="text"
                                  value={link.label || ""}
                                  onChange={(e) => {
-                                   const items = [...(data.footer.services.materials.items || [])];
-                                   items[i].label = e.target.value;
+                                   const materials = data.footer?.services?.materials || { title: "Company", items: [] };
+                                   const items = [...(materials.items || [])];
+                                   items[i] = { ...(items[i] || {}), label: e.target.value };
                                    updateData("footer", "services", {
-                                     ...data.footer.services,
-                                     materials: { ...data.footer.services.materials, items }
+                                     ...(data.footer?.services || {}),
+                                     materials: { ...materials, items }
                                    });
                                  }}
                                  className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]"
@@ -619,13 +638,14 @@ export default function SettingsEditor() {
                             <div className="flex-1 space-y-1">
                                <label className="text-[11px] font-bold">Destination Page</label>
                                <select
-                                 value={link.href}
+                                 value={link.href || "/"}
                                  onChange={(e) => {
-                                   const items = [...(data.footer.services.materials.items || [])];
-                                   items[i].href = e.target.value;
+                                   const materials = data.footer?.services?.materials || { title: "Company", items: [] };
+                                   const items = [...(materials.items || [])];
+                                   items[i] = { ...(items[i] || {}), href: e.target.value };
                                    updateData("footer", "services", {
-                                     ...data.footer.services,
-                                     materials: { ...data.footer.services.materials, items }
+                                     ...(data.footer?.services || {}),
+                                     materials: { ...materials, items }
                                    });
                                  }}
                                  className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]"
@@ -646,10 +666,11 @@ export default function SettingsEditor() {
                             </div>
                             <button
                               onClick={() => {
-                                const items = (data.footer.services.materials.items || []).filter((_: any, idx: number) => idx !== i);
+                                const materials = data.footer?.services?.materials || { title: "Company", items: [] };
+                                const items = (materials.items || []).filter((_: any, idx: number) => idx !== i);
                                 updateData("footer", "services", {
-                                  ...data.footer.services,
-                                  materials: { ...data.footer.services.materials, items }
+                                  ...(data.footer?.services || {}),
+                                  materials: { ...materials, items }
                                 });
                               }}
                               className="text-[#d63638] text-[13px] mt-5 hover:underline"
@@ -663,7 +684,7 @@ export default function SettingsEditor() {
                           const materials = data.footer?.services?.materials || { title: "Company", items: [] };
                           const items = materials.items || [];
                           updateData("footer", "services", {
-                            ...data.footer.services,
+                            ...(data.footer?.services || {}),
                             materials: { ...materials, items: [...items, { label: "New Link", href: "/" }] }
                           });
                         }}
@@ -680,53 +701,53 @@ export default function SettingsEditor() {
                            <div className="flex-1 space-y-1">
                               <label className="text-[11px] font-bold">Certification Name</label>
                               <input type="text" value={cert.cert || ""} onChange={(e) => {
-                                 const nc = [...data.footer.certifications];
-                                 nc[i].cert = e.target.value;
+                                 const nc = [...(data.footer?.certifications || [])];
+                                 nc[i] = { ...(nc[i] || {}), cert: e.target.value };
                                  updateData("footer", "certifications", nc);
                               }} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                            </div>
                            <div className="flex-1 space-y-1">
                               <label className="text-[11px] font-bold">License / Number</label>
                               <input type="text" value={cert.number || ""} onChange={(e) => {
-                                 const nc = [...data.footer.certifications];
-                                 nc[i].number = e.target.value;
+                                 const nc = [...(data.footer?.certifications || [])];
+                                 nc[i] = { ...(nc[i] || {}), number: e.target.value };
                                  updateData("footer", "certifications", nc);
                               }} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                            </div>
                            <div className="space-y-1 w-24">
                               <label className="text-[11px] font-bold">Icon</label>
                               <IconPicker value={cert.icon || "ShieldCheck"} onChange={(v) => {
-                                 const nc = [...data.footer.certifications];
-                                 nc[i].icon = v;
+                                 const nc = [...(data.footer?.certifications || [])];
+                                 nc[i] = { ...(nc[i] || {}), icon: v };
                                  updateData("footer", "certifications", nc);
                               }} />
                            </div>
                            <button onClick={() => {
-                              const nc = data.footer.certifications.filter((_:any, idx:number) => idx !== i);
+                              const nc = (data.footer?.certifications || []).filter((_:any, idx:number) => idx !== i);
                               updateData("footer", "certifications", nc);
                            }} className="text-[#d63638] text-[13px] mb-1 hover:underline">Remove</button>
                         </div>
                      ))}
-                     <button onClick={() => updateData("footer", "certifications", [...(data.footer.certifications || []), { cert: "New Cert", number: "#123456", icon: "ShieldCheck" }])} className="text-[#2271b1] text-[13px] hover:underline">+ Add Certification</button>
+                     <button onClick={() => updateData("footer", "certifications", [...(data.footer?.certifications || []), { cert: "New Cert", number: "#123456", icon: "ShieldCheck" }])} className="text-[#2271b1] text-[13px] hover:underline">+ Add Certification</button>
                   </div>
                </SettingsRow>
                <SettingsRow label="Footer Contact & Hours" description="Direct contact numbers, operating hours, and support line.">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                      <div className="space-y-1">
                         <label className="text-[11px] font-bold">Phone Number</label>
-                        <input type="text" placeholder="(614) 301-7100" value={data.footer?.contact?.phone || ""} onChange={(e) => updateData("footer", "contact", { ...data.footer?.contact, phone: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                        <input type="text" placeholder="(614) 301-7100" value={data.footer?.contact?.phone || ""} onChange={(e) => updateData("footer", "contact", { ...(data.footer?.contact || {}), phone: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                      </div>
                      <div className="space-y-1">
                         <label className="text-[11px] font-bold">Operating / Call Hours</label>
-                        <input type="text" placeholder="Mon - Sun: 8:00 AM - 8:00 PM" value={data.footer?.contact?.hours || ""} onChange={(e) => updateData("footer", "contact", { ...data.footer?.contact, hours: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                        <input type="text" placeholder="Mon - Sun: 8:00 AM - 8:00 PM" value={data.footer?.contact?.hours || ""} onChange={(e) => updateData("footer", "contact", { ...(data.footer?.contact || {}), hours: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                      </div>
                      <div className="space-y-1">
                         <label className="text-[11px] font-bold">Contact Email</label>
-                        <input type="text" placeholder="Info@lightsovercolumbus.com" value={data.footer?.contact?.email || ""} onChange={(e) => updateData("footer", "contact", { ...data.footer?.contact, email: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                        <input type="text" placeholder="Info@lightsovercolumbus.com" value={data.footer?.contact?.email || ""} onChange={(e) => updateData("footer", "contact", { ...(data.footer?.contact || {}), email: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                      </div>
                      <div className="space-y-1">
                         <label className="text-[11px] font-bold">Support Tagline</label>
-                        <input type="text" placeholder="24/7 Customer Support" value={data.footer?.contact?.support || ""} onChange={(e) => updateData("footer", "contact", { ...data.footer?.contact, support: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                        <input type="text" placeholder="24/7 Customer Support" value={data.footer?.contact?.support || ""} onChange={(e) => updateData("footer", "contact", { ...(data.footer?.contact || {}), support: e.target.value })} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                      </div>
                   </div>
                </SettingsRow>
@@ -734,7 +755,7 @@ export default function SettingsEditor() {
                   <div className="space-y-3">
                      <div className="space-y-1">
                         <label className="text-[11px] font-bold">Copyright Notice</label>
-                        <input type="text" placeholder="© 2026 Luminous Holiday" value={data.footer?.bottom?.copyright || ""} onChange={(e) => updateData("footer", "bottom", { ...data.footer?.bottom, copyright: e.target.value })} className="w-full max-w-md border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                        <input type="text" placeholder="© 2026 Christmas Lights Over Columbus" value={data.footer?.bottom?.copyright || ""} onChange={(e) => updateData("footer", "bottom", { ...(data.footer?.bottom || {}), copyright: e.target.value })} className="w-full max-w-md border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                      </div>
                      <div className="space-y-2 pt-2">
                         <label className="text-[11px] font-bold">Footer Links (Privacy, Terms, Quick Links)</label>
@@ -742,23 +763,23 @@ export default function SettingsEditor() {
                            <div key={idx} className="flex gap-2 items-center">
                               <input type="text" placeholder="Label" value={link.label || ""} onChange={(e) => {
                                  const nl = [...(data.footer?.bottom?.links || [])];
-                                 nl[idx] = { ...nl[idx], label: e.target.value };
-                                 updateData("footer", "bottom", { ...data.footer?.bottom, links: nl });
+                                 nl[idx] = { ...(nl[idx] || {}), label: e.target.value };
+                                 updateData("footer", "bottom", { ...(data.footer?.bottom || {}), links: nl });
                               }} className="w-40 border border-[#8c8f94] px-2 py-1 text-[12px] rounded-[3px]" />
                               <input type="text" placeholder="URL (/privacy)" value={link.href || ""} onChange={(e) => {
                                  const nl = [...(data.footer?.bottom?.links || [])];
-                                 nl[idx] = { ...nl[idx], href: e.target.value };
-                                 updateData("footer", "bottom", { ...data.footer?.bottom, links: nl });
+                                 nl[idx] = { ...(nl[idx] || {}), href: e.target.value };
+                                 updateData("footer", "bottom", { ...(data.footer?.bottom || {}), links: nl });
                               }} className="flex-1 border border-[#8c8f94] px-2 py-1 text-[12px] rounded-[3px]" />
                               <button onClick={() => {
                                  const nl = (data.footer?.bottom?.links || []).filter((_: any, i: number) => i !== idx);
-                                 updateData("footer", "bottom", { ...data.footer?.bottom, links: nl });
+                                 updateData("footer", "bottom", { ...(data.footer?.bottom || {}), links: nl });
                               }} className="text-[#d63638] text-xs">Remove</button>
                            </div>
                         ))}
                         <button onClick={() => {
                            const nl = [...(data.footer?.bottom?.links || []), { label: "New Link", href: "/" }];
-                           updateData("footer", "bottom", { ...data.footer?.bottom, links: nl });
+                           updateData("footer", "bottom", { ...(data.footer?.bottom || {}), links: nl });
                         }} className="text-[#2271b1] text-xs underline font-bold">+ Add Footer Link</button>
                      </div>
                   </div>
@@ -773,46 +794,46 @@ export default function SettingsEditor() {
                <SettingsRow label="Primary Email" description="Supports HTML. E.g. &lt;a href='mailto:...'&gt;email&lt;/a&gt;">
                   <RichTextEditor
                     content={data.footer?.contact?.email || ""}
-                    onChange={(v) => updateData("footer", "contact", { ...data.footer.contact, email: v })}
+                    onChange={(v) => updateData("footer", "contact", { ...(data.footer?.contact || {}), email: v })}
                   />
                </SettingsRow>
                <SettingsRow label="Primary Phone" description="Supports HTML. E.g. &lt;a href='tel:...'&gt;number&lt;/a&gt;">
                   <RichTextEditor
                     content={data.footer?.contact?.phone || ""}
-                    onChange={(v) => updateData("footer", "contact", { ...data.footer.contact, phone: v })}
+                    onChange={(v) => updateData("footer", "contact", { ...(data.footer?.contact || {}), phone: v })}
                   />
                </SettingsRow>
                <SettingsRow label="Office Address" description="Supports HTML. E.g. use &lt;br&gt; for line breaks.">
                   <RichTextEditor
                     content={data.footer?.contact?.address || ""}
-                    onChange={(v) => updateData("footer", "contact", { ...data.footer.contact, address: v })}
+                    onChange={(v) => updateData("footer", "contact", { ...(data.footer?.contact || {}), address: v })}
                   />
                </SettingsRow>
                <SettingsRow label="24/7 Emergency Text" description="Supports HTML.">
                   <RichTextEditor
                     content={data.footer?.contact?.emergency || ""}
-                    onChange={(v) => updateData("footer", "contact", { ...data.footer.contact, emergency: v })}
+                    onChange={(v) => updateData("footer", "contact", { ...(data.footer?.contact || {}), emergency: v })}
                   />
                </SettingsRow>
                <SettingsRow label="Service Areas" description="Supports HTML.">
                   <RichTextEditor
                     content={data.footer?.contact?.areas || ""}
-                    onChange={(v) => updateData("footer", "contact", { ...data.footer.contact, areas: v })}
+                    onChange={(v) => updateData("footer", "contact", { ...(data.footer?.contact || {}), areas: v })}
                   />
                </SettingsRow>
                <SettingsRow label="Office Hours">
                   <div className="grid grid-cols-3 gap-2">
                      <div className="space-y-1">
                         <label className="text-[11px] text-[#646970]">Mon-Fri</label>
-                        <input type="text" value={data.hours?.monday} onChange={(e) => updateData("hours", "monday", e.target.value)} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                        <input type="text" value={data.hours?.monday || ""} onChange={(e) => updateData("hours", "monday", e.target.value)} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                      </div>
                      <div className="space-y-1">
                         <label className="text-[11px] text-[#646970]">Saturday</label>
-                        <input type="text" value={data.hours?.saturday} onChange={(e) => updateData("hours", "saturday", e.target.value)} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                        <input type="text" value={data.hours?.saturday || ""} onChange={(e) => updateData("hours", "saturday", e.target.value)} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                      </div>
                      <div className="space-y-1">
                         <label className="text-[11px] text-[#646970]">Sunday</label>
-                        <input type="text" value={data.hours?.sunday} onChange={(e) => updateData("hours", "sunday", e.target.value)} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
+                        <input type="text" value={data.hours?.sunday || ""} onChange={(e) => updateData("hours", "sunday", e.target.value)} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                      </div>
                   </div>
                </SettingsRow>
@@ -827,29 +848,29 @@ export default function SettingsEditor() {
                      <div key={i} className="flex gap-4 items-end bg-[#f6f7f7] p-4 border border-[#c3c4c7] rounded-sm">
                         <div className="flex-1 space-y-1">
                            <label className="text-[11px] font-bold">Platform Name</label>
-                           <input type="text" value={s.platform} onChange={(e) => {
-                              const ns = [...data.footer.social];
-                              ns[i].platform = e.target.value;
+                           <input type="text" value={s.platform || ""} onChange={(e) => {
+                              const ns = [...(data.footer?.social || [])];
+                              ns[i] = { ...(ns[i] || {}), platform: e.target.value };
                               updateData("footer", "social", ns);
                            }} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                         </div>
                         <div className="flex-1 space-y-1">
                            <label className="text-[11px] font-bold">URL</label>
-                           <input type="text" value={s.href} onChange={(e) => {
-                              const ns = [...data.footer.social];
-                              ns[i].href = e.target.value;
+                           <input type="text" value={s.href || ""} onChange={(e) => {
+                              const ns = [...(data.footer?.social || [])];
+                              ns[i] = { ...(ns[i] || {}), href: e.target.value };
                               updateData("footer", "social", ns);
                            }} className="w-full border border-[#8c8f94] px-2 py-1 text-[13px] rounded-[3px]" />
                         </div>
                         <div className="space-y-1">
                            <label className="text-[11px] font-bold">Icon</label>
-                           <IconPicker value={s.icon} onChange={(v) => {
-                              const ns = [...data.footer.social];
-                              ns[i].icon = v;
+                           <IconPicker value={s.icon || "Facebook"} onChange={(v) => {
+                              const ns = [...(data.footer?.social || [])];
+                              ns[i] = { ...(ns[i] || {}), icon: v };
                               updateData("footer", "social", ns);
                            }} />
                         </div>
-                        <button onClick={() => updateData("footer", "social", data.footer.social.filter((_:any,idx:number)=>idx!==i))} className="p-2 text-[#d63638] hover:bg-white rounded transition-colors"><Trash2 className="w-4 h-4" /></button>
+                        <button onClick={() => updateData("footer", "social", (data.footer?.social || []).filter((_:any,idx:number)=>idx!==i))} className="p-2 text-[#d63638] hover:bg-white rounded transition-colors"><Trash2 className="w-4 h-4" /></button>
                      </div>
                   ))}
                   <button onClick={() => updateData("footer", "social", [...(data.footer?.social || []), { platform: "Facebook", href: "", icon: "Facebook" }])} className="text-[#2271b1] text-xs underline font-bold">+ Add New Social Profile</button>
