@@ -247,13 +247,9 @@
     @apply text-foreground;
   }
 
-  /* Links default to BLACK, hover to BLUE */
+  /* Links transition smoothly without forcing universal blue hover */
   a {
-    @apply text-foreground transition-colors duration-300;
-  }
-
-  a:hover {
-    @apply text-primary;
+    @apply transition-colors duration-200;
   }
 }
 
