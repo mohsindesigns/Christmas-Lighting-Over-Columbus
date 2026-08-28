@@ -275,8 +275,8 @@ export default function ServicesTemplate({ pageData }: { pageData?: any }) {
                 {heroSubtitle}
               </p>
 
-              {/* CTA Buttons with animations */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up animation-delay-600">
+              {/* CTA Button with animations */}
+              <div className="flex items-center justify-center animate-fade-up animation-delay-600">
                 <button
                   onClick={handleOpenModal}
                   className="relative overflow-hidden group inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-yellow-500 to-red-500 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl text-lg cursor-pointer transform hover:-translate-y-0.5 active:scale-95"
@@ -288,16 +288,6 @@ export default function ServicesTemplate({ pageData }: { pageData?: any }) {
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-yellow-400 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
                 </button>
-
-                {heroPhone && (
-                  <button
-                    onClick={handleCallClick}
-                    className="inline-flex items-center justify-center px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg border border-white/20 backdrop-blur-md transition-all duration-300 text-lg cursor-pointer"
-                  >
-                    <FaPhoneAlt className="mr-2 text-base text-amber-400" />
-                    <span>{heroPhone}</span>
-                  </button>
-                )}
               </div>
             </div>
           </div>

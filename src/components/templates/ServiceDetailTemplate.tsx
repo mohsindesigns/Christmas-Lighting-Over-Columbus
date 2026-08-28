@@ -260,20 +260,13 @@ export default function ServiceDetailTemplate({ pageData, params }: { pageData?:
                                 {service.description}
                             </p>
 
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 animate-fade-up animation-delay-600">
+                            <div className="flex items-center justify-center mb-12 animate-fade-up animation-delay-600">
                                 <button
                                     onClick={() => handleCtaClick(service.heroCtaLink)}
                                     className="relative overflow-hidden group inline-flex items-center justify-center px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 bg-gradient-to-r from-yellow-500 to-red-500 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base md:text-lg w-auto min-w-[140px] sm:min-w-[160px] md:min-w-[180px] cursor-pointer"
                                 > 
                                     {service.heroCtaText}
                                 </button>
-                                <a
-                                    href={service.heroPhoneLink?.startsWith('tel:') ? service.heroPhoneLink : `tel:${(service.heroPhoneLink || service.heroPhone).replace(/[^0-9+]/g, '')}`}
-                                    className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md font-semibold rounded-lg transition-all duration-300 text-sm sm:text-base md:text-lg"
-                                >
-                                    <FaPhoneAlt className="w-4 h-4 text-amber-400" />
-                                    {service.heroPhone}
-                                </a>
                             </div>
                         </div>
                     </div>

@@ -13,7 +13,6 @@ const Testimonials = dynamic(() => import("@/components/Testimonials"), { ssr: f
 const HowWeWork = dynamic(() => import("@/components/HowWeWork"), { ssr: false });
 const QAForm = dynamic(() => import("@/components/QAForm"), { ssr: false });
 const FAQ = dynamic(() => import("@/components/FAQ"), { ssr: false });
-const QuickQuote = dynamic(() => import("@/components/QuickQuote"), { ssr: false });
 const BlogSection = dynamic(() => import("@/components/sections/BlogSection"), { ssr: false });
 
 import { useContent } from "@/hooks/useContent";
@@ -57,8 +56,6 @@ export default function HomeTemplate({ pageData, params }: { pageData?: any, par
         description={pageData?.content?.blogSection?.description || blogSection?.description}
         posts={allBlogs.filter((p: any) => (pageData?.content?.blogSection?.selectedPosts || []).includes(p._id))}
       />
-
-      <QuickQuote />
 
     </div>
   );
