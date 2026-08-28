@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, DM_Sans } from "next/font/google";
+import { Montserrat, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import SiteLayout from "@/components/SiteLayout";
@@ -7,14 +7,18 @@ import connectToDatabase from "@/lib/mongodb";
 import SiteContent from "@/models/Content";
 import { BASE_URL } from "@/lib/constants";
 
-const spaceGrotesk = Space_Grotesk({
+const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-heading",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
 });
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-body",
+  weight: ["400", "500", "700"],
+  display: "swap",
 });
 
 
@@ -152,7 +156,7 @@ export default async function RootLayout({
           />
         ))}
       </head>
-      <body className={`${spaceGrotesk.variable} ${dmSans.variable} antialiased`}>
+      <body className={`${montserrat.variable} ${dmSans.variable} antialiased`}>
         {/* ── CMS-managed body_start scripts ── */}
         {bodyStartScripts.map((s) => (
           <div key={s.id} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: s.code }} />

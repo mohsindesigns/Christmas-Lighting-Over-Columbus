@@ -63,9 +63,9 @@ export default function FAQEditor({ pageId, data, setData }: { pageId: string, d
   };
 
   const tabs = [
-    { id: "header", label: "Support Header", icon: Type, title: "Support Knowledge Base Introduction" },
-    { id: "categories", label: "Filter Taxonomy", icon: Filter, title: "Filtering Categories" },
-    { id: "items", label: "Q&A Database", icon: CircleHelp, title: "Comprehensive Q&A Database" },
+    { id: "header", label: "Hero Header & Intro", icon: Type, title: "Hero Introduction" },
+    { id: "categories", label: "Categories & Filters", icon: Filter, title: "FAQ Category Filters" },
+    { id: "items", label: "FAQ Q&A Items", icon: CircleHelp, title: "Frequently Asked Questions List" },
   ];
 
   const activeTabTitle = tabs.find(t => t.id === activeTab)?.title;

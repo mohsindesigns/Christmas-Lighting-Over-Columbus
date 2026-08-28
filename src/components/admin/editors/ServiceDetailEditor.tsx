@@ -51,13 +51,13 @@ export default function ServiceDetailEditor({ pageId, data, setData }: { pageId:
   };
 
   const tabs = [
-    { id: "identity", label: "Core Identity", title: "Service Core Branding" },
-    { id: "features", label: "Capabilities", title: "Features & Performance" },
-    { id: "benefits", label: "Value", title: "Consumer Benefits" },
-    { id: "process", label: "Methodology", title: "Workflow Process" },
-    { id: "faq", label: "Support", title: "Service FAQ" },
-    { id: "cta", label: "Conversion", title: "Action Logic" },
-    { id: "blog", label: "Insights", title: "Related Blog Posts" },
+    { id: "identity", label: "Hero & Core Identity", title: "Hero Header & Service Branding" },
+    { id: "features", label: "Features & Capabilities", title: "Features & Performance" },
+    { id: "benefits", label: "Why Choose Us (Value)", title: "Consumer Benefits" },
+    { id: "process", label: "Installation Process", title: "Workflow Process" },
+    { id: "faq", label: "Service FAQ", title: "Service FAQ" },
+    { id: "cta", label: "Call-To-Action Banner", title: "Bottom CTA Action" },
+    { id: "blog", label: "Related Insights", title: "Related Blog Posts" },
   ];
 
   const activeTabTitle = tabs.find(t => t.id === activeTab)?.title;

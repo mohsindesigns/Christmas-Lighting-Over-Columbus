@@ -92,7 +92,7 @@ const DEFAULT_STEPS = [
 ];
 
 export default function ServiceAreaEditor({ pageId, data, setData }: { pageId: string, data: any, setData: (d: any) => void }) {
-  const [activeTab, setActiveTab] = useState("communities");
+  const [activeTab, setActiveTab] = useState("header");
 
   useEffect(() => {
     if (!data.serviceArea) {
@@ -227,9 +227,9 @@ export default function ServiceAreaEditor({ pageId, data, setData }: { pageId: s
   };
 
   const tabs = [
-    { id: "communities", label: "Communities We Serve", icon: MapPin, title: "Manage Service Locations" },
-    { id: "vanMap", label: "Van & Map Section (VanMap)", icon: Truck, title: "Van & Real Map Section" },
     { id: "header", label: "Hero Header & Intro", icon: Type, title: "Hero Introduction" },
+    { id: "vanMap", label: "Van & Map Section (VanMap)", icon: Truck, title: "Van & Real Map Section" },
+    { id: "communities", label: "Communities We Serve", icon: MapPin, title: "Manage Service Locations" },
     { id: "cta", label: "Call-To-Action Banner", icon: Megaphone, title: "Bottom CTA Banner" },
   ];
 

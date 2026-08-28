@@ -26,7 +26,7 @@ const DEFAULT_GALLERY_IMAGES = [
 ];
 
 export default function GalleryEditor({ pageId, data, setData }: { pageId: string, data: any, setData: (d: any) => void }) {
-  const [activeTab, setActiveTab] = useState("images");
+  const [activeTab, setActiveTab] = useState("header");
 
   useEffect(() => {
     if (!data.galleryPage) {
@@ -151,8 +151,8 @@ export default function GalleryEditor({ pageId, data, setData }: { pageId: strin
   };
 
   const tabs = [
-    { id: "images", label: "Gallery Pictures & Photos", icon: ImageIcon, title: "Manage Gallery Pictures" },
     { id: "header", label: "Hero Header & Introduction", icon: Type, title: "Hero Introduction" },
+    { id: "images", label: "Gallery Pictures & Photos", icon: ImageIcon, title: "Manage Gallery Pictures" },
     { id: "cta", label: "Call-To-Action Banner", icon: Megaphone, title: "Bottom CTA Banner" },
   ];
 

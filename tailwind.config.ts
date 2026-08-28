@@ -14,9 +14,9 @@ export default {
         },
         extend: {
             fontFamily: {
-                heading: ['Space Grotesk', 'sans-serif'],
-                body: ['DM Sans', 'sans-serif'],
-                accent: ['DM Sans', 'sans-serif'],
+                heading: ['var(--font-heading)', 'Montserrat', 'sans-serif'],
+                body: ['var(--font-body)', 'DM Sans', 'sans-serif'],
+                accent: ['var(--font-body)', 'DM Sans', 'sans-serif'],
             },
             colors: {
                 border: "hsl(var(--border))",
