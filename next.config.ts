@@ -2,24 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true, // Prevents image optimization failure for dynamic database URLs
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
+        hostname: '**',
       },
       {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'eaglerevolution.com',
-        port: '',
-        pathname: '/**',
+        protocol: 'http',
+        hostname: '**',
       },
     ],
   },
@@ -35,9 +26,12 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
+        // Route any /uploads/:filename to our persistent API server
+        source: '/uploads/:filename*',
+        destination: '/api/uploads/:filename*',
+      },
+      {
         // Proxy /cdn-images/:path* → Cloudinary
-        // This allows serving images from eaglerevolution.com/cdn-images/...
-        // instead of exposing res.cloudinary.com/dytytwyp6/image/upload/...
         source: '/cdn-images/:path*',
         destination: 'https://res.cloudinary.com/dytytwyp6/image/upload/:path*',
       },

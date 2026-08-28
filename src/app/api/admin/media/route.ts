@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
 
     // Use universal storage utility
     const { uploadFile } = await import('@/lib/storage');
-    const { url, publicId } = await uploadFile(file, buffer);
+    const { url, publicId, data } = await uploadFile(file, buffer);
 
     const newMedia = await Media.create({
       url,
@@ -61,6 +61,7 @@ export async function POST(req: NextRequest) {
       size: file.size,
       width,
       height,
+      data: data || undefined,
       alt: formData.get('alt') || '',
       title: formData.get('title') || '',
       description: formData.get('description') || '',

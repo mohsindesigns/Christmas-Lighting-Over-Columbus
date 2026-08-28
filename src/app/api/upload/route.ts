@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
-import { existsSync } from "fs";
+import { uploadFile } from "@/lib/storage";
+import connectToDatabase from "@/lib/mongodb";
+import Media from "@/models/Media";
 
 export async function POST(req: Request) {
   try {
@@ -13,19 +13,24 @@ export async function POST(req: Request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const filename = Date.now() + "_" + file.name.replace(/[^a-zA-Z0-9.]/g, "_");
-    
-    // Create uploads directory in public folder if it doesn't exist
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+    const { url, publicId, data } = await uploadFile(file, buffer);
+
+    try {
+      await connectToDatabase();
+      await Media.create({
+        url,
+        publicId,
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        data: data || undefined,
+      });
+    } catch (dbErr) {
+      console.warn("Media DB record creation warning:", dbErr);
     }
 
-    const filePath = path.join(uploadDir, filename);
-    await writeFile(filePath, buffer);
-
-    return NextResponse.json({ url: `/uploads/${filename}` });
-  } catch (error) {
+    return NextResponse.json({ url });
+  } catch (error: any) {
     console.error("Error uploading file:", error);
     return NextResponse.json({ error: "Failed to upload file." }, { status: 500 });
   }

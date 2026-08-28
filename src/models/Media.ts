@@ -11,6 +11,7 @@ const MediaSchema = new mongoose.Schema({
   width: { type: Number },
   height: { type: Number },
   publicId: { type: String }, // For Cloudinary
+  data: { type: String }, // Base64 encoded data for production database persistence
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
