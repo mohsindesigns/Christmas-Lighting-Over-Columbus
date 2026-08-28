@@ -295,6 +295,9 @@ export default function HomeEditor({ pageId, data, setData }: { pageId: string, 
                                     className={UI.input}
                                     placeholder="#freequote or /contact"
                                  />
+                                 <p className="text-[11px] text-[#646970] mt-1">
+                                    💡 Tip: Use <code className="text-[#2271b1] font-mono font-bold">#freequote</code> or <code className="text-[#2271b1] font-mono font-bold">#quote</code> to open the Quick Quote modal on click. You can also use a page URL (e.g. <code className="text-[#2271b1] font-mono">/contact-us</code>).
+                                 </p>
                               </div>
                            </div>
                         </div>
@@ -813,50 +816,93 @@ export default function HomeEditor({ pageId, data, setData }: { pageId: string, 
                               />
                            </div>
 
-                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-                              <div className="space-y-1.5">
-                                 <label className={UI.label}>Primary Button Text</label>
-                                 <input
-                                    type="text"
-                                    value={data.howWeWork?.cta?.buttons?.primary ?? data.howWeWork?.cta?.primaryButtonText ?? "Call Us Now"}
-                                    onChange={(e) => {
-                                       const currentCta = data.howWeWork?.cta || {};
-                                       const currentButtons = currentCta.buttons || {};
-                                       updateSection("howWeWork", "cta", { ...currentCta, primaryButtonText: e.target.value, buttons: { ...currentButtons, primary: e.target.value } });
-                                    }}
-                                    className={UI.input}
-                                    placeholder="Call Us Now"
-                                 />
-                              </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                               {/* Primary CTA (Call) */}
+                               <div className="p-3 bg-white border border-[#c3c4c7] rounded-sm space-y-3">
+                                  <span className="text-[11px] font-bold text-emerald-700 uppercase">Primary Button (Call Action)</span>
+                                  <div className="space-y-1.5">
+                                     <label className={UI.label}>Button Text</label>
+                                     <input
+                                        type="text"
+                                        value={data.howWeWork?.cta?.buttons?.primary ?? data.howWeWork?.cta?.primaryButtonText ?? "Call Us Now"}
+                                        onChange={(e) => {
+                                           const currentCta = data.howWeWork?.cta || {};
+                                           const currentButtons = currentCta.buttons || {};
+                                           updateSection("howWeWork", "cta", { ...currentCta, primaryButtonText: e.target.value, buttons: { ...currentButtons, primary: e.target.value } });
+                                           updateSection("whyChooseUs", "cta", { ...(data.whyChooseUs?.cta || {}), primaryButtonText: e.target.value, buttons: { ...((data.whyChooseUs?.cta || {}).buttons || {}), primary: e.target.value } });
+                                        }}
+                                        className={UI.input}
+                                        placeholder="Call Us Now"
+                                     />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                     <label className={UI.label}>Button Link / Action</label>
+                                     <input
+                                        type="text"
+                                        value={data.howWeWork?.cta?.primaryButtonLink ?? data.howWeWork?.cta?.primaryLink ?? "tel:6143017100"}
+                                        onChange={(e) => {
+                                           const currentCta = data.howWeWork?.cta || {};
+                                           updateSection("howWeWork", "cta", { ...currentCta, primaryButtonLink: e.target.value });
+                                           updateSection("whyChooseUs", "cta", { ...(data.whyChooseUs?.cta || {}), primaryButtonLink: e.target.value });
+                                        }}
+                                        className={UI.input + " font-mono text-xs"}
+                                        placeholder="tel:6143017100"
+                                     />
+                                     <p className="text-[11px] text-[#646970]">Defaults to click-to-call phone number.</p>
+                                  </div>
+                               </div>
 
-                              <div className="space-y-1.5">
-                                 <label className={UI.label}>Phone Number (Click to Call)</label>
-                                 <input
-                                    type="text"
-                                    value={data.howWeWork?.cta?.phone ?? data.footer?.contact?.phone ?? "(614) 301-7100"}
-                                    onChange={(e) => {
-                                       updateSection("howWeWork", "cta", { ...(data.howWeWork?.cta || {}), phone: e.target.value });
-                                    }}
-                                    className={UI.input}
-                                    placeholder="(614) 301-7100"
-                                 />
-                              </div>
+                               {/* Secondary CTA (Modal) */}
+                               <div className="p-3 bg-white border border-[#c3c4c7] rounded-sm space-y-3">
+                                  <span className="text-[11px] font-bold text-[#2271b1] uppercase">Secondary Button (Quote Modal)</span>
+                                  <div className="space-y-1.5">
+                                     <label className={UI.label}>Button Text</label>
+                                     <input
+                                        type="text"
+                                        value={data.howWeWork?.cta?.buttons?.secondary ?? data.howWeWork?.cta?.secondaryButtonText ?? "Schedule Free Consultation"}
+                                        onChange={(e) => {
+                                           const currentCta = data.howWeWork?.cta || {};
+                                           const currentButtons = currentCta.buttons || {};
+                                           updateSection("howWeWork", "cta", { ...currentCta, secondaryButtonText: e.target.value, buttons: { ...currentButtons, secondary: e.target.value } });
+                                           updateSection("whyChooseUs", "cta", { ...(data.whyChooseUs?.cta || {}), secondaryButtonText: e.target.value, buttons: { ...((data.whyChooseUs?.cta || {}).buttons || {}), secondary: e.target.value } });
+                                        }}
+                                        className={UI.input}
+                                        placeholder="Schedule Free Consultation"
+                                     />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                     <label className={UI.label}>Target Link</label>
+                                     <input
+                                        type="text"
+                                        value={data.howWeWork?.cta?.secondaryButtonLink ?? data.howWeWork?.cta?.secondaryLink ?? "#quote"}
+                                        onChange={(e) => {
+                                           const currentCta = data.howWeWork?.cta || {};
+                                           updateSection("howWeWork", "cta", { ...currentCta, secondaryButtonLink: e.target.value });
+                                           updateSection("whyChooseUs", "cta", { ...(data.whyChooseUs?.cta || {}), secondaryButtonLink: e.target.value });
+                                        }}
+                                        className={UI.input + " font-mono text-xs"}
+                                        placeholder="#quote"
+                                     />
+                                     <p className="text-[11px] text-[#646970]">
+                                       💡 Tip: Enter <code className="text-[#2271b1] font-mono font-bold">#quote</code> to open the consultation/quote modal on click.
+                                     </p>
+                                  </div>
+                               </div>
+                            </div>
 
-                              <div className="space-y-1.5">
-                                 <label className={UI.label}>Secondary Button Text (Modal Trigger)</label>
-                                 <input
-                                    type="text"
-                                    value={data.howWeWork?.cta?.buttons?.secondary ?? data.howWeWork?.cta?.secondaryButtonText ?? "Schedule Free Consultation"}
-                                    onChange={(e) => {
-                                       const currentCta = data.howWeWork?.cta || {};
-                                       const currentButtons = currentCta.buttons || {};
-                                       updateSection("howWeWork", "cta", { ...currentCta, secondaryButtonText: e.target.value, buttons: { ...currentButtons, secondary: e.target.value } });
-                                    }}
-                                    className={UI.input}
-                                    placeholder="Schedule Free Consultation"
-                                 />
-                              </div>
-                           </div>
+                            <div className="space-y-1.5 pt-2">
+                               <label className={UI.label}>Direct Contact Phone Number</label>
+                               <input
+                                  type="text"
+                                  value={data.howWeWork?.cta?.phone ?? data.footer?.contact?.phone ?? "(614) 301-7100"}
+                                  onChange={(e) => {
+                                     updateSection("howWeWork", "cta", { ...(data.howWeWork?.cta || {}), phone: e.target.value });
+                                     updateSection("whyChooseUs", "cta", { ...(data.whyChooseUs?.cta || {}), phone: e.target.value });
+                                  }}
+                                  className={UI.input}
+                                  placeholder="(614) 301-7100"
+                               />
+                            </div>
                         </div>
                      </div>
                   </div>

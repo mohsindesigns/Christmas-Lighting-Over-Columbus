@@ -119,9 +119,9 @@ async function seedAdmin() {
                 status: 'active'
             },
             {
-                username: process.env.ADMIN_USERNAME || 'eagleadmin',
-                email: 'eagleadmin@lightsovercolumbus.com',
-                password: process.env.ADMIN_PASSWORD || 'Eagle@Revolution2025',
+                username: process.env.ADMIN_USERNAME || 'clocadmin',
+                email: 'admin@lightsovercolumbus.com',
+                password: process.env.ADMIN_PASSWORD || 'LightsOverColumbus2025!',
                 role: adminRole._id,
                 status: 'active'
             }

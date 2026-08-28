@@ -3,7 +3,7 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env.local') });
 
 const uri = process.env.MONGODB_URI;
-const dbName = 'eagle_revolution';
+const dbName = process.env.MONGODB_DB || 'cloc_cms';
 
 async function check() {
     if (!uri) {

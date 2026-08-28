@@ -32,8 +32,8 @@ async function seedPages() {
                 template: 'home',
                 status: 'published',
                 metadata: {
-                    title: 'Eagle Revolution | Home',
-                    description: 'Welcome to Eagle Revolution - Your Home Improvement Experts.'
+                    title: 'Christmas Lights Over Columbus | Premier Holiday Lighting',
+                    description: 'Professional holiday and permanent lighting design, installation, maintenance, and storage in Columbus, Ohio.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -44,8 +44,8 @@ async function seedPages() {
                 template: 'about',
                 status: 'published',
                 metadata: {
-                    title: 'About Eagle Revolution',
-                    description: 'Learn about our history, mission, and commitment to excellence.'
+                    title: 'About Us | Christmas Lights Over Columbus',
+                    description: 'Learn about our history, mission, and commitment to lighting up Columbus holidays.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -56,8 +56,8 @@ async function seedPages() {
                 template: 'services',
                 status: 'published',
                 metadata: {
-                    title: 'Our Services | Eagle Revolution',
-                    description: 'Explore our wide range of home improvement services.'
+                    title: 'Holiday Lighting Services | Christmas Lights Over Columbus',
+                    description: 'Explore our residential, commercial, permanent, and landscape holiday lighting services.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -68,8 +68,8 @@ async function seedPages() {
                 template: 'team',
                 status: 'published',
                 metadata: {
-                    title: 'Our Team | Eagle Revolution',
-                    description: 'Meet the professionals behind Eagle Revolution.'
+                    title: 'Our Team | Christmas Lights Over Columbus',
+                    description: 'Meet the professionals behind Christmas Lights Over Columbus.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -80,8 +80,8 @@ async function seedPages() {
                 template: 'careers',
                 status: 'published',
                 metadata: {
-                    title: 'Careers | Eagle Revolution',
-                    description: 'Explore career opportunities with Eagle Revolution.'
+                    title: 'Careers | Christmas Lights Over Columbus',
+                    description: 'Explore career opportunities with Christmas Lights Over Columbus.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -92,8 +92,8 @@ async function seedPages() {
                 template: 'reviews',
                 status: 'published',
                 metadata: {
-                    title: 'Reviews | Eagle Revolution',
-                    description: 'Read what our customers have to say about us.'
+                    title: 'Reviews | Christmas Lights Over Columbus',
+                    description: 'Read what Central Ohio homeowners and business owners have to say about us.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -104,8 +104,8 @@ async function seedPages() {
                 template: 'faq',
                 status: 'published',
                 metadata: {
-                    title: 'FAQ | Eagle Revolution',
-                    description: 'Find answers to common questions about our services.'
+                    title: 'FAQ | Christmas Lights Over Columbus',
+                    description: 'Find answers to common questions about our lighting installation, maintenance, and storage.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -116,8 +116,8 @@ async function seedPages() {
                 template: 'gallery',
                 status: 'published',
                 metadata: {
-                    title: 'Portfolio | Eagle Revolution',
-                    description: 'View our completed projects and quality workmanship.'
+                    title: 'Lighting Gallery | Christmas Lights Over Columbus',
+                    description: 'View our portfolio of completed holiday and permanent lighting installations in Columbus, OH.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -128,8 +128,8 @@ async function seedPages() {
                 template: 'contact',
                 status: 'published',
                 metadata: {
-                    title: 'Contact | Eagle Revolution',
-                    description: 'Get in touch with us for a free estimate.'
+                    title: 'Contact Us | Christmas Lights Over Columbus',
+                    description: 'Get in touch with us for a free holiday lighting design estimate.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()

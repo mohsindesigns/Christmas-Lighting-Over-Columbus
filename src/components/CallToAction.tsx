@@ -418,7 +418,9 @@ const CTASection: React.FC<CTASectionProps> = ({ isVisible = true, onOpenConsult
   const description = typeof rawDesc === "string" ? rawDesc.replace(/<[^>]*>?/gm, '') : "";
 
   const primaryText = ctaData.primaryButtonText || ctaData.buttons?.primary || "Call Us Now";
+  const primaryLink = ctaData.primaryButtonLink || ctaData.buttons?.primaryLink || "";
   const secondaryText = ctaData.secondaryButtonText || ctaData.buttons?.secondary || "Schedule Free Consultation";
+  const secondaryLink = ctaData.secondaryButtonLink || ctaData.buttons?.secondaryLink || "#quote";
   const phone = ctaData.phone || footerContact.phone || "(614) 301-7100";
   const phoneClean = phone.replace(/[^0-9+]/g, '');
 
@@ -428,6 +430,27 @@ const CTASection: React.FC<CTASectionProps> = ({ isVisible = true, onOpenConsult
     } else {
       setIsModalOpen(true);
     }
+  };
+
+  const handlePrimaryClick = () => {
+    if (primaryLink && primaryLink !== '#quote' && !primaryLink.startsWith('tel:')) {
+      if (primaryLink.startsWith('http') || primaryLink.startsWith('/') || primaryLink.startsWith('#')) {
+        window.location.href = primaryLink;
+        return;
+      }
+    }
+    const targetTel = primaryLink && primaryLink.startsWith('tel:') ? primaryLink : `tel:${phoneClean.startsWith('+') ? phoneClean : '+1' + phoneClean.replace(/^1/, '')}`;
+    window.location.href = targetTel;
+  };
+
+  const handleSecondaryClick = () => {
+    if (secondaryLink && secondaryLink !== '#quote' && secondaryLink !== 'modal' && secondaryLink !== '#') {
+      if (secondaryLink.startsWith('http') || secondaryLink.startsWith('/') || secondaryLink.startsWith('tel:') || secondaryLink.startsWith('mailto:')) {
+        window.location.href = secondaryLink;
+        return;
+      }
+    }
+    handleOpenModal();
   };
 
   return (
@@ -450,7 +473,7 @@ const CTASection: React.FC<CTASectionProps> = ({ isVisible = true, onOpenConsult
             <button
               className="group/btn relative px-4 xs:px-5 sm:px-6 md:px-8 py-2.5 xs:py-3 sm:py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-lg xs:rounded-xl hover:shadow-lg transition-all duration-300 overflow-hidden w-full sm:w-auto text-center active:scale-95 cursor-pointer"
               aria-label={primaryText}
-              onClick={() => (window.location.href = `tel:${phoneClean.startsWith('+') ? phoneClean : '+1' + phoneClean.replace(/^1/, '')}`)}
+              onClick={handlePrimaryClick}
             >
               <span className="relative z-10 flex items-center justify-center gap-1.5 xs:gap-2">
                 <FaPhoneAlt className="text-xs xs:text-sm" />
@@ -464,7 +487,7 @@ const CTASection: React.FC<CTASectionProps> = ({ isVisible = true, onOpenConsult
             <button
               className="px-4 xs:px-5 sm:px-6 md:px-8 py-2.5 xs:py-3 sm:py-3.5 font-semibold text-gray-700 hover:text-gray-900 border-2 border-gray-300 hover:border-gray-400 rounded-lg xs:rounded-xl transition-all duration-300 bg-white hover:bg-gray-50 w-full sm:w-auto text-center active:scale-95 cursor-pointer"
               aria-label={secondaryText}
-              onClick={handleOpenModal}
+              onClick={handleSecondaryClick}
             >
               <span className="flex items-center justify-center gap-1.5 xs:gap-2">
                 <FaCalendarAlt className="text-xs xs:text-sm" />

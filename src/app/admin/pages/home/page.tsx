@@ -310,6 +310,9 @@ export default function HomeEditor() {
                         className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 text-sm focus:border-primary focus:outline-none"
                         placeholder="#freequote or /contact"
                       />
+                      <p className="text-[11px] text-slate-500 mt-1">
+                        💡 Tip: Use <code className="text-primary font-mono font-bold">#freequote</code> or <code className="text-primary font-mono font-bold">#quote</code> to open the Quick Quote modal on click. You can also enter a URL (e.g. <code className="text-primary font-mono">/contact-us</code>).
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1725,74 +1728,153 @@ export default function HomeEditor() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                      <div className="space-y-1">
-                        <label className="text-[10px] uppercase text-gray-500 font-bold">Primary Button Text</label>
-                        <input
-                          type="text"
-                          value={data.howWeWork?.cta?.buttons?.primary ?? data.howWeWork?.cta?.primaryButtonText ?? "Call Us Now"}
-                          onChange={(e) => {
-                            setData((prev: any) => ({
-                              ...prev,
-                              howWeWork: {
-                                ...prev.howWeWork,
-                                cta: {
-                                  ...(prev.howWeWork?.cta || {}),
-                                  primaryButtonText: e.target.value,
-                                  buttons: { ...(prev.howWeWork?.cta?.buttons || {}), primary: e.target.value }
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                      {/* Primary Button */}
+                      <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-3">
+                        <span className="text-xs font-bold text-emerald-700 uppercase">Primary Button (Call Action)</span>
+                        <div className="space-y-1">
+                          <label className="text-[10px] uppercase text-gray-500 font-bold">Button Text</label>
+                          <input
+                            type="text"
+                            value={data.howWeWork?.cta?.buttons?.primary ?? data.howWeWork?.cta?.primaryButtonText ?? "Call Us Now"}
+                            onChange={(e) => {
+                              setData((prev: any) => ({
+                                ...prev,
+                                howWeWork: {
+                                  ...prev.howWeWork,
+                                  cta: {
+                                    ...(prev.howWeWork?.cta || {}),
+                                    primaryButtonText: e.target.value,
+                                    buttons: { ...(prev.howWeWork?.cta?.buttons || {}), primary: e.target.value }
+                                  }
+                                },
+                                whyChooseUs: {
+                                  ...prev.whyChooseUs,
+                                  cta: {
+                                    ...(prev.whyChooseUs?.cta || {}),
+                                    primaryButtonText: e.target.value,
+                                    buttons: { ...(prev.whyChooseUs?.cta?.buttons || {}), primary: e.target.value }
+                                  }
                                 }
-                              }
-                            }));
-                          }}
-                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-primary/50 focus:outline-none"
-                          placeholder="Call Us Now"
-                        />
+                              }));
+                            }}
+                            className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-primary/50 focus:outline-none"
+                            placeholder="Call Us Now"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] uppercase text-gray-500 font-bold">Button Link / Action</label>
+                          <input
+                            type="text"
+                            value={data.howWeWork?.cta?.primaryButtonLink ?? data.howWeWork?.cta?.primaryLink ?? "tel:6143017100"}
+                            onChange={(e) => {
+                              setData((prev: any) => ({
+                                ...prev,
+                                howWeWork: {
+                                  ...prev.howWeWork,
+                                  cta: { ...(prev.howWeWork?.cta || {}), primaryButtonLink: e.target.value }
+                                },
+                                whyChooseUs: {
+                                  ...prev.whyChooseUs,
+                                  cta: { ...(prev.whyChooseUs?.cta || {}), primaryButtonLink: e.target.value }
+                                }
+                              }));
+                            }}
+                            className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono focus:border-primary/50 focus:outline-none"
+                            placeholder="tel:6143017100"
+                          />
+                          <p className="text-[11px] text-gray-500">Defaults to click-to-call phone number.</p>
+                        </div>
                       </div>
 
-                      <div className="space-y-1">
-                        <label className="text-[10px] uppercase text-gray-500 font-bold">Phone Number (Click to Call)</label>
-                        <input
-                          type="text"
-                          value={data.howWeWork?.cta?.phone ?? data.footer?.contact?.phone ?? "(614) 301-7100"}
-                          onChange={(e) => {
-                            setData((prev: any) => ({
-                              ...prev,
-                              howWeWork: {
-                                ...prev.howWeWork,
-                                cta: {
-                                  ...(prev.howWeWork?.cta || {}),
-                                  phone: e.target.value
+                      {/* Secondary Button */}
+                      <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-3">
+                        <span className="text-xs font-bold text-primary uppercase">Secondary Button (Quote Modal)</span>
+                        <div className="space-y-1">
+                          <label className="text-[10px] uppercase text-gray-500 font-bold">Button Text</label>
+                          <input
+                            type="text"
+                            value={data.howWeWork?.cta?.buttons?.secondary ?? data.howWeWork?.cta?.secondaryButtonText ?? "Schedule Free Consultation"}
+                            onChange={(e) => {
+                              setData((prev: any) => ({
+                                ...prev,
+                                howWeWork: {
+                                  ...prev.howWeWork,
+                                  cta: {
+                                    ...(prev.howWeWork?.cta || {}),
+                                    secondaryButtonText: e.target.value,
+                                    buttons: { ...(prev.howWeWork?.cta?.buttons || {}), secondary: e.target.value }
+                                  }
+                                },
+                                whyChooseUs: {
+                                  ...prev.whyChooseUs,
+                                  cta: {
+                                    ...(prev.whyChooseUs?.cta || {}),
+                                    secondaryButtonText: e.target.value,
+                                    buttons: { ...(prev.whyChooseUs?.cta?.buttons || {}), secondary: e.target.value }
+                                  }
                                 }
-                              }
-                            }));
-                          }}
-                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-primary/50 focus:outline-none"
-                          placeholder="(614) 301-7100"
-                        />
+                              }));
+                            }}
+                            className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-primary/50 focus:outline-none"
+                            placeholder="Schedule Free Consultation"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] uppercase text-gray-500 font-bold">Target Link</label>
+                          <input
+                            type="text"
+                            value={data.howWeWork?.cta?.secondaryButtonLink ?? data.howWeWork?.cta?.secondaryLink ?? "#quote"}
+                            onChange={(e) => {
+                              setData((prev: any) => ({
+                                ...prev,
+                                howWeWork: {
+                                  ...prev.howWeWork,
+                                  cta: { ...(prev.howWeWork?.cta || {}), secondaryButtonLink: e.target.value }
+                                },
+                                whyChooseUs: {
+                                  ...prev.whyChooseUs,
+                                  cta: { ...(prev.whyChooseUs?.cta || {}), secondaryButtonLink: e.target.value }
+                                }
+                              }));
+                            }}
+                            className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono focus:border-primary/50 focus:outline-none"
+                            placeholder="#quote"
+                          />
+                          <p className="text-[11px] text-gray-500">
+                            💡 Tip: Enter <code className="text-primary font-mono font-bold">#quote</code> to open the consultation/quote modal on click.
+                          </p>
+                        </div>
                       </div>
+                    </div>
 
-                      <div className="space-y-1">
-                        <label className="text-[10px] uppercase text-gray-500 font-bold">Secondary Button (Modal Trigger)</label>
-                        <input
-                          type="text"
-                          value={data.howWeWork?.cta?.buttons?.secondary ?? data.howWeWork?.cta?.secondaryButtonText ?? "Schedule Free Consultation"}
-                          onChange={(e) => {
-                            setData((prev: any) => ({
-                              ...prev,
-                              howWeWork: {
-                                ...prev.howWeWork,
-                                cta: {
-                                  ...(prev.howWeWork?.cta || {}),
-                                  secondaryButtonText: e.target.value,
-                                  buttons: { ...(prev.howWeWork?.cta?.buttons || {}), secondary: e.target.value }
-                                }
+                    <div className="space-y-1 pt-2">
+                      <label className="text-[10px] uppercase text-gray-500 font-bold">Direct Contact Phone Number</label>
+                      <input
+                        type="text"
+                        value={data.howWeWork?.cta?.phone ?? data.footer?.contact?.phone ?? "(614) 301-7100"}
+                        onChange={(e) => {
+                          setData((prev: any) => ({
+                            ...prev,
+                            howWeWork: {
+                              ...prev.howWeWork,
+                              cta: {
+                                ...(prev.howWeWork?.cta || {}),
+                                phone: e.target.value
                               }
-                            }));
-                          }}
-                          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-primary/50 focus:outline-none"
-                          placeholder="Schedule Free Consultation"
-                        />
-                      </div>
+                            },
+                            whyChooseUs: {
+                              ...prev.whyChooseUs,
+                              cta: {
+                                ...(prev.whyChooseUs?.cta || {}),
+                                phone: e.target.value
+                              }
+                            }
+                          }));
+                        }}
+                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-primary/50 focus:outline-none"
+                        placeholder="(614) 301-7100"
+                      />
                     </div>
                   </div>
                 </div>

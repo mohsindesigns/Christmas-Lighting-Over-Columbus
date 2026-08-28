@@ -12,22 +12,8 @@ import {
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import PageInlineFaqs from "@/components/PageInlineFaqs";
-import brandon from '@/assets/ownerteam.jpeg'
-import chrissy from '@/assets/Chrissyteam.jpeg'
-import austin from '@/assets/Austinteam.jpeg'
-import brandonsutton from '@/assets/suttonteam.jpeg'
-import allan from '@/assets/allenteam.jpeg'
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
 const Images = {
-  BrandonAnderson: brandon.src,
-  ChrissyLong: chrissy.src,
-  Austin: austin.src,
-  BrandonSales: brandonsutton.src,
-  Allan: allan.src,
+  DefaultPortrait: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
   Pattern: "https://images.unsplash.com/photo-1502691876148-a84978e59af8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
   Studio: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2069&q=80",
 };
@@ -198,8 +184,8 @@ export default function TeamTemplate({ pageData, params }: { pageData?: any, par
                       member.image ? (
                         (member.image.startsWith('/') || member.image.startsWith('http'))
                           ? member.image
-                          : (Images[member.image as keyof typeof Images] || Images.BrandonAnderson)
-                      ) : Images.BrandonAnderson
+                          : (Images[member.image as keyof typeof Images] || Images.DefaultPortrait)
+                      ) : Images.DefaultPortrait
                     }
                     title={`${member.name} - ${member.role}`}
                     badge1={member.badge1}

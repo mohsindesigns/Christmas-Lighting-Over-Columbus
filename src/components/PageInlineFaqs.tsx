@@ -714,7 +714,7 @@ export default function PageInlineFaqs({
                       <RichTextRenderer content={subtitle || section?.description} />
                     )
                   ) : (
-                    <p>Answers to common questions about our exterior remodeling services in St. Louis.</p>
+                    <p>Answers to common questions about our professional holiday lighting services in Columbus, Ohio.</p>
                   )}
                 </div>
                 <div className="w-16 h-0.5 bg-gradient-to-r from-primary to-primary/60 mx-auto mt-6 rounded-full" />

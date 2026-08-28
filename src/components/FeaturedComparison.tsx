@@ -4,7 +4,6 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
-import decksImg from '@/assets/outdoor-sitting-desk.png';
 
 interface CardData {
   title?: string;
@@ -46,17 +45,17 @@ export default function FeaturedComparison({ data }: FeaturedComparisonProps) {
   if (!data) return null;
 
   const {
-    badge = "Premium Material Showcase",
-    titleLine1 = "Composite & PVC:",
-    titleLine2 = "Built Different",
-    description = "Two premium paths to your dream outdoor space. Discover why our deck installations are the gold standard.",
+    badge = "Premium Holiday Lighting",
+    titleLine1 = "Holiday vs Permanent:",
+    titleLine2 = "Custom Installed",
+    description = "Two premium paths to illuminate your property with elegance. Discover why our holiday lighting is Central Ohio's top choice.",
     image = "",
-    imageBadge = "Award-Winning Craftsmanship",
-    imageTitle = "Transform Your Outdoor Living",
-    imageDescription = "Every deck we build is a masterpiece of engineering and design, backed by industry-leading warranties.",
+    imageBadge = "Professional Quality",
+    imageTitle = "Transform Your Property",
+    imageDescription = "Every lighting installation is custom-designed, fitted, and maintained with commercial-grade LED systems.",
     comparisonTitle = "Compare & Choose",
-    comparisonSubtitle = "Find Your Perfect Material",
-    comparisonDescription = "Side-by-side comparison of our premium decking solutions",
+    comparisonSubtitle = "Find Your Ideal Lighting Solution",
+    comparisonDescription = "Side-by-side comparison of our holiday lighting options",
     card1 = {},
     card2 = {}
   } = data;
@@ -141,22 +140,11 @@ export default function FeaturedComparison({ data }: FeaturedComparisonProps) {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="relative h-[300px] sm:h-[400px] md:h-[500px] rounded-3xl sm:rounded-[3rem] overflow-hidden shadow-2xl shadow-primary/10 mb-16 group"
         >
-          {image ? (
-            <img
-              src={image}
-              alt={imageTitle || "Premium showcase"}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-            />
-          ) : (
-            <Image
-              src={decksImg}
-              alt="Premium deck showcase"
-              fill
-              quality={100}
-              className="object-cover group-hover:scale-105 transition-transform duration-1000"
-              priority
-            />
-          )}
+          <img
+            src={image || "/images/hero-background2.jpg"}
+            alt={imageTitle || "Holiday lighting showcase"}
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
           {/* Overlay Content */}

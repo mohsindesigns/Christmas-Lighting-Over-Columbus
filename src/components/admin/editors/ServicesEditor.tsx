@@ -551,25 +551,42 @@ export default function ServicesEditor({ pageId, data, setData }: { pageId: stri
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#f0f0f1]">
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-500 uppercase">Primary CTA Button</label>
-                      <input
-                        type="text"
-                        value={hero.ctaText || "Get My Free Quote"}
-                        onChange={(e) => updateHero("ctaText", e.target.value)}
-                        className="w-full border border-[#c3c4c7] px-2.5 py-1.5 text-xs font-bold rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
-                      />
+                  <div className="p-3 bg-white border border-[#c3c4c7] rounded-sm space-y-3">
+                    <span className="text-[11px] font-bold text-emerald-700 uppercase">Primary CTA Button</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Button Text</label>
+                        <input
+                          type="text"
+                          value={hero.ctaText || "Get My Free Quote"}
+                          onChange={(e) => updateHero("ctaText", e.target.value)}
+                          className="w-full border border-[#c3c4c7] px-2.5 py-1.5 text-xs font-bold rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Target Link</label>
+                        <input
+                          type="text"
+                          value={hero.ctaLink || "#quote"}
+                          onChange={(e) => updateHero("ctaLink", e.target.value)}
+                          className="w-full border border-[#c3c4c7] px-2.5 py-1.5 text-xs font-mono rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
+                          placeholder="#quote or /contact-us"
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-500 uppercase">Direct Phone Number</label>
-                      <input
-                        type="text"
-                        value={hero.phone || "(614) 301-7100"}
-                        onChange={(e) => updateHero("phone", e.target.value)}
-                        className="w-full border border-[#c3c4c7] px-2.5 py-1.5 text-xs font-bold rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
-                      />
-                    </div>
+                    <p className="text-[11px] text-[#646970]">
+                      💡 Tip: Enter <code className="text-[#2271b1] font-mono font-bold">#quote</code> to open the Quick Quote modal on click, or enter a URL/anchor.
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-500 uppercase">Direct Phone Number</label>
+                    <input
+                      type="text"
+                      value={hero.phone || "(614) 301-7100"}
+                      onChange={(e) => updateHero("phone", e.target.value)}
+                      className="w-full border border-[#c3c4c7] px-2.5 py-1.5 text-xs font-bold rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
+                    />
                   </div>
 
                   <div className="pt-2 border-t border-[#f0f0f1]">
@@ -610,23 +627,55 @@ export default function ServicesEditor({ pageId, data, setData }: { pageId: stri
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#f0f0f1]">
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-500 uppercase">Primary Button Label</label>
-                      <input
-                        type="text"
-                        value={cta.primaryButtonText || "Call Us: (614) 301-7100"}
-                        onChange={(e) => updateCta("primaryButtonText", e.target.value)}
-                        className="w-full border border-[#c3c4c7] px-3 py-1.5 text-xs font-bold rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
-                      />
+                    {/* Primary Button */}
+                    <div className="space-y-2 p-3 bg-white border border-[#c3c4c7] rounded-sm">
+                      <span className="text-[11px] font-bold text-emerald-700 uppercase">Primary Button (Call)</span>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Button Text</label>
+                        <input
+                          type="text"
+                          value={cta.primaryButtonText || "Call Us: (614) 301-7100"}
+                          onChange={(e) => updateCta("primaryButtonText", e.target.value)}
+                          className="w-full border border-[#c3c4c7] px-2.5 py-1.5 text-xs font-bold rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Button Link / Action</label>
+                        <input
+                          type="text"
+                          value={cta.primaryButtonLink || "tel:6143017100"}
+                          onChange={(e) => updateCta("primaryButtonLink", e.target.value)}
+                          className="w-full border border-[#c3c4c7] px-2.5 py-1.5 text-xs font-mono rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
+                          placeholder="tel:6143017100"
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-500 uppercase">Secondary Button Label</label>
-                      <input
-                        type="text"
-                        value={cta.secondaryButtonText || "Schedule Free Consultation"}
-                        onChange={(e) => updateCta("secondaryButtonText", e.target.value)}
-                        className="w-full border border-[#c3c4c7] px-3 py-1.5 text-xs font-bold rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
-                      />
+
+                    {/* Secondary Button */}
+                    <div className="space-y-2 p-3 bg-white border border-[#c3c4c7] rounded-sm">
+                      <span className="text-[11px] font-bold text-[#2271b1] uppercase">Secondary Button (Modal)</span>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Button Text</label>
+                        <input
+                          type="text"
+                          value={cta.secondaryButtonText || "Schedule Free Consultation"}
+                          onChange={(e) => updateCta("secondaryButtonText", e.target.value)}
+                          className="w-full border border-[#c3c4c7] px-2.5 py-1.5 text-xs font-bold rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase">Target Link</label>
+                        <input
+                          type="text"
+                          value={cta.secondaryButtonLink || "#quote"}
+                          onChange={(e) => updateCta("secondaryButtonLink", e.target.value)}
+                          className="w-full border border-[#c3c4c7] px-2.5 py-1.5 text-xs font-mono rounded-[3px] bg-white outline-none focus:border-[#2271b1]"
+                          placeholder="#quote"
+                        />
+                      </div>
+                      <p className="text-[10px] text-[#646970]">
+                        💡 Tip: Enter <code className="text-[#2271b1] font-mono font-bold">#quote</code> to open the consultation modal on click.
+                      </p>
                     </div>
                   </div>
                 </div>

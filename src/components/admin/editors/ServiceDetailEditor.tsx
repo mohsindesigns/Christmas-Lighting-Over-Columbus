@@ -339,12 +339,27 @@ export default function ServiceDetailEditor({ pageId, data, setData }: { pageId:
                 <div className={UI.card + " space-y-6"}>
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className={UI.label}>Button Call-to-Action</label>
-                      <input type="text" value={data.cta?.text || ""} onChange={(e) => updateField("cta", { ...(data.cta || {}), text: e.target.value })} className={UI.input} />
+                      <label className={UI.label}>Button Call-to-Action Text</label>
+                      <input
+                        type="text"
+                        value={data.cta?.text || ""}
+                        onChange={(e) => updateField("cta", { ...(data.cta || {}), text: e.target.value })}
+                        className={UI.input}
+                        placeholder="Get Your Free Quote"
+                      />
                     </div>
                     <div className="space-y-1.5">
-                      <label className={UI.label}>Target Destination (URL)</label>
-                      <input type="text" value={data.cta?.link || ""} onChange={(e) => updateField("cta", { ...(data.cta || {}), link: e.target.value })} className={UI.input} />
+                      <label className={UI.label}>Target Destination (URL / Anchor)</label>
+                      <input
+                        type="text"
+                        value={data.cta?.link || ""}
+                        onChange={(e) => updateField("cta", { ...(data.cta || {}), link: e.target.value })}
+                        className={UI.input + " font-mono text-xs"}
+                        placeholder="#quote or /contact-us"
+                      />
+                      <p className="text-[11px] text-[#646970]">
+                        💡 Tip: Enter <code className="text-[#2271b1] font-mono font-bold">#quote</code> to open the Quick Quote modal on click, or enter a page URL (e.g. <code className="text-[#2271b1] font-mono">/contact-us</code>).
+                      </p>
                     </div>
                   </div>
                 </div>
