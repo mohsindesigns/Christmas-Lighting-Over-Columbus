@@ -222,8 +222,8 @@ export default function ServicesEditor({ pageId, data, setData }: { pageId: stri
               type="button"
               onClick={() => setActiveTab(tab.id)}
               className={`px-1 py-1 transition-colors cursor-pointer ${activeTab === tab.id
-                  ? 'text-[#1d2327] font-bold border-b-2 border-[#2271b1]'
-                  : 'text-[#2271b1] hover:text-[#135e96]'
+                ? 'text-[#1d2327] font-bold border-b-2 border-[#2271b1]'
+                : 'text-[#2271b1] hover:text-[#135e96]'
                 }`}
             >
               {tab.label}
@@ -322,8 +322,8 @@ export default function ServicesEditor({ pageId, data, setData }: { pageId: stri
                           key={master.id || slug || idx}
                           onClick={() => handleSelectMasterService(master)}
                           className={`p-3 rounded-sm border transition-all cursor-pointer flex flex-col justify-between ${isSelected
-                              ? "bg-emerald-50 border-emerald-500 shadow-sm ring-1 ring-emerald-400/50"
-                              : "bg-white border-[#c3c4c7] hover:border-[#2271b1] hover:bg-slate-50"
+                            ? "bg-emerald-50 border-emerald-500 shadow-sm ring-1 ring-emerald-400/50"
+                            : "bg-white border-[#c3c4c7] hover:border-[#2271b1] hover:bg-slate-50"
                             }`}
                         >
                           <div className="space-y-1.5">
