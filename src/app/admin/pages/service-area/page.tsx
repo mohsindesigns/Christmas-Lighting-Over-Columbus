@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Save, Loader2, ChevronRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import GalleryEditor from "@/components/admin/editors/GalleryEditor";
+import ServiceAreaEditor from "@/components/admin/editors/ServiceAreaEditor";
 
-export default function GalleryPageEditor() {
+export default function ServiceAreaPageEditor() {
   const [data, setData] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -28,7 +28,7 @@ export default function GalleryPageEditor() {
         body: JSON.stringify(data),
       });
       if (res.ok) {
-        setMessage("Gallery saved successfully!");
+        setMessage("Service Area page saved successfully!");
         setTimeout(() => setMessage(""), 3000);
       } else {
         setMessage("Failed to save changes.");
@@ -54,9 +54,9 @@ export default function GalleryPageEditor() {
       {/* WP Header Area */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <h1 className="text-[20px] font-normal text-[#1d2327] font-serif m-0">Edit Gallery Page</h1>
+          <h1 className="text-[20px] font-normal text-[#1d2327] font-serif m-0">Edit Service Area Page</h1>
           <Link
-            href="/gallery"
+            href="/service-area"
             target="_blank"
             className="bg-white border border-[#c3c4c7] text-[#2c3338] text-[12px] px-1.5 py-0.5 rounded-[3px] hover:bg-[#f6f7f7] transition-colors flex items-center gap-1"
           >
@@ -83,7 +83,7 @@ export default function GalleryPageEditor() {
       )}
 
       <div className="bg-white border border-[#c3c4c7] shadow-sm rounded-sm p-5">
-        <GalleryEditor pageId="gallery" data={data} setData={setData} />
+        <ServiceAreaEditor pageId="service-area" data={data} setData={setData} />
       </div>
     </div>
   );

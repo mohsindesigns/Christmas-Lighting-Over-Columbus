@@ -118,7 +118,7 @@ export default function ServicesAdminPage() {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState<number | null>(null);
-  
+
   // WP Style Tabs
   const [mainTab, setMainTab] = useState<"content" | "seo">("content");
   const [activeSection, setActiveSection] = useState<"hero" | "overview" | "features" | "why-choose-us" | "cta">("hero");
@@ -258,7 +258,7 @@ export default function ServicesAdminPage() {
     setForm({
       ...defaultServiceForm,
       ...service,
-      features: Array.isArray(service.features) && service.features.length > 0 
+      features: Array.isArray(service.features) && service.features.length > 0
         ? service.features.map((f: any) => ({ ...f, icon: f.icon || "FaLightbulb" }))
         : defaultServiceForm.features,
       whyPoints: Array.isArray(service.whyPoints) && service.whyPoints.length > 0
@@ -392,7 +392,7 @@ export default function ServicesAdminPage() {
           {/* Top Bar: Bulk Actions & Search */}
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <select 
+              <select
                 className="border border-[#8c8f94] bg-white text-[#2c3338] px-2 py-1 text-[13px] rounded-[3px] outline-none focus:border-[#2271b1] focus:ring-1 focus:ring-[#2271b1]"
                 value={bulkAction}
                 onChange={(e) => setBulkAction(e.target.value)}
@@ -402,7 +402,7 @@ export default function ServicesAdminPage() {
                 <option value="draft">Mark as Draft</option>
                 <option value="delete">Delete Permanently</option>
               </select>
-              <button 
+              <button
                 onClick={handleBulkAction}
                 className="bg-white border border-[#8c8f94] text-[#2c3338] px-3 py-1 text-[13px] rounded-[3px] hover:bg-[#f6f7f7] transition-colors cursor-pointer"
               >
@@ -411,20 +411,20 @@ export default function ServicesAdminPage() {
             </div>
 
             <div className="flex items-center gap-2">
-               <input
-                 type="text"
-                 placeholder="Search Services"
-                 value={search}
-                 onChange={(e) => setSearch(e.target.value)}
-                 className="border border-[#8c8f94] bg-white px-3 py-1 text-[13px] rounded-[3px] outline-none focus:border-[#2271b1] focus:ring-1 focus:ring-[#2271b1]"
-               />
-               <button className="bg-white border border-[#8c8f94] text-[#2c3338] px-3 py-1 text-[13px] rounded-[3px] hover:bg-[#f6f7f7] transition-colors">Search Services</button>
+              <input
+                type="text"
+                placeholder="Search Services"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="border border-[#8c8f94] bg-white px-3 py-1 text-[13px] rounded-[3px] outline-none focus:border-[#2271b1] focus:ring-1 focus:ring-[#2271b1]"
+              />
+              <button className="bg-white border border-[#8c8f94] text-[#2c3338] px-3 py-1 text-[13px] rounded-[3px] hover:bg-[#f6f7f7] transition-colors">Search Services</button>
             </div>
           </div>
 
           {/* Table Pagination Info */}
           <div className="flex justify-end text-[13px] text-[#50575e]">
-             {filteredServices.length} items
+            {filteredServices.length} items
           </div>
 
           {/* WP-Style Table */}
@@ -475,11 +475,11 @@ export default function ServicesAdminPage() {
                           <span className="text-[#a7aaad]">|</span>
                           <button onClick={() => handleDuplicate(service)} className="text-[#2271b1] hover:underline text-[12px] cursor-pointer">Duplicate</button>
                           <span className="text-[#a7aaad]">|</span>
-                          <button 
+                          <button
                             onClick={() => {
                               const updated = services.map(s => (s.id === service.id || s.slug === service.slug) ? { ...s, status: s.status === 'published' ? 'draft' : 'published' } : s);
                               saveToDb(updated);
-                            }} 
+                            }}
                             className="text-[#2271b1] hover:underline text-[12px] cursor-pointer"
                           >
                             {service.status === 'published' ? 'Keep as Draft' : 'Publish Now'}
@@ -724,18 +724,16 @@ export default function ServicesAdminPage() {
                   <button
                     type="button"
                     onClick={() => setMainTab("content")}
-                    className={`px-3 py-2 text-[12px] font-semibold border-r border-[#c3c4c7] transition-all cursor-pointer ${
-                      mainTab === "content" ? "bg-white text-[#1d2327]" : "text-[#2271b1] hover:text-[#135e96]"
-                    }`}
+                    className={`px-3 py-2 text-[12px] font-semibold border-r border-[#c3c4c7] transition-all cursor-pointer ${mainTab === "content" ? "bg-white text-[#1d2327]" : "text-[#2271b1] hover:text-[#135e96]"
+                      }`}
                   >
                     Page Content
                   </button>
                   <button
                     type="button"
                     onClick={() => setMainTab("seo")}
-                    className={`px-3 py-2 text-[12px] font-semibold border-r border-[#c3c4c7] transition-all cursor-pointer ${
-                      mainTab === "seo" ? "bg-white text-[#1d2327]" : "text-[#2271b1] hover:text-[#135e96]"
-                    }`}
+                    className={`px-3 py-2 text-[12px] font-semibold border-r border-[#c3c4c7] transition-all cursor-pointer ${mainTab === "seo" ? "bg-white text-[#1d2327]" : "text-[#2271b1] hover:text-[#135e96]"
+                      }`}
                   >
                     SEO Settings
                   </button>
@@ -751,11 +749,10 @@ export default function ServicesAdminPage() {
                           <button
                             type="button"
                             onClick={() => setActiveSection(sec.id as any)}
-                            className={`cursor-pointer ${
-                              activeSection === sec.id
+                            className={`cursor-pointer ${activeSection === sec.id
                                 ? "text-[#1d2327] font-bold border-b-2 border-[#2271b1] pb-0.5"
                                 : "text-[#2271b1] hover:text-[#135e96] underline decoration-transparent hover:decoration-current"
-                            }`}
+                              }`}
                           >
                             {sec.label}
                           </button>
