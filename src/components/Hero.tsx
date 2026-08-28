@@ -169,7 +169,7 @@ const Hero = () => {
             <img
               src={leftTreeSrc}
               alt="Christmas tree left"
-              className="w-auto h-auto max-h-[180px] sm:max-h-[300px] md:max-h-[450px] lg:max-h-[600px] object-contain"
+              className="w-auto h-auto max-h-[120px] sm:max-h-[180px] md:max-h-[220px] lg:max-h-[260px] xl:max-h-[300px] object-contain"
             />
           ) : (
             <Image
@@ -177,7 +177,7 @@ const Hero = () => {
               alt="Christmas tree left"
               width={200}
               height={300}
-              className="w-auto h-auto max-h-[180px] sm:max-h-[300px] md:max-h-[450px] lg:max-h-[600px] object-contain"
+              className="w-auto h-auto max-h-[120px] sm:max-h-[180px] md:max-h-[220px] lg:max-h-[260px] xl:max-h-[300px] object-contain"
               priority
             />
           )}
@@ -199,7 +199,7 @@ const Hero = () => {
             <img
               src={rightTreeSrc}
               alt="Christmas tree right"
-              className="w-auto h-auto max-h-[180px] sm:max-h-[300px] md:max-h-[450px] lg:max-h-[600px] object-contain"
+              className="w-auto h-auto max-h-[120px] sm:max-h-[180px] md:max-h-[220px] lg:max-h-[260px] xl:max-h-[300px] object-contain"
             />
           ) : (
             <Image
@@ -207,7 +207,7 @@ const Hero = () => {
               alt="Christmas tree right"
               width={200}
               height={300}
-              className="w-auto h-auto max-h-[180px] sm:max-h-[300px] md:max-h-[450px] lg:max-h-[600px] object-contain"
+              className="w-auto h-auto max-h-[120px] sm:max-h-[180px] md:max-h-[220px] lg:max-h-[260px] xl:max-h-[300px] object-contain"
               priority
             />
           )}

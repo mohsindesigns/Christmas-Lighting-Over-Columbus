@@ -343,13 +343,13 @@ const AwardWinningServicesSection = () => {
                           </div>
 
                           {/* Description */}
-                          <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed line-clamp-3">
+                          <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed">
                             {service.description.replace(/<[^>]*>?/gm, '')}
                           </p>
 
                           {/* Features */}
                           <ul className="space-y-1.5 sm:space-y-2 mb-4 lg:mb-6">
-                            {service.features.slice(0, 3).map((feature: string, idx: number) => (
+                            {(service.features || []).map((feature: string, idx: number) => (
                               <motion.li
                                 key={idx}
                                 initial={{ opacity: 0, x: -10 }}
