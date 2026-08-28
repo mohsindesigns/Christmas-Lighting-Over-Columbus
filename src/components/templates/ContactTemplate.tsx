@@ -1,277 +1,468 @@
 "use client";
 
-import Link from "next/link";
-import { useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useContent } from "../../hooks/useContent";
-import { Icon } from "../../config/icons";
-import RichTextRenderer from "../ui/RichTextRenderer";
-import PageInlineFaqs from "@/components/PageInlineFaqs";
+import React, { useState, useCallback, memo } from "react";
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaHome,
+  FaTree,
+  FaCheckCircle,
+  FaArrowRight,
+  FaQuoteRight,
+  FaMapMarkerAlt,
+  FaUpload,
+  FaStar,
+  FaClock,
+  FaDollarSign,
+  FaImage
+} from "react-icons/fa";
+import { GiSparkles } from "react-icons/gi";
+import { useContent } from "@/hooks/useContent";
 
-const HolographicInput = ({ icon: IconName, label, type = "text", ...props }: any) => {
-    const [isFocused, setIsFocused] = useState(false);
-    const [hasValue, setHasValue] = useState(false);
-    return (
-        <div className="relative group">
-            <div className={`relative flex items-center bg-card rounded-xl border transition-all duration-300 ${isFocused ? 'border-primary shadow-lg shadow-primary/10' : hasValue ? 'border-primary/40' : 'border-border hover:border-border/80'}`}>
-                <div className={`absolute left-4 transition-colors duration-300 ${isFocused || hasValue ? 'text-primary' : 'text-muted-foreground'}`}>
-                    <Icon name={IconName} className="w-5 h-5" />
-                </div>
-                <input
-                    type={type}
-                    placeholder={label}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    onChange={(e) => {
-                        setHasValue(!!e.target.value);
-                        props.onChange?.(e);
-                    }}
-                    className="w-full pl-12 pr-4 py-4 bg-transparent rounded-xl text-foreground text-sm placeholder:text-muted-foreground focus:outline-none"
-                    {...props}
-                />
-            </div>
-        </div>
-    );
+// Move ALL static data outside component
+const DEFAULT_BUDGET_OPTIONS = [
+  "What Is Your Lighting Budget",
+  "$900 - $1200 (Standard Front Rooflines)",
+  "$1200 - $1500",
+  "$1500 - $2500",
+  "$2500 - $4000",
+  "$4000 and up",
+  "Give me your best lighting design, money is not a factor."
+];
+
+const LIGHTING_AREAS = [
+  { id: "house", label: "House", emoji: "🏠" },
+  { id: "ground", label: "Ground Lighting", emoji: "✨" },
+  { id: "trees", label: "Trees", emoji: "🌲" },
+  { id: "shrubs", label: "Shrubs / Bushes", emoji: "🌿" }
+];
+
+const DEFAULT_BENEFITS = [
+  "Free consultation & design",
+  "Professional installation",
+  "Commercial-grade LEDs",
+  "Maintenance included",
+  "Take-down & storage"
+];
+
+const INITIAL_FORM_STATE = {
+  fname: "", lname: "", email: "", phone: "", address: "", city: "",
+  budget: "", notes: "", lightingAreas: { house: false, ground: false, trees: false, shrubs: false } as Record<string, boolean>
 };
 
+// Pre-defined classNames for better performance
+const INPUT_CLASSES = "w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none text-gray-900 placeholder-gray-500";
+const LABEL_CLASSES = "block text-gray-700 text-sm font-medium mb-1.5";
+
 export default function ContactTemplate({ pageData }: { pageData?: any }) {
-    const { contactPage: globalContactData, footer } = useContent();
+  const content = useContent();
+  const contactData = pageData?.content?.contactPage || content?.contactPage || {};
 
-    // Prioritize page-specific content over global content
-    const contactData = pageData?.content?.contactPage || globalContactData;
-    const footerContact = footer?.contact || {};
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [formData, setFormData] = useState<Record<string, string>>({});
+  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
+  const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-    // Fallback data if CMS has no data yet
-    const header = contactData?.header || {};
-    const badge = header.badge || "Contact Us";
-    const headline = header.headline || "Get In Touch";
-    const description = header.description || "We'd love to hear from you. Fill out the form and we'll get back to you shortly.";
-    const formFields = contactData?.formFields || [
-        { name: "name", label: "Full Name", type: "text", required: true, icon: "User" },
-        { name: "email", label: "Email Address", type: "email", required: true, icon: "Mail" },
-        { name: "phone", label: "Phone Number", type: "tel", required: false, icon: "Phone" },
-        { name: "message", label: "Your Message", type: "textarea", required: true, icon: "MessageSquare" },
-    ];
+  // Dynamic CMS fields with defaults
+  const badge = contactData.header?.badge || "Get A Fast Quote";
+  const title = contactData.header?.headline || contactData.header?.title || "Contact Us For Your Fast Free Quote";
+  const subtitle = contactData.header?.description || "We look forward to helping light up your property  🙂";
+  const phone = contactData.info?.phone || content?.footer?.contact?.phone || "(614) 301-7100";
+  const email = contactData.info?.email || content?.footer?.contact?.email || "Info@lightsovercolumbus.com";
+  const benefits: string[] = Array.isArray(contactData.benefits) && contactData.benefits.length > 0
+    ? contactData.benefits.map((b: any) => typeof b === 'string' ? b : (b.text || b.title))
+    : DEFAULT_BENEFITS;
+  const budgetOptions: string[] = Array.isArray(contactData.budgetOptions) && contactData.budgetOptions.length > 0
+    ? contactData.budgetOptions
+    : DEFAULT_BUDGET_OPTIONS;
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        try {
-            const response = await fetch('/api/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...formData,
-                    type: 'Contact Form',
-                    subject: `New Contact Form Submission - ${formData.name || 'Unknown'}`,
-                })
-            });
+  // Ultra-fast handlers
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-            const result = await response.json().catch(() => ({}));
-            if (response.ok || result.success || result.submissionId) {
-                setShowSuccess(true);
-                setFormData({});
-            } else {
-                console.error('Submission failed:', response.status, result);
-                alert(`Error: ${result.error || 'Submission failed'}`);
-            }
-        } catch (error) {
-            console.error('Contact form error:', error);
-            alert('Failed to send message. Please try again.');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+  const handleAreaChange = (areaId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      lightingAreas: { ...prev.lightingAreas, [areaId]: !prev.lightingAreas[areaId] }
+    }));
+  };
 
-    const inlineFields = formFields.filter((f: any) => f.type !== "textarea");
-    const textareaFields = formFields.filter((f: any) => f.type === "textarea");
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFiles(Array.from(e.target.files));
+    }
+  };
 
-    const info = contactData?.info || {};
-    const infoCards = contactData?.infoCards || [];
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
-    // Map infoCards to the info structure if info is empty — also fall back to footer contact
-    const finalInfo = {
-        phone: info.phone || infoCards.find((c: any) => c.type === 'phone')?.value || footerContact.phone || "",
-        email: info.email || infoCards.find((c: any) => c.type === 'email')?.value || footerContact.email || "",
-        address: info.address || infoCards.find((c: any) => c.type === 'location')?.value || footerContact.address || "",
-        hours: info.hours || footerContact.hours || ""
-    };
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    return (
-        <main className="relative bg-background py-24 min-h-screen overflow-hidden">
-            {/* Background decoration */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div
-                    className="absolute inset-0 opacity-[0.02]"
-                    style={{
-                        backgroundImage: `linear-gradient(to right, hsl(var(--primary)) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--primary)) 1px, transparent 1px)`,
-                        backgroundSize: '60px 60px',
-                    }}
-                />
+      if (response.ok) {
+        setIsSubmitted(true);
+        setFormData(INITIAL_FORM_STATE);
+        setFiles([]);
+        setTimeout(() => setIsSubmitted(false), 4000);
+      } else {
+        alert('Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Network error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const fileCount = files.length;
+  const hasFiles = fileCount > 0;
+
+  // Set page title
+  React.useEffect(() => {
+    document.title = 'Christmas Lighting Over Columbus | Contact';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Serving Columbus With Stress-Free Holiday Lighting');
+    }
+  }, []);
+
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-8 px-4 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Simple Header */}
+        <div className="text-center mb-8 lg:mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-600/10 via-amber-500/10 to-red-600/10 rounded-full border border-amber-500/30 mb-4">
+            <GiSparkles className="text-sm text-amber-500" />
+            <span className="text-sm font-medium text-gray-800 uppercase">{badge}</span>
+          </div>
+
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+            {title.includes("Fast Free") ? (
+              <>
+                Contact Us For Your{" "}
+                <span className="bg-gradient-to-r from-red-600 via-amber-500 to-emerald-600 bg-clip-text text-transparent">
+                  Fast Free
+                </span>{" "}
+                Quote
+              </>
+            ) : (
+              title
+            )}
+          </h1>
+          <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto">
+            {subtitle}
+          </p>
+        </div>
+
+        {/* Success Message */}
+        {isSubmitted && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+            <div className="flex items-center gap-3">
+              <FaCheckCircle className="text-green-600 text-lg flex-shrink-0" />
+              <div>
+                <h3 className="text-base font-bold text-green-800">Quote Request Sent!</h3>
+                <p className="text-green-600 text-sm">We'll contact you within 24 hours.</p>
+              </div>
             </div>
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-primary/5 to-transparent opacity-60 blur-3xl pointer-events-none" />
+          </div>
+        )}
 
-            <div className="max-w-4xl mx-auto px-4 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Form Section */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              {/* Form Header */}
+              <div className="p-4 sm:p-6 bg-gradient-to-r from-red-600/5 via-amber-500/5 to-red-600/5 border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-red-600 to-amber-500 rounded-lg flex items-center justify-center">
+                    <FaQuoteRight className="text-white text-lg" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900">Quote Details</h2>
+                    <p className="text-gray-600 text-xs sm:text-sm">* Required fields</p>
+                  </div>
+                </div>
+              </div>
 
-                {/* Section Header */}
-                <div className="text-center mb-16">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-widest uppercase mb-6">
-                            {badge}
-                        </span>
-                        <h1 className="text-4xl sm:text-6xl font-light text-foreground mb-6 leading-tight">
-                            {headline}
-                        </h1>
-                        <div className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                            <RichTextRenderer content={description} />
-                        </div>
-                    </motion.div>
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-5">
+                {/* Name Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <InputField
+                    label="First Name *"
+                    name="fname"
+                    value={formData.fname}
+                    onChange={handleChange}
+                    placeholder="John"
+                    required
+                  />
+                  <InputField
+                    label="Last Name *"
+                    name="lname"
+                    value={formData.lname}
+                    onChange={handleChange}
+                    placeholder="Smith"
+                    required
+                  />
                 </div>
 
-                {/* Form Card */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7, delay: 0.2 }}
-                    className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-3xl p-8 sm:p-12 shadow-2xl"
-                >
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Inline fields grid */}
-                        {inlineFields.length > 0 && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                {inlineFields.map((field: any, idx: number) => (
-                                    <HolographicInput
-                                        key={idx}
-                                        icon={field.icon || "User"}
-                                        label={field.label}
-                                        type={field.type}
-                                        name={field.name}
-                                        value={formData[field.name] || ""}
-                                        onChange={(e: any) => setFormData(prev => ({ ...prev, [field.name]: e.target.value }))}
-                                        required={field.required}
-                                    />
-                                ))}
-                            </div>
-                        )}
+                {/* Email & Phone */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <InputField
+                    label="Email *"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Info@lightsovercolumbus.com"
+                    required
+                  />
+                  <InputField
+                    label="Phone *"
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="(614) 301-7100"
+                    required
+                  />
+                </div>
 
-                        {/* Textarea fields */}
-                        {textareaFields.map((field: any, idx: number) => (
-                            <div key={`ta-${idx}`} className="relative">
-                                <div className="relative flex bg-card rounded-xl border border-border focus-within:border-primary focus-within:shadow-lg focus-within:shadow-primary/10 transition-all duration-300">
-                                    <div className="absolute left-4 top-4 text-muted-foreground">
-                                        <Icon name={field.icon || "MessageSquare"} className="w-5 h-5" />
-                                    </div>
-                                    <textarea
-                                        placeholder={field.label}
-                                        name={field.name}
-                                        rows={5}
-                                        value={formData[field.name] || ""}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, [field.name]: e.target.value }))}
-                                        required={field.required}
-                                        className="w-full pl-12 pr-4 py-4 bg-transparent rounded-xl text-foreground text-sm placeholder:text-muted-foreground focus:outline-none resize-none"
-                                    />
-                                </div>
-                            </div>
-                        ))}
+                {/* Address & City */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="sm:col-span-2">
+                    <InputField
+                      label="Address *"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      placeholder="123 Main St"
+                      required
+                    />
+                  </div>
+                  <InputField
+                    label="City *"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    placeholder="Columbus"
+                    required
+                  />
+                </div>
 
-                        <motion.button
-                            type="submit"
-                            disabled={isSubmitting}
-                            whileHover={{ scale: 1.01 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="w-full py-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-2xl font-bold text-sm tracking-widest uppercase shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isSubmitting ? 'Sending Message...' : 'Send Message'}
-                        </motion.button>
-                    </form>
-                </motion.div>
-
-                {/* Business Vitals Section */}
-                {(finalInfo.phone || finalInfo.email || finalInfo.address || finalInfo.hours) && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+                {/* Budget Select */}
+                <div>
+                  <label className={LABEL_CLASSES}>Budget Range *</label>
+                  <div className="relative">
+                    <FaDollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm z-10" />
+                    <select
+                      name="budget"
+                      value={formData.budget}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 pr-8 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none appearance-none text-gray-900"
                     >
-                        {finalInfo.phone && (
-                            <div className="bg-card/40 border border-border/50 rounded-2xl p-6 text-center">
-                                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
-                                    <Icon name="Phone" className="w-5 h-5" />
-                                </div>
-                                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">Phone</h3>
-                                <p className="text-foreground font-medium">{finalInfo.phone}</p>
-                            </div>
+                      <option value="">Select your budget...</option>
+                      {budgetOptions.map((option, index) => (
+                        <option key={index} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Lighting Areas */}
+                <div>
+                  <label className={LABEL_CLASSES}>Select Areas To Be Lit Up</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {LIGHTING_AREAS.map((area) => (
+                      <div
+                        key={area.id}
+                        onClick={() => handleAreaChange(area.id)}
+                        className={`relative p-3 sm:p-4 bg-gray-50 border-2 rounded-xl text-center cursor-pointer transition-colors ${formData.lightingAreas[area.id]
+                          ? 'border-amber-500 bg-amber-50'
+                          : 'border-gray-200 hover:border-amber-200'
+                          }`}
+                      >
+                        <div className={`text-2xl sm:text-3xl mb-2 ${formData.lightingAreas[area.id] ? 'scale-110 text-amber-600' : 'text-gray-600'}`}>
+                          {area.emoji}
+                        </div>
+                        <p className="text-xs sm:text-sm text-gray-900 font-medium">{area.label}</p>
+                        {formData.lightingAreas[area.id] && (
+                          <div className="absolute top-1 right-1 w-4 h-4 bg-amber-500 rounded-full flex items-center justify-center">
+                            <FaCheckCircle className="text-white text-xs" />
+                          </div>
                         )}
-                        {finalInfo.email && (
-                            <div className="bg-card/40 border border-border/50 rounded-2xl p-6 text-center">
-                                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
-                                    <Icon name="Mail" className="w-5 h-5" />
-                                </div>
-                                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">Email</h3>
-                                <p className="text-foreground font-medium break-all">{finalInfo.email}</p>
-                            </div>
-                        )}
-                        {finalInfo.address && (
-                            <div className="bg-card/40 border border-border/50 rounded-2xl p-6 text-center">
-                                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
-                                    <Icon name="MapPin" className="w-5 h-5" />
-                                </div>
-                                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">Address</h3>
-                                <p className="text-foreground font-medium">{finalInfo.address}</p>
-                            </div>
-                        )}
-                        {finalInfo.hours && (
-                            <div className="bg-card/40 border border-border/50 rounded-2xl p-6 text-center">
-                                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
-                                    <Icon name="Clock" className="w-5 h-5" />
-                                </div>
-                                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">Hours</h3>
-                                <p className="text-foreground font-medium">{finalInfo.hours}</p>
-                            </div>
-                        )}
-                    </motion.div>
-                )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Additional Notes */}
+                <div>
+                  <label className={LABEL_CLASSES}>Additional Notes</label>
+                  <textarea
+                    name="notes"
+                    value={formData.notes}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none resize-none text-gray-900 placeholder-gray-500"
+                    placeholder="Any details to help create your quote..."
+                  />
+                </div>
+
+                {/* Photo Upload */}
+                <div>
+                  <p className="text-gray-700 text-sm mb-2 bg-amber-50 p-2 rounded-lg">
+                    Upload a front-facing photo for faster quotes 🙂
+                  </p>
+                  <FileUpload
+                    files={files}
+                    onFileChange={handleFileChange}
+                    hasFiles={hasFiles}
+                    fileCount={fileCount}
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <SubmitButton isSubmitting={isSubmitting} />
+
+                <p className="text-center text-gray-500 text-xs sm:text-sm">
+                  By submitting, you agree to our Privacy Policy.
+                </p>
+              </form>
             </div>
+          </div>
 
-            {/* Success Modal */}
-            <AnimatePresence>
-                {showSuccess && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.9, y: 20 }}
-                            className="bg-card rounded-3xl p-10 text-center max-w-md w-full shadow-2xl border border-border"
-                        >
-                            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center shadow-2xl shadow-primary/30">
-                                <Icon name="Check" className="w-10 h-10 text-white" />
-                            </div>
-                            <h2 className="text-2xl font-bold text-foreground mb-3">Message Sent!</h2>
-                            <p className="text-muted-foreground mb-8">Thank you for reaching out. We'll get back to you as soon as possible.</p>
-                            <button
-                                onClick={() => setShowSuccess(false)}
-                                className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-bold hover:bg-primary/90 transition-colors"
-                            >
-                                Close
-                            </button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-        </main>
-    );
+          {/* Benefits Section */}
+          <div className="space-y-6">
+            <BenefitsSection benefits={benefits} />
+            <ContactInfo phone={phone} email={email} />
+          </div>
+        </div>
+      </div>
+    </main>
+  );
 }
+
+// Simple Input Field
+const InputField = memo(({ label, type = "text", ...props }: any) => (
+  <div>
+    <label className={LABEL_CLASSES}>{label}</label>
+    <input
+      type={type}
+      className={INPUT_CLASSES}
+      {...props}
+    />
+  </div>
+));
+InputField.displayName = 'InputField';
+
+// FileUpload Component
+const FileUpload = memo(({ files, onFileChange, hasFiles, fileCount }: any) => (
+  <div>
+    <input type="file" id="file-upload" onChange={onFileChange} multiple accept="image/*" className="hidden" />
+    <label htmlFor="file-upload" className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-amber-500">
+      <FaUpload className="text-gray-400" />
+      <span className="text-gray-900 text-sm">
+        {hasFiles ? `${fileCount} file(s) selected` : 'Click to upload photos'}
+      </span>
+    </label>
+    {hasFiles && (
+      <div className="mt-2 space-y-1">
+        {files.map((file: File, index: number) => (
+          <div key={index} className="flex items-center gap-2 text-xs text-gray-900 bg-gray-50 p-2 rounded">
+            <FaImage className="text-amber-500 flex-shrink-0" />
+            <span className="truncate">{file.name}</span>
+            <span className="text-gray-600 flex-shrink-0">{(file.size / 1024).toFixed(0)}KB</span>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+));
+FileUpload.displayName = 'FileUpload';
+
+// Submit Button
+const SubmitButton = memo(({ isSubmitting }: { isSubmitting: boolean }) => (
+  <button
+    type="submit"
+    disabled={isSubmitting}
+    className="w-full bg-gradient-to-r from-red-600 via-amber-500 to-red-600 hover:from-red-500 hover:via-amber-400 hover:to-red-500 text-white font-semibold rounded-lg py-3.5 px-4 shadow-lg active:scale-[0.98] transition-all disabled:opacity-70 cursor-pointer"
+  >
+    <div className="flex items-center justify-center gap-2">
+      {isSubmitting ? (
+        <>
+          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          <span>Processing...</span>
+        </>
+      ) : (
+        <>
+          <span className="font-bold">Get My Lighting Quote</span>
+          <FaArrowRight className="text-sm" />
+        </>
+      )}
+    </div>
+  </button>
+));
+SubmitButton.displayName = 'SubmitButton';
+
+// Benefits Section
+const BenefitsSection = memo(({ benefits }: { benefits: string[] }) => (
+  <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+    <h3 className="text-xl font-bold text-gray-900 mb-4">What You Get</h3>
+    <div className="space-y-3">
+      {benefits.map((text, index) => (
+        <div key={index} className="flex items-center gap-3">
+          <div className="w-5 h-5 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 flex items-center justify-center flex-shrink-0">
+            <FaCheckCircle className="text-white text-xs" />
+          </div>
+          <span className="text-sm font-medium text-gray-900">{text}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+));
+BenefitsSection.displayName = 'BenefitsSection';
+
+// Contact Info
+const ContactInfo = memo(({ phone, email }: { phone: string; email: string }) => {
+  const phoneClean = phone.replace(/[^0-9+]/g, '');
+
+  return (
+    <div className="bg-gradient-to-r from-red-600 to-amber-500 rounded-2xl shadow-lg p-6 text-white">
+      <h3 className="text-xl font-bold text-white mb-3">Need Immediate Help?</h3>
+      <div className="space-y-3">
+        <a href={`tel:${phoneClean}`} className="flex items-center gap-3 hover:opacity-90">
+          <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+            <FaPhone className="text-sm text-white" />
+          </div>
+          <div>
+            <div className="text-xs text-white/80">Call us 24/7</div>
+            <div className="text-base font-bold text-white">{phone}</div>
+          </div>
+        </a>
+        <a href={`mailto:${email}`} className="flex items-center gap-3 hover:opacity-90">
+          <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+            <FaEnvelope className="text-sm text-white" />
+          </div>
+          <div>
+            <div className="text-xs text-white/80">Email us</div>
+            <div className="text-sm font-bold text-white break-all">{email}</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  );
+});
+ContactInfo.displayName = 'ContactInfo';

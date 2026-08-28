@@ -32,19 +32,27 @@ const defaultFaqItems = [
   }
 ];
 
-const FAQSection = () => {
+interface FAQSectionProps {
+  customData?: {
+    title?: string;
+    items?: Array<{ question: string; answer: string }>;
+    faqs?: Array<{ question: string; answer: string }>;
+  };
+}
+
+const FAQSection = ({ customData }: FAQSectionProps = {}) => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [heights, setHeights] = useState<{ [key: number]: number }>({});
   const [sparkles, setSparkles] = useState<Array<{ id: number; left: number; top: number; size: number; delay: number; duration: number }>>([]);
 
   const content = useContent();
-  const faqData = content?.faq || {};
-  const title = faqData.title || faqData.section?.headline || faqData.section?.title || "Questions & Answers";
+  const faqData = customData || content?.faq || {};
+  const title = faqData.title || (faqData as any).section?.headline || (faqData as any).section?.title || "Questions & Answers";
 
   const rawItems = Array.isArray(faqData.items) && faqData.items.length > 0
     ? faqData.items
-    : defaultFaqItems;
+    : (Array.isArray((faqData as any).faqs) && (faqData as any).faqs.length > 0 ? (faqData as any).faqs : defaultFaqItems);
 
   const items = rawItems.map((item: any) => ({
     question: item.question || item.q || "Common Question?",

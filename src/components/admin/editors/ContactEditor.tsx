@@ -2,75 +2,117 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Save, Loader2, LayoutTemplate, Type, Image as ImageIcon, 
-  ChevronRight, Star, Phone, Plus, Trash2, Mail, Upload, 
-  List, Heart, CircleHelp, Check, Target, Award, Shield, 
-  ArrowRight, MapPin, Clock, Facebook, Instagram, Linkedin, Send,
-  User, MessageSquare, Smartphone, Hash, Sparkles
+import {
+  Loader2, Type, Globe, CheckCircle, Search, HelpCircle,
+  Plus, Trash2, ShieldCheck, Mail, Phone, MapPin, Award,
+  Sparkles, DollarSign, Check, ListChecks
 } from "lucide-react";
-import IconSelector from "@/components/admin/IconSelector";
-import dynamic from "next/dynamic";
-const RichTextEditor = dynamic(() => import("@/components/admin/RichTextEditor"), { 
-  ssr: false,
-  loading: () => <div className="h-64 bg-[#f6f7f7] animate-pulse border border-[#c3c4c7] rounded-sm flex items-center justify-center text-[#8c8f94] text-xs">Loading Rich Text Editor...</div>
-});
 import { UI } from "./styles";
+
+const DEFAULT_BENEFITS = [
+  "Free consultation & design",
+  "Professional installation",
+  "Commercial-grade LEDs",
+  "Maintenance included",
+  "Take-down & storage"
+];
+
+const DEFAULT_BUDGET_OPTIONS = [
+  "What Is Your Lighting Budget",
+  "$900 - $1200 (Standard Front Rooflines)",
+  "$1200 - $1500",
+  "$1500 - $2500",
+  "$2500 - $4000",
+  "$4000 and up",
+  "Give me your best lighting design, money is not a factor."
+];
 
 export default function ContactEditor({ pageId, data, setData }: { pageId: string, data: any, setData: (d: any) => void }) {
   const [activeTab, setActiveTab] = useState("header");
 
   useEffect(() => {
-    if (data && Object.keys(data).length === 0) {
-       setData({
-         contactPage: {
-           header: { badge: "Contact Us", headline: "Expert hands with Visionary minds", description: "Get in touch with St. Louis's leading roofing and exterior specialists." },
-           formFields: [
-             { name: "name", label: "Full Name", type: "text", required: true, icon: "User" },
-             { name: "email", label: "Email Address", type: "email", required: true, icon: "Mail" },
-             { name: "phone", label: "Phone Number", type: "tel", required: false, icon: "Phone" },
-             { name: "message", label: "Your Message", type: "textarea", required: true, icon: "MessageSquare" }
-           ],
-           info: { address: "St. Louis, MO", phone: "314-XXX-XXXX", email: "info@eaglerevolution.com", hours: "Mon-Fri: 8am-6pm" },
-           social: { facebook: "#", instagram: "#", linkedin: "#" }
-         }
-       });
+    if (!data.contactPage) {
+      setData({
+        ...data,
+        contactPage: {
+          header: {
+            badge: "Get A Fast Quote",
+            headline: "Contact Us For Your Fast Free Quote",
+            description: "We look forward to helping light up your property 🙂"
+          },
+          benefits: DEFAULT_BENEFITS,
+          budgetOptions: DEFAULT_BUDGET_OPTIONS,
+          info: {
+            phone: "(614) 301-7100",
+            email: "Info@lightsovercolumbus.com"
+          }
+        }
+      });
     }
-  }, [data, setData]);
+  }, []);
 
   if (!data) return <div className="flex items-center justify-center h-64"><Loader2 className="w-5 h-5 text-[#2271b1] animate-spin" /></div>;
 
-  const updateContact = (section: string, field: string | null, value: any) => {
-    const currentData = data.contactPage || {
-      header: { badge: "", headline: "", description: "" },
-      formFields: [],
-      info: {},
-      social: {}
-    };
+  const contactPage = data.contactPage || {};
+  const header = contactPage.header || {};
+  const benefits: string[] = Array.isArray(contactPage.benefits) ? contactPage.benefits : DEFAULT_BENEFITS;
+  const budgetOptions: string[] = Array.isArray(contactPage.budgetOptions) ? contactPage.budgetOptions : DEFAULT_BUDGET_OPTIONS;
+  const info = contactPage.info || {};
 
-    const targetSectionData = currentData[section as keyof typeof currentData] || {};
-
+  const updateHeader = (field: string, value: any) => {
     setData({
       ...data,
       contactPage: {
-        ...currentData,
-        [section]: field ? {
-          ...targetSectionData,
-          [field]: value,
-        } : value,
-      },
+        ...contactPage,
+        header: {
+          ...(contactPage.header || {}),
+          [field]: value
+        }
+      }
+    });
+  };
+
+  const updateInfo = (field: string, value: any) => {
+    setData({
+      ...data,
+      contactPage: {
+        ...contactPage,
+        info: {
+          ...(contactPage.info || {}),
+          [field]: value
+        }
+      }
+    });
+  };
+
+  const updateBenefits = (newBenefits: string[]) => {
+    setData({
+      ...data,
+      contactPage: {
+        ...contactPage,
+        benefits: newBenefits
+      }
+    });
+  };
+
+  const updateBudgetOptions = (newOptions: string[]) => {
+    setData({
+      ...data,
+      contactPage: {
+        ...contactPage,
+        budgetOptions: newOptions
+      }
     });
   };
 
   const tabs = [
-    { id: "header", label: "Contact Header", icon: Type, title: "Introduction & Narrative" },
-    { id: "form", label: "Form Architect", icon: Send, title: "Lead Generation Form Builder" },
-    { id: "info", label: "Business Vitals", icon: MapPin, title: "Contact Information & Socials" },
+    { id: "header", label: "Page Header & Intro", icon: Type, title: "Header & Narrative" },
+    { id: "benefits", label: "What You Get (Benefits)", icon: ListChecks, title: "Benefits Card List" },
+    { id: "info", label: "Direct Contact Info", icon: Phone, title: "Contact Numbers & Email" },
+    { id: "budget", label: "Budget Ranges", icon: DollarSign, title: "Budget Dropdown Options" },
   ];
 
   const activeTabTitle = tabs.find(t => t.id === activeTab)?.title;
-
-  const inputTypes = ["text", "email", "tel", "textarea", "number"];
 
   return (
     <div className="bg-white">
@@ -79,8 +121,13 @@ export default function ContactEditor({ pageId, data, setData }: { pageId: strin
         {tabs.map((tab: any, idx: number) => (
           <React.Fragment key={tab.id}>
             <button 
+              type="button"
               onClick={() => setActiveTab(tab.id)} 
-              className={`px-1 py-1 transition-colors ${activeTab === tab.id ? 'text-[#1d2327] font-bold' : 'text-[#2271b1] hover:text-[#135e96]'}`}
+              className={`px-1 py-1 transition-colors cursor-pointer ${
+                activeTab === tab.id 
+                  ? 'text-[#1d2327] font-bold border-b-2 border-[#2271b1]' 
+                  : 'text-[#2271b1] hover:text-[#135e96]'
+              }`}
             >
               {tab.label}
             </button>
@@ -90,9 +137,8 @@ export default function ContactEditor({ pageId, data, setData }: { pageId: strin
       </div>
 
       <div className="space-y-6">
-        <div className="mb-6">
-           <h2 className={UI.sectionHeader}>{activeTabTitle}</h2>
-           <p className="text-[12px] text-[#646970] -mt-2">Manage how customers interact with your brand through the contact page.</p>
+        <div className="mb-4">
+          <h2 className="text-base font-bold text-[#1d2327]">{activeTabTitle}</h2>
         </div>
 
         <AnimatePresence mode="wait">
@@ -101,132 +147,177 @@ export default function ContactEditor({ pageId, data, setData }: { pageId: strin
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }} 
-            className="space-y-8 pb-10"
+            className="space-y-6"
           >
-            
-            {/* HEADER SECTION */}
+            {/* ========================================================================= */}
+            {/* TAB 1: HEADER & INTRO */}
+            {/* ========================================================================= */}
             {activeTab === "header" && (
-              <div className="max-w-3xl space-y-6">
-                 <div className={UI.card + " space-y-5"}>
-                    <div className="space-y-1.5">
-                       <label className={UI.label}>Section Badge</label>
-                       <input type="text" value={data.contactPage?.header?.badge || ""} onChange={(e) => updateContact("header", "badge", e.target.value)} className={UI.input} />
-                    </div>
-                    <div className="space-y-1.5">
-                       <label className={UI.label}>Main Headline</label>
-                       <input type="text" value={data.contactPage?.header?.headline || ""} onChange={(e) => updateContact("header", "headline", e.target.value)} className={UI.inputLarge} />
-                    </div>
-                    <div className="space-y-1.5">
-                       <label className={UI.label}>Intro Narrative</label>
-                       <RichTextEditor 
-                         content={data.contactPage?.header?.description || ""} 
-                         onChange={(val) => updateContact("header", "description", val)} 
-                       />
-                    </div>
-                 </div>
+              <div className="max-w-3xl space-y-4">
+                <div className="bg-[#f9f9f9] border border-[#c3c4c7] p-4 rounded-sm space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Pill Badge</label>
+                    <input
+                      type="text"
+                      value={header.badge || "Get A Fast Quote"}
+                      onChange={(e) => updateHeader("badge", e.target.value)}
+                      className="w-full border border-[#c3c4c7] px-3 py-1.5 text-xs font-semibold rounded-[3px] focus:border-[#2271b1] outline-none bg-white uppercase"
+                      placeholder="Get A Fast Quote"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Page Headline</label>
+                    <input
+                      type="text"
+                      value={header.headline || header.title || "Contact Us For Your Fast Free Quote"}
+                      onChange={(e) => updateHeader("headline", e.target.value)}
+                      className="w-full border border-[#c3c4c7] px-3 py-2 text-xs font-bold rounded-[3px] focus:border-[#2271b1] outline-none bg-white"
+                      placeholder="Contact Us For Your Fast Free Quote"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Subtitle Narrative</label>
+                    <textarea
+                      rows={2}
+                      value={header.description || ""}
+                      onChange={(e) => updateHeader("description", e.target.value)}
+                      className="w-full border border-[#c3c4c7] px-3 py-2 text-xs rounded-[3px] focus:border-[#2271b1] outline-none bg-white"
+                      placeholder="We look forward to helping light up your property 🙂"
+                    />
+                  </div>
+                </div>
               </div>
             )}
 
-            {/* FORM SECTION */}
-            {activeTab === "form" && (
-              <div className="space-y-6">
-                 <label className={UI.label}>Lead Form Architect</label>
-                 <div className="grid grid-cols-1 gap-4 max-w-4xl">
-                    {(data.contactPage?.formFields || []).map((field: any, i: number) => (
-                      <div key={i} className={UI.card + " space-y-4 relative group"}>
-                        <button onClick={() => {
-                          const newF = (data.contactPage?.formFields || []).filter((_: any, idx: number) => idx !== i);
-                          updateContact("formFields", null, newF);
-                        }} className="absolute top-6 right-6 text-slate-400 hover:text-[#d63638] transition-colors"><Trash2 className="w-4 h-4" /></button>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                           <div className="space-y-4">
-                              <div className="space-y-1.5">
-                                 <label className={UI.label}>Field Label</label>
-                                 <input type="text" value={field.label} onChange={(e) => {
-                                   const newF = [...(data.contactPage?.formFields || [])]; newF[i].label = e.target.value; updateContact("formFields", null, newF);
-                                 }} className={UI.input} />
-                              </div>
-                              <div className="space-y-1.5">
-                                 <label className={UI.label}>Data Name (Slug)</label>
-                                 <input type="text" value={field.name} onChange={(e) => {
-                                   const newF = [...data.contactPage.formFields]; newF[i].name = e.target.value; updateContact("formFields", null, newF);
-                                 }} className={UI.input + " font-mono text-[11px]"} />
-                              </div>
-                           </div>
-                           <div className="space-y-4">
-                              <div className="space-y-1.5">
-                                 <label className={UI.label}>Input Type</label>
-                                 <select value={field.type} onChange={(e) => {
-                                   const newF = [...data.contactPage.formFields]; newF[i].type = e.target.value; updateContact("formFields", null, newF);
-                                 }} className={UI.input}>
-                                    {inputTypes.map(t => <option key={t} value={t}>{t}</option>)}
-                                 </select>
-                              </div>
-                              <IconSelector 
-                                label="Field Icon"
-                                value={field.icon} 
-                                onChange={(val) => {
-                                  const newF = [...data.contactPage.formFields]; newF[i].icon = val; updateContact("formFields", null, newF);
-                                }} 
-                              />
-                           </div>
-                        </div>
-                        <div className="pt-2">
-                           <label className="flex items-center gap-2 cursor-pointer">
-                              <input type="checkbox" className="rounded-sm border-[#c3c4c7]" checked={field.required} onChange={(e) => {
-                                const newF = [...data.contactPage.formFields]; newF[i].required = e.target.checked; updateContact("formFields", null, newF);
-                              }} />
-                              <span className="text-[12px] text-[#1d2327]">Required Field</span>
-                           </label>
-                        </div>
+            {/* ========================================================================= */}
+            {/* TAB 2: BENEFITS / WHAT YOU GET */}
+            {/* ========================================================================= */}
+            {activeTab === "benefits" && (
+              <div className="max-w-3xl space-y-4">
+                <div className="flex items-center justify-between bg-[#f6f7f7] p-3 border border-[#c3c4c7] rounded-sm">
+                  <div>
+                    <h3 className="text-sm font-bold text-[#1d2327]">What You Get Bullet Points</h3>
+                    <p className="text-xs text-[#646970]">Displayed in the right-side benefits card next to the quote form.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => updateBenefits([...benefits, "New Benefit Item"])}
+                    className="bg-[#2271b1] text-white text-xs font-semibold px-3 py-1.5 rounded-[3px] hover:bg-[#135e96] transition-colors cursor-pointer"
+                  >
+                    + Add Benefit
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {benefits.map((b, idx) => (
+                    <div key={idx} className="flex items-center gap-2 p-2 bg-white border border-[#c3c4c7] rounded-sm">
+                      <div className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0">
+                        ✓
                       </div>
-                    ))}
-                    <button onClick={() => updateContact("formFields", null, [...(data.contactPage?.formFields || []), { name: "new_field", label: "New Field", type: "text", required: false, icon: "User" }])} className={UI.buttonAdd}>
-                       + Add Form Field
-                    </button>
-                 </div>
+                      <input
+                        type="text"
+                        value={b}
+                        onChange={(e) => {
+                          const updated = [...benefits];
+                          updated[idx] = e.target.value;
+                          updateBenefits(updated);
+                        }}
+                        className="w-full border border-[#c3c4c7] px-2.5 py-1 text-xs font-medium rounded-[3px] outline-none focus:border-[#2271b1]"
+                        placeholder="Benefit text..."
+                      />
+                      <button
+                        type="button"
+                        onClick={() => updateBenefits(benefits.filter((_, i) => i !== idx))}
+                        className="p-1 text-red-500 hover:bg-red-50 rounded cursor-pointer"
+                        title="Delete Benefit"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
-            {/* INFO SECTION */}
+            {/* ========================================================================= */}
+            {/* TAB 3: DIRECT CONTACT INFO */}
+            {/* ========================================================================= */}
             {activeTab === "info" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <div className="space-y-6">
-                    <label className={UI.label}>Direct Contact Channels</label>
-                    <div className={UI.card + " space-y-4"}>
-                       {[
-                         { key: 'phone', icon: Phone, label: 'Phone Number' },
-                         { key: 'email', icon: Mail, label: 'Email Address' },
-                         { key: 'address', icon: MapPin, label: 'Physical Address' },
-                         { key: 'hours', icon: Clock, label: 'Business Hours' }
-                       ].map((item) => (
-                         <div key={item.key} className="space-y-1.5">
-                            <label className={UI.label}>{item.label}</label>
-                            <input type="text" value={data.contactPage?.info?.[item.key] || ""} onChange={(e) => updateContact("info", item.key, e.target.value)} className={UI.input} />
-                         </div>
-                       ))}
-                    </div>
-                 </div>
+              <div className="max-w-3xl space-y-4">
+                <div className="bg-[#f9f9f9] border border-[#c3c4c7] p-4 rounded-sm space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Phone Number (Call 24/7)</label>
+                    <input
+                      type="text"
+                      value={info.phone || "(614) 301-7100"}
+                      onChange={(e) => updateInfo("phone", e.target.value)}
+                      className="w-full border border-[#c3c4c7] px-3 py-1.5 text-xs font-bold rounded-[3px] focus:border-[#2271b1] outline-none bg-white"
+                      placeholder="(614) 301-7100"
+                    />
+                  </div>
 
-                 <div className="space-y-6">
-                    <label className={UI.label}>Social Connectivity</label>
-                    <div className={UI.card + " space-y-4"}>
-                       {[
-                         { key: 'facebook', icon: Facebook, label: 'Facebook' },
-                         { key: 'instagram', icon: Instagram, label: 'Instagram' },
-                         { key: 'linkedin', icon: Linkedin, label: 'LinkedIn' }
-                       ].map((item) => (
-                         <div key={item.key} className="space-y-1.5">
-                            <label className={UI.label}>{item.label} URL</label>
-                            <input type="text" value={data.contactPage?.social?.[item.key] || ""} onChange={(e) => updateContact("social", item.key, e.target.value)} className={UI.input} placeholder="https://..." />
-                         </div>
-                       ))}
-                    </div>
-                 </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Email Address</label>
+                    <input
+                      type="email"
+                      value={info.email || "Info@lightsovercolumbus.com"}
+                      onChange={(e) => updateInfo("email", e.target.value)}
+                      className="w-full border border-[#c3c4c7] px-3 py-1.5 text-xs font-bold rounded-[3px] focus:border-[#2271b1] outline-none bg-white"
+                      placeholder="Info@lightsovercolumbus.com"
+                    />
+                  </div>
+                </div>
               </div>
             )}
 
+            {/* ========================================================================= */}
+            {/* TAB 4: BUDGET OPTIONS */}
+            {/* ========================================================================= */}
+            {activeTab === "budget" && (
+              <div className="max-w-3xl space-y-4">
+                <div className="flex items-center justify-between bg-[#f6f7f7] p-3 border border-[#c3c4c7] rounded-sm">
+                  <div>
+                    <h3 className="text-sm font-bold text-[#1d2327]">Budget Dropdown Options</h3>
+                    <p className="text-xs text-[#646970]">Available tiers selectable in the quote request dropdown.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => updateBudgetOptions([...budgetOptions, "$5000 - $7500"])}
+                    className="bg-[#2271b1] text-white text-xs font-semibold px-3 py-1.5 rounded-[3px] hover:bg-[#135e96] transition-colors cursor-pointer"
+                  >
+                    + Add Option
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {budgetOptions.map((opt, idx) => (
+                    <div key={idx} className="flex items-center gap-2 p-2 bg-white border border-[#c3c4c7] rounded-sm">
+                      <span className="text-xs text-slate-400 font-mono w-6">#{idx + 1}</span>
+                      <input
+                        type="text"
+                        value={opt}
+                        onChange={(e) => {
+                          const updated = [...budgetOptions];
+                          updated[idx] = e.target.value;
+                          updateBudgetOptions(updated);
+                        }}
+                        className="w-full border border-[#c3c4c7] px-2.5 py-1 text-xs font-medium rounded-[3px] outline-none focus:border-[#2271b1]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => updateBudgetOptions(budgetOptions.filter((_, i) => i !== idx))}
+                        className="p-1 text-red-500 hover:bg-red-50 rounded cursor-pointer"
+                        title="Delete Option"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
