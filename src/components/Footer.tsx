@@ -62,7 +62,7 @@ const Footer = () => {
     setLightPositions(positions);
   }, []);
 
-  const companyName = footer?.company?.name || settings?.siteTitle || "Luminous Holiday";
+  const companyName = footer?.company?.name || settings?.siteTitle || "Christmas Lights Over Columbus";
   const logoSrc = footer?.company?.logo || navbar?.logo || "/images/mainlogo.png";
   const year = footer?.bottom?.year || currentYear;
   

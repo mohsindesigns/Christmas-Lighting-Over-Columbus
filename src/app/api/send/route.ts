@@ -89,7 +89,7 @@ export async function POST(request: Request) {
     }
 
     // Fetch dynamic email from Content CMS
-    let receiverEmail = 'banderson@eaglerevolution.com';
+    let receiverEmail = 'info@lightsovercolumbus.com';
     try {
       const contentDoc = await Content.findOne({ key: "complete_data" }).lean() as any;
       if (contentDoc && contentDoc.data) {
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
     }
 
     if (!receiverEmail || !receiverEmail.includes('@')) {
-      receiverEmail = 'banderson@eaglerevolution.com';
+      receiverEmail = 'info@lightsovercolumbus.com';
     }
 
     const to = receiverEmail;
@@ -118,7 +118,7 @@ export async function POST(request: Request) {
     // Construct email HTML
     let html = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
-        <h2 style="color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">🦅 Eagle Revolution - New Submission</h2>
+        <h2 style="color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">✨ Christmas Lights Over Columbus - New Submission</h2>
         <p><strong>Type:</strong> ${type || 'General Inquiry'}</p>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
@@ -154,14 +154,14 @@ export async function POST(request: Request) {
     html += `
         <p style="font-size: 12px; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
           ⏱️ Submitted: ${new Date().toLocaleString()}<br>
-          🇺🇸 Veteran Owned & Operated
+          🎄 Professional Holiday Lighting in Columbus, OH
         </p>
       </div>
     `;
 
     // Prepare email content
     const emailContent = `
-NEW SUBMISSION - EAGLE REVOLUTION
+NEW SUBMISSION - CHRISTMAS LIGHTS OVER COLUMBUS
 ----------------------------------
 Name: ${name}
 Email: ${email}
@@ -183,7 +183,7 @@ Source: Website
 
     // Send email using Resend
     const { data: resendData, error: resendError } = await resend.emails.send({
-      from: 'Eagle Revolution <onboarding@resend.dev>',
+      from: 'Christmas Lights Over Columbus <onboarding@resend.dev>',
       to: [receiverEmail],
       subject: subject || `New Lead: ${name}`,
       html: `

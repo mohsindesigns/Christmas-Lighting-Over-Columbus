@@ -40,19 +40,19 @@ export default function SettingsEditor({ pageId, data, setData }: { pageId: stri
   useEffect(() => {
     if (data && Object.keys(data).length === 0) {
        setData({
-         settings: { siteTitle: "Eagle Revolution", siteTemplate: "%s | Eagle Revolution", favicon: "" },
-         navbar: { logo: "", siteTitle: "Eagle Revolution", ctaText: "Book Now", ctaLink: "/contact-us", companyLinks: [] },
+         settings: { siteTitle: "Christmas Lights Over Columbus", siteTemplate: "%s | Christmas Lights Over Columbus", favicon: "/images/logo.png" },
+         navbar: { logo: "/images/logo.png", siteTitle: "Christmas Lights Over Columbus", ctaText: "Get Free Quote", ctaLink: "/contact-us", companyLinks: [] },
          footer: { 
-           company: { name: "Eagle Revolution", tagline: "Heritage. Integrity. Precision.", description: "", logo: "" },
+           company: { name: "Christmas Lights Over Columbus", tagline: "Professional Holiday Lighting in Columbus, OH", description: "", logo: "/images/logo.png" },
            newsletter: { placeholder: "Enter your email", buttonText: "Subscribe" },
-           services: { title: "Our Expertise", materials: { title: "Premium Materials", items: [] } },
-           contact: { title: "Contact Us", email: "", phone: "", address: "", emergency: "", areas: "" },
+           services: { title: "Our Services", materials: { title: "Company", items: [] } },
+           contact: { title: "Contact Us", email: "info@lightsovercolumbus.com", phone: "(614) 301-7100", address: "", emergency: "", areas: "" },
            certifications: [],
            social: [],
-           marquee: { speed: 30, repeats: 8, texts: ["Heritage", "Precision", "Integrity"] },
-           bottom: { copyright: "© 2024 Eagle Revolution", rights: "All Rights Reserved", tagline: "Crafted with Precision", links: [] }
+           marquee: { speed: 30, repeats: 8, texts: ["Holiday Lighting", "Professional Installation", "Free Quotes"] },
+           bottom: { copyright: "© 2026 Christmas Lights Over Columbus", rights: "All Rights Reserved", tagline: "Crafted with Precision", links: [] }
          },
-         hours: { monday: "8am - 6pm", saturday: "9am - 3pm", sunday: "Closed" }
+         hours: { monday: "8am - 8pm", saturday: "8am - 8pm", sunday: "8am - 8pm" }
        });
     }
   }, [data, setData]);
@@ -332,7 +332,7 @@ export default function SettingsEditor({ pageId, data, setData }: { pageId: stri
                        <div className={UI.card + " space-y-4"}>
                           <div className="space-y-1.5">
                              <label className={UI.label}>Company Display Name</label>
-                             <input type="text" value={data.footer?.company?.name || ""} onChange={(e) => updateNested(["footer", "company", "name"], e.target.value)} className={UI.input} placeholder="Luminous Holiday" />
+                             <input type="text" value={data.footer?.company?.name || ""} onChange={(e) => updateNested(["footer", "company", "name"], e.target.value)} className={UI.input} placeholder="Christmas Lights Over Columbus" />
                           </div>
                           <ImageField label="Footer Logo" value={data.footer?.company?.logo || ""} onChange={(url: string) => updateNested(["footer", "company", "logo"], url)} />
                        </div>
@@ -343,7 +343,7 @@ export default function SettingsEditor({ pageId, data, setData }: { pageId: stri
                        <div className={UI.card + " space-y-5"}>
                           <div className="space-y-1.5">
                              <label className={UI.label}>Copyright Text</label>
-                             <input type="text" value={data.footer?.bottom?.copyright || ""} onChange={(e) => updateNested(["footer", "bottom", "copyright"], e.target.value)} className={UI.input} placeholder="© 2026 Luminous Holiday" />
+                             <input type="text" value={data.footer?.bottom?.copyright || ""} onChange={(e) => updateNested(["footer", "bottom", "copyright"], e.target.value)} className={UI.input} placeholder="© 2026 Christmas Lights Over Columbus" />
                           </div>
                           <div className="space-y-2">
                              <label className={UI.label}>Legal & Secondary Links</label>

@@ -26,12 +26,12 @@ export default function TeamEditor({ pageId, data, setData }: { pageId: string, 
 
   useEffect(() => {
     if (data && Object.keys(data).length === 0) {
-       setData({
-         team: {
-           section: { badge: "Our Leadership", headline: "Expert hands with Visionary minds", description: "Meet the dedicated professionals leading the charge at Eagle Revolution." },
-           members: []
-         }
-       });
+        setData({
+          team: {
+            section: { badge: "Our Leadership", headline: "Expert hands with Visionary minds", description: "Meet the dedicated professionals leading the charge at Christmas Lights Over Columbus." },
+            members: []
+          }
+        });
     } else if (data && data.team && data.team.section && data.team.section.headline && !data.team.section.headlinePrefix && !data.team.section.headlineHighlight) {
        const parts = data.team.section.headline.split('with');
        const prefix = parts.length > 1 ? parts[0].trim() + " " : data.team.section.headline;
@@ -101,7 +101,7 @@ export default function TeamEditor({ pageId, data, setData }: { pageId: string, 
       <div className="space-y-6">
         <div className="mb-6">
            <h2 className={UI.sectionHeader}>{activeTabTitle}</h2>
-           <p className="text-[12px] text-[#646970] -mt-2">Manage the leadership and specialists representing Eagle Revolution.</p>
+           <p className="text-[12px] text-[#646970] -mt-2">Manage the leadership and specialists representing Christmas Lights Over Columbus.</p>
         </div>
 
         <AnimatePresence mode="wait">
@@ -204,7 +204,7 @@ export default function TeamEditor({ pageId, data, setData }: { pageId: string, 
                                      <label className={UI.label}>Direct Email</label>
                                      <input type="text" value={member.email || ""} onChange={(e) => {
                                         const newM = [...data.team.members]; newM[i].email = e.target.value; updateTeam("members", null, newM);
-                                     }} className={UI.input} placeholder="name@eaglerevolution.com" />
+                                     }} className={UI.input} placeholder="name@lightsovercolumbus.com" />
                                   </div>
                                </div>
                             </div>

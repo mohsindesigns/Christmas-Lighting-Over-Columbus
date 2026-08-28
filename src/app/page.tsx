@@ -26,13 +26,13 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     openGraph: {
       url: pageUrl,
-      siteName: "Eagle Revolution",
+      siteName: "Christmas Lights Over Columbus",
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      site: "@EagleRevolution",
-      creator: "@EagleRevolution",
+      site: "@LightsOverColumbus",
+      creator: "@LightsOverColumbus",
     }
   };
 
@@ -114,7 +114,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ...metadata.openGraph,
       title: seo.ogTitle || seo.metaTitle || homeData?.hero?.headline || settings?.siteTitle,
       description: seo.ogDescription || seo.metaDescription || homeData?.hero?.subheadline,
-      images: [seo.featuredImage || `${BASE_URL}/eagle-logo.png`].filter(Boolean) as string[],
+      images: [seo.featuredImage || `${BASE_URL}/images/logo.png`].filter(Boolean) as string[],
     },
     robots: {
       index: seo.metaRobotsIndex !== 'noindex',
@@ -157,7 +157,7 @@ export default async function Index() {
         slug: "/",
         type: "WebPage",
         faqs: faqs,
-        image: `${BASE_URL}/eagle-logo.png`
+        image: `${BASE_URL}/images/logo.png`
       });
       return (
         <>
@@ -190,7 +190,7 @@ export default async function Index() {
         slug: "/",
         type: "Service",
         faqs: faqs,
-        image: `${BASE_URL}/eagle-logo.png`
+        image: `${BASE_URL}/images/logo.png`
       });
       return (
         <>
@@ -204,12 +204,12 @@ export default async function Index() {
   // Default Home Template
   const homeData = content?.data?.home;
   const schema = generateSchema({
-    title: settings?.siteTitle || "Eagle Revolution",
-    description: homeData?.hero?.subheadline || "Veteran-owned roofing & home improvement in St. Louis, MO.",
+    title: settings?.siteTitle || "Christmas Lights Over Columbus",
+    description: homeData?.hero?.subheadline || "Professional Holiday & Christmas Lighting in Columbus, OH.",
     slug: "/",
     type: "WebPage",
     faqs: faqs,
-    image: `${BASE_URL}/eagle-logo.png`
+    image: `${BASE_URL}/images/logo.png`
   });
 
   return (

@@ -22,11 +22,11 @@ export default function CareersEditor({ pageId, data, setData }: { pageId: strin
     if (data && Object.keys(data).length === 0) {
        setData({
          careers: {
-           section: { badge: "Join Eagle Revolution", headline: "Expert hands with Visionary minds", description: "Build your future with a team that values precision, integrity, and craftsmanship." },
+           section: { badge: "Join Christmas Lights Over Columbus", headline: "Expert hands with Visionary minds", description: "Build your future with a team that values precision, integrity, and craftsmanship." },
            roles: [
-             { label: "Project Manager", value: "project-manager" },
-             { label: "Roofing Specialist", value: "roofing-specialist" },
-             { label: "Sales Consultant", value: "sales-consultant" }
+             { label: "Installation Specialist", value: "installer" },
+             { label: "Design Consultant", value: "designer" },
+             { label: "Operations Manager", value: "operations" }
            ],
            success: { title: "Application Received", description: "Thank you for your interest. Our recruitment team will review your profile and reach out shortly." },
            labels: { name: "Full Name", email: "Email Address", phone: "Phone Number", role: "Position Applied For", summary: "Tell us about your experience" }

@@ -50,7 +50,7 @@ export default function PrivacyPolicyPage() {
                 Our Commitment to Privacy
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Eagle Revolution takes the security and privacy of your personal information extremely seriously. We will not trade, sell, or rent your personally identifiable information. For an overview of our privacy practices, please read below.
+                Christmas Lights Over Columbus takes the security and privacy of your personal information extremely seriously. We will not trade, sell, or rent your personally identifiable information. For an overview of our privacy practices, please read below.
               </p>
               <p className="text-muted-foreground leading-relaxed">
                 We are strongly devoted to defending the privacy of your personal information. We have established this Privacy Policy to inform you of the type of personal information we may collect throughout your visit to our Website, why we collect your information, what we use your personal information for, when we may provide your personal information, and how you can control your personal information.
@@ -69,7 +69,7 @@ export default function PrivacyPolicyPage() {
               <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-xl">
                 <p className="text-sm text-muted-foreground">
                   <span className="font-semibold text-primary">Questions?</span> If you have any inquiries about this Privacy Policy, please contact us at{' '}
-                  <a href="mailto:info@eaglerevolution.com" className="text-primary hover:underline">info@eaglerevolution.com</a>
+                  <a href="mailto:info@lightsovercolumbus.com" className="text-primary hover:underline">info@lightsovercolumbus.com</a>
                 </p>
               </div>
             </div>
@@ -78,20 +78,20 @@ export default function PrivacyPolicyPage() {
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
               <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">What Information Is Collected and Stored?</h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Eagle Revolution adheres to the uppermost standards of ethical practices in all of our processes and is devoted to protecting the privacy of all users of our Website. Our privacy policy is straightforward: Except as revealed below, we don't sell, barter, deliver or rent your personal information to any organization or individual external of Eagle Revolution.
+                Christmas Lights Over Columbus adheres to the highest standards of ethical practices in all of our processes and is devoted to protecting the privacy of all users of our Website. Our privacy policy is straightforward: Except as revealed below, we don't sell, barter, deliver or rent your personal information to any organization or individual outside of Christmas Lights Over Columbus.
               </p>
               
               <h3 className="text-lg font-semibold text-foreground mt-6 mb-3">Personal Information</h3>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                We accumulate and store information that you enter into this Website or that you supply through our Customer Service Department. For instance, when you create an account or place an order, we accumulate and store some or all of the subsequent information that you supply: name, billing address, shipping address, email address, telephone number, credit card number, and expiration date.
+                We accumulate and store information that you enter into this Website or that you supply through our Customer Service Department. For instance, when you submit a quote request or contact us, we accumulate and store information that you supply: name, address, email address, telephone number, and project requirements.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                This information is used to make available the products and services that you have ordered or requested, to process and ship orders, to mail order and shipping confirmations, and to supply customer service.
+                This information is used to make available the lighting services and estimates that you have requested and to supply customer service.
               </p>
 
               <h3 className="text-lg font-semibold text-foreground mt-6 mb-3">Anonymous Information</h3>
               <p className="text-muted-foreground leading-relaxed">
-                During your use of the Website, we may possibly collect certain information that does not recognize you independently ("Anonymous Information"). Usually, this information is gathered from "traffic data". We accumulate and store certain other information repeatedly whenever you interact with this Website, including your IP address, browser information, and reference site domain name.
+                During your use of the Website, we may collect certain information that does not recognize you independently ("Anonymous Information") to monitor site performance and improve user experience.
               </p>
             </div>
 
@@ -99,26 +99,7 @@ export default function PrivacyPolicyPage() {
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
               <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">Use of Cookies</h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                We in no way apply or install spyware on your computer, nor do we utilize spyware to recover information from your computer. In addition, like several Websites, we apply "cookies", which are records stored on your computer's hard drive by your browser.
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                Cookies allow us to recognize account owners and optimize their shopping experience. The majority of browsers recognize cookies by design but allow you to stop them. We advise that you keep cookies "turned on" so that we are able to provide you with a user-friendly online experience on this Website.
-              </p>
-            </div>
-
-            {/* Newsletter */}
-            <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">Our Newsletter & Email List</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                We gather e-mail addresses and zip codes of all consumers who subscribe to our newsletter. Not including our third-party representatives, this information is not publicized with any third parties for any reason. Any person who does not want to obtain this newsletter can, at any time, follow the "Unsubscribe" directions contained in every newsletter.
-              </p>
-            </div>
-
-            {/* Children's Privacy */}
-            <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">Information Collected From Children</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                We do not sell or ship anything ordered from this Website directly to anyone who we know to be under the age of 13, nor do we collect any personal information from a person who we identify to be under 13 years old. If you are under the age of 13, you ought to utilize this Website only with the participation of a parent or guardian and must not surrender any personal information to us.
+                We in no way apply or install spyware on your computer. We may use standard browser cookies to improve your browsing experience and remember preferences.
               </p>
             </div>
 
@@ -131,26 +112,9 @@ export default function PrivacyPolicyPage() {
               <div className="space-y-3 text-muted-foreground">
                 <p>Consent is not a condition of purchase. Message frequency varies. Message & data rates may apply.</p>
                 <p>You can opt out at any time by replying STOP or reply HELP for more info.</p>
-                <p>By clicking "Submit," I agree with Eagle Revolution Terms of Service.</p>
+                <p>By clicking "Submit," I agree with Christmas Lights Over Columbus Terms of Service.</p>
                 <p className="text-sm">Reply STOP to stop receiving messages from us. Reply HELP for more information.</p>
-                <p className="text-sm">You will receive no further messages from us. If this was an error reply UNSTOP to continue receiving messages.</p>
               </div>
-            </div>
-
-            {/* Opt-Out */}
-            <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">Opt-Out and Correction Procedures</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                You can at any time opt-out of getting potential e-mails and newsletters. We offer you the option to opt out of getting communications from us at the point where we ask for information concerning you. When you initiate an account or place an order, you will have an opportunity to make your selections in this regard. You also will have an opportunity to change these selections by following the "unsubscribe" instructions contained in the promotional emails we send you.
-              </p>
-            </div>
-
-            {/* Changes to Policy */}
-            <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">Changes to This Policy</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                As our Website keeps developing, we possibly will add new services and features to our Website. On the occasion that these added extras influence our Privacy Policy, this manuscript will be revised aptly. We will place those revisions significantly so that you will constantly identify what information we collect, how we could apply that information, and whether we will reveal it.
-              </p>
             </div>
 
             {/* Contact */}
@@ -161,17 +125,17 @@ export default function PrivacyPolicyPage() {
                 Questions regarding this Privacy Policy should be directed to our Customer Service.
               </p>
               <a 
-                href="mailto:info@eaglerevolution.com" 
+                href="mailto:info@lightsovercolumbus.com" 
                 className="inline-flex items-center gap-2 text-primary hover:underline font-semibold"
               >
-                info@eaglerevolution.com
+                info@lightsovercolumbus.com
                 <Icon name="ArrowRight" className="w-4 h-4" />
               </a>
             </div>
 
             {/* Footer Note */}
             <p className="text-center text-xs text-muted-foreground/60 pt-8">
-              © {new Date().getFullYear()} Eagle Revolution. All rights reserved.
+              © {new Date().getFullYear()} Christmas Lights Over Columbus. All rights reserved.
             </p>
           </motion.div>
         </div>

@@ -1,6 +1,6 @@
-// BrandStore.tsx - Fixed with proper contrast
+// BrandStore.tsx - Christmas Lights Over Columbus Collection
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Icon } from "../config/icons";
 
 export default function BrandStore() {
@@ -11,10 +11,7 @@ export default function BrandStore() {
         offset: ["start end", "end start"]
     });
 
-    const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-    const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
-
-    const storeUrl = "https://gbrandusa.chipply.com/eaglerevolution/?action=viewall";
+    const storeUrl = "/contact-us";
 
     return (
         <section
@@ -40,7 +37,7 @@ export default function BrandStore() {
             />
 
             <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
-                {/* Premium Badge - Fixed contrast */}
+                {/* Premium Badge */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -52,10 +49,10 @@ export default function BrandStore() {
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
                     </span>
-                    <span className="text-xs font-bold tracking-[0.15em] uppercase text-primary">Official Store • Limited Collection</span>
+                    <span className="text-xs font-bold tracking-[0.15em] uppercase text-primary">Holiday Lighting • Custom Packages</span>
                 </motion.div>
 
-                {/* Main Headline - Fixed visibility */}
+                {/* Main Headline */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
@@ -70,13 +67,13 @@ export default function BrandStore() {
                         transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
                         className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter"
                     >
-                        <span className="text-foreground">REP THE</span>
+                        <span className="text-foreground">BRIGHTEN THE</span>
                         <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">REVOLUTION</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">SEASON</span>
                     </motion.h2>
                 </motion.div>
 
-                {/* Subtitle - Fixed contrast */}
+                {/* Subtitle */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
@@ -91,13 +88,13 @@ export default function BrandStore() {
                         transition={{ duration: 0.6, delay: 0.3, ease: [0.33, 1, 0.68, 1] }}
                         className="text-card-foreground/70 text-base md:text-lg max-w-lg mx-auto"
                     >
-                        Premium hoodies • Tees • Hats • Bags
+                        Custom Roofline Lights • Tree & Shrub Wraps • Commercial Grade
                         <br />
-                        Made to order • Veteran owned
+                        Professional Installation & Maintenance in Columbus, OH
                     </motion.p>
                 </motion.div>
 
-                {/* CTA Button - Fixed hover effect */}
+                {/* CTA Button */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -106,20 +103,16 @@ export default function BrandStore() {
                 >
                     <motion.a
                         href={storeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.98 }}
-                        className="group relative inline-flex items-center gap-3 px-10 py-4 bg-primary text-white hover:text-white font-bold rounded-full  transition-all duration-300 text-base"
+                        className="group relative inline-flex items-center gap-3 px-10 py-4 bg-primary text-white hover:text-white font-bold rounded-full transition-all duration-300 text-base"
                     >
-                        <span>Shop Official Gear</span>
+                        <span>Get Free Quote</span>
                         <Icon name="ArrowRight" className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </motion.a>
                 </motion.div>
 
-
-
-                {/* Scroll indicator - Now visible */}
+                {/* Scroll indicator */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}

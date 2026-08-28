@@ -122,7 +122,7 @@ export default function SeoEditor({ data, setData, pageSlug, pageTitle, pageCont
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
                     <label className="text-[12px] font-bold text-[#1d2327] uppercase tracking-wide">Focus Keyword</label>
-                    <input type="text" value={data.focusKeyword || ""} onChange={(e) => updateField('focusKeyword', e.target.value)} className="w-full border border-[#c3c4c7] px-3 py-2 text-[14px] rounded-[3px] focus:border-[#2271b1] focus:ring-1 focus:ring-[#2271b1] outline-none" placeholder="e.g. roofing st louis" />
+                    <input type="text" value={data.focusKeyword || ""} onChange={(e) => updateField('focusKeyword', e.target.value)} className="w-full border border-[#c3c4c7] px-3 py-2 text-[14px] rounded-[3px] focus:border-[#2271b1] focus:ring-1 focus:ring-[#2271b1] outline-none" placeholder="e.g. christmas lights columbus" />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[12px] font-bold text-[#1d2327] uppercase tracking-wide">Secondary Keywords</label>
@@ -255,7 +255,7 @@ export default function SeoEditor({ data, setData, pageSlug, pageTitle, pageCont
           <div className="space-y-4">
             <h3 className="text-[10px] font-bold text-[#646970] uppercase tracking-wider">Search Preview</h3>
             <div className="bg-white border border-[#c3c4c7] p-4 rounded-[3px] shadow-sm space-y-1">
-              <div className="text-[11px] text-[#4d5156] line-clamp-1">eaglerevolution.com › {pageSlug}</div>
+              <div className="text-[11px] text-[#4d5156] line-clamp-1">lightsovercolumbus.com › {pageSlug}</div>
               <h4 className="text-[15px] text-[#1a0dab] hover:underline cursor-pointer font-normal line-clamp-1">
                 {data.metaTitle || pageTitle}
               </h4>
@@ -271,7 +271,7 @@ export default function SeoEditor({ data, setData, pageSlug, pageTitle, pageCont
                 {data.ogImage ? <img src={data.ogImage} className="w-full h-full object-cover" /> : <ImageIcon className="w-6 h-6 text-[#c3c4c7]" />}
               </div>
               <div className="p-3 border-t border-[#f0f0f1]">
-                <div className="text-[9px] text-[#646970] uppercase font-bold">eaglerevolution.com</div>
+                <div className="text-[9px] text-[#646970] uppercase font-bold">lightsovercolumbus.com</div>
                 <div className="text-[13px] font-bold text-[#1d2327] line-clamp-1">{data.ogTitle || data.metaTitle || pageTitle}</div>
               </div>
             </div>

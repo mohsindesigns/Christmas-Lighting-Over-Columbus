@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
-import AggressiveRoofingSection from "@/components/RoofingExperts";
+import ChristmasLightingSection from "@/components/ChristmasLightingSection";
 import Services from "@/components/Services";
 
 
@@ -23,8 +23,8 @@ export default function HomeTemplate({ pageData, params }: { pageData?: any, par
   return (
     <div className="relative">
       <Hero />
-      <section id="roofingexperts">
-        <AggressiveRoofingSection />
+      <section id="christmas-lighting">
+        <ChristmasLightingSection />
       </section>
       <section id="services">
         <Services />

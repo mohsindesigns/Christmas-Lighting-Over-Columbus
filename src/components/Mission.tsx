@@ -22,11 +22,11 @@ const Mission = () => {
       <div className="grid-editorial items-center">
         <div className="md:col-span-5 order-2 md:order-1">
           <div className="mission-image overflow-hidden aspect-[3/4] relative">
-            <Image src={teamImage} alt="Eagle Revolution team at work" className="object-cover" fill quality={100} />
+            <Image src={teamImage} alt="Christmas Lights Over Columbus team at work" className="object-cover" fill quality={100} />
             <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6 bg-primary/90 backdrop-blur-sm p-5 border border-primary-foreground/10">
               <div className="grid grid-cols-3 gap-4">
-                {[{ num: "500+", label: "Projects" }, { num: "50+", label: "Years Combined" }, { num: "100%", label: "Insured" }].map((stat) => (
+                {[{ num: "500+", label: "Projects" }, { num: "10+", label: "Years Experience" }, { num: "100%", label: "Insured" }].map((stat) => (
                   <div key={stat.label} className="text-center">
                     <span className="block font-heading text-primary-foreground text-lg font-medium">{stat.num}</span>
                     <span className="font-body text-primary-foreground/80 text-[10px] uppercase tracking-wider">{stat.label}</span>
@@ -39,11 +39,11 @@ const Mission = () => {
 
         <div className="md:col-span-6 md:col-start-7 order-1 md:order-2">
           <div className="accent-line mb-6 mission-copy" />
-          <h2 className="heading-lg text-foreground mb-8 mission-headline">Soaring Beyond<br />Expectations.</h2>
+          <h2 className="heading-lg text-foreground mb-8 mission-headline">Lighting Up<br />Your Holidays.</h2>
           <div className="space-y-6">
-            <p className="body-lg text-foreground/90 mission-copy">Eagle Revolution was founded to do more than just build roofs, windows, decks, and siding. We are here to build a movement.</p>
-            <p className="body-sm text-muted-foreground mission-copy">Born in St. Charles, Missouri, Eagle Revolution was launched by Brandon Anderson, a U.S. Army veteran who brings battlefield discipline and boardroom precision to every project.</p>
-            <p className="body-sm text-muted-foreground mission-copy italic border-l-2 border-primary/30 pl-4">"We don't just build homes. We restore trust, craftsmanship, and honor to the remodeling industry."</p>
+            <p className="body-lg text-foreground/90 mission-copy">Christmas Lights Over Columbus was founded to create enchanting holiday displays and joyful memories for families and businesses.</p>
+            <p className="body-sm text-muted-foreground mission-copy">Based in Columbus, Ohio, our dedicated team brings professional design, flawless commercial-grade installations, and turnkey takedown & storage to every property.</p>
+            <p className="body-sm text-muted-foreground mission-copy italic border-l-2 border-primary/30 pl-4">"We don't just hang lights. We craft unforgettable holiday experiences with unmatched reliability and care."</p>
           </div>
         </div>
       </div>

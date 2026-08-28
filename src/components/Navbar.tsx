@@ -34,7 +34,7 @@ const Navbar = () => {
 
   // Dynamic values with elegant fallbacks
   const logoSrc = navbar?.logo || "/images/mainlogo.png";
-  const siteTitle = settings?.siteTitle || navbar?.siteTitle || "Luminous Holiday";
+  const siteTitle = settings?.siteTitle || navbar?.siteTitle || "Christmas Lights Over Columbus";
   const phone = navbar?.phone || settings?.phone || "(614) 301-7100";
   const email = navbar?.email || settings?.email || "Info@lightsovercolumbus.com";
   const ctaText = navbar?.ctaText || `Call Now ${phone}`;

@@ -38,21 +38,18 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(BASE_URL),
     icons: {
-      icon: settings.favicon || `${BASE_URL}/eagle-logo.png`,
-      apple: settings.favicon || `${BASE_URL}/eagle-logo.png`,
-    },
-    facebook: {
-      appId: "Eagle-Revolution-61564977483096",
+      icon: settings.favicon || `${BASE_URL}/images/logo.png`,
+      apple: settings.favicon || `${BASE_URL}/images/logo.png`,
     },
     title: {
-      default: settings.siteTitle,
-      template: settings.siteTemplate,
+      default: settings.siteTitle || "Christmas Lights Over Columbus",
+      template: settings.siteTemplate || "%s | Christmas Lights Over Columbus",
     },
-    description: settings.siteDescription,
-    keywords: settings.siteKeywords || ["Eagle Revolution"],
-    authors: [{ name: "Eagle Revolution", url: BASE_URL }],
-    creator: "Eagle Revolution",
-    publisher: "Eagle Revolution",
+    description: settings.siteDescription || "Professional Christmas & Holiday Light Installation in Columbus, OH.",
+    keywords: settings.siteKeywords || ["Christmas Lights Over Columbus", "Holiday Lighting Columbus OH", "Christmas light installation Columbus"],
+    authors: [{ name: "Christmas Lights Over Columbus", url: BASE_URL }],
+    creator: "Christmas Lights Over Columbus",
+    publisher: "Christmas Lights Over Columbus",
 
     // ── Robots & Canonical ──
     robots: {
@@ -71,15 +68,15 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       locale: "en_US",
       url: BASE_URL,
-      siteName: "Eagle Revolution",
-      title: settings.siteTitle,
-      description: settings.siteDescription,
+      siteName: "Christmas Lights Over Columbus",
+      title: settings.siteTitle || "Christmas Lights Over Columbus",
+      description: settings.siteDescription || "Professional Christmas & Holiday Light Installation in Columbus, OH.",
       images: [
         {
-          url: settings.favicon || `${BASE_URL}/eagle-logo.png`,
+          url: settings.favicon || `${BASE_URL}/images/logo.png`,
           width: 1200,
           height: 630,
-          alt: "Eagle Revolution – Veteran Owned Roofing & Home Improvement",
+          alt: "Christmas Lights Over Columbus",
           type: "image/png",
         },
       ],
@@ -88,11 +85,11 @@ export async function generateMetadata(): Promise<Metadata> {
     // ── Twitter Cards ──
     twitter: {
       card: "summary_large_image",
-      title: settings.siteTitle,
-      description: settings.siteDescription,
-      images: [settings.favicon || `${BASE_URL}/eagle-logo.png`],
-      creator: "@EagleRevolution",
-      site: "@EagleRevolution",
+      title: settings.siteTitle || "Christmas Lights Over Columbus",
+      description: settings.siteDescription || "Professional Christmas & Holiday Light Installation in Columbus, OH.",
+      images: [settings.favicon || `${BASE_URL}/images/logo.png`],
+      creator: "@LightsOverColumbus",
+      site: "@LightsOverColumbus",
     },
 
     other: {

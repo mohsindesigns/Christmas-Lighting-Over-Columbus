@@ -123,7 +123,7 @@ export default function Leadership() {
                     />
                   ) : (
                     <Image
-                      src={ceo.image?.src || "/eagle-logo.png"}
+                      src={ceo.image?.src || "/images/logo.png"}
                       alt={ceo.alt || ceo.name || "CEO"}
                       className="object-cover"
                       fill

@@ -22,18 +22,17 @@ export function generateSchema(options: SchemaOptions) {
   const organizationSchema = {
     "@type": "Organization",
     "@id": `${BASE_URL}/#organization`,
-    "name": "Eagle Revolution",
+    "name": "Christmas Lights Over Columbus",
     "url": BASE_URL,
     "logo": {
       "@type": "ImageObject",
-      "url": `${BASE_URL}/eagle-logo.png`,
+      "url": `${BASE_URL}/images/logo.png`,
       "width": 512,
       "height": 512
     },
     "sameAs": [
-      "https://www.facebook.com/eaglerevolution",
-      "https://www.instagram.com/eaglerevolution",
-      "https://www.linkedin.com/company/eaglerevolution"
+      "https://www.facebook.com/lightsovercolumbus",
+      "https://www.instagram.com/lightsovercolumbus"
     ]
   };
 
@@ -41,33 +40,33 @@ export function generateSchema(options: SchemaOptions) {
   const localBusinessSchema = {
     "@type": "LocalBusiness",
     "@id": `${BASE_URL}/#localbusiness`,
-    "name": "Eagle Revolution",
-    "image": `${BASE_URL}/eagle-logo.png`,
-    "telePhone": "636-449-9714",
-    "email": "banderson@eaglerevolution.com",
+    "name": "Christmas Lights Over Columbus",
+    "image": `${BASE_URL}/images/logo.png`,
+    "telephone": "(614) 301-7100",
+    "email": "info@lightsovercolumbus.com",
     "url": BASE_URL,
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "1077 E Terra Ln",
-      "addressLocality": "O'fallon",
-      "addressRegion": "MO",
-      "postalCode": "63366",
+      "addressLocality": "Columbus",
+      "addressRegion": "OH",
+      "postalCode": "43215",
       "addressCountry": "US"
     },
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": 38.8105,
-      "longitude": -90.6998
+      "latitude": 39.9612,
+      "longitude": -82.9988
     },
     "areaServed": [
-      { "@type": "AdministrativeArea", "name": "St. Louis County" },
-      { "@type": "AdministrativeArea", "name": "St. Louis City" },
-      { "@type": "AdministrativeArea", "name": "St. Charles County" },
-      { "@type": "AdministrativeArea", "name": "Jefferson County" },
-      { "@type": "AdministrativeArea", "name": "Franklin County" },
-      { "@type": "AdministrativeArea", "name": "Saint Clair County" },
-      { "@type": "AdministrativeArea", "name": "Monroe County" },
-      { "@type": "AdministrativeArea", "name": "Madison County" }
+      { "@type": "City", "name": "Columbus" },
+      { "@type": "City", "name": "Dublin" },
+      { "@type": "City", "name": "Powell" },
+      { "@type": "City", "name": "New Albany" },
+      { "@type": "City", "name": "Upper Arlington" },
+      { "@type": "City", "name": "Westerville" },
+      { "@type": "City", "name": "Hilliard" },
+      { "@type": "City", "name": "Worthington" },
+      { "@type": "City", "name": "Gahanna" }
     ],
     "priceRange": "$$"
   };
@@ -77,7 +76,7 @@ export function generateSchema(options: SchemaOptions) {
     "@type": "WebSite",
     "@id": `${BASE_URL}/#website`,
     "url": BASE_URL,
-    "name": "Eagle Revolution",
+    "name": "Christmas Lights Over Columbus",
     "publisher": { "@id": `${BASE_URL}/#organization` }
   };
 

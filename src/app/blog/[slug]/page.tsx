@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       modifiedTime: (post.updatedAt || post.publishedAt)?.toISOString(),
       images: [
         {
-          url: post.seo?.ogImage || post.featuredImage || `${BASE_URL}/eagle-logo.png`,
+          url: post.seo?.ogImage || post.featuredImage || `${BASE_URL}/images/logo.png`,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -52,9 +52,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title: post.seo?.ogTitle || post.title,
       description: post.seo?.ogDescription || post.excerpt,
-      images: [post.seo?.ogImage || post.featuredImage || `${BASE_URL}/eagle-logo.png`],
-      site: "@EagleRevolution",
-      creator: "@EagleRevolution",
+      images: [post.seo?.ogImage || post.featuredImage || `${BASE_URL}/images/logo.png`],
+      site: "@LightsOverColumbus",
+      creator: "@LightsOverColumbus",
     },
     robots: {
       index: post.seo?.metaRobotsIndex !== 'noindex',
@@ -252,7 +252,7 @@ export default async function BlogPostPage({ params }: Props) {
                 </div>
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-1 block">Article Strategist</span>
-                  <h4 className="text-xl font-bold text-slate-900 leading-tight">{post.author?.name || 'Eagle Revolution'}</h4>
+                  <h4 className="text-xl font-bold text-slate-900 leading-tight">{post.author?.name || 'Christmas Lights Over Columbus'}</h4>
                   <p className="text-slate-500 text-sm mt-0.5">Industry Expert & Lead Contributor</p>
                 </div>
               </div>
@@ -345,7 +345,7 @@ export default async function BlogPostPage({ params }: Props) {
                 <div className="bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden group shadow-2xl">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/20 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 group-hover:bg-blue-600/40 transition-colors duration-700" />
                   <h4 className="text-2xl text-white mb-3 relative z-10">Expert Opinion</h4>
-                  <p className="text-slate-400 text-sm mb-8 leading-relaxed relative z-10">Get a professional consultation for your roofing project today.</p>
+                  <p className="text-slate-400 text-sm mb-8 leading-relaxed relative z-10">Get a professional consultation for your holiday lighting project today.</p>
                   <Link href="/contact-us" className="block w-full bg-blue-600 py-4 rounded-2xl text-center font-bold text-sm hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 relative z-10 group/btn">
                     Get Free Quote <ArrowRight className="inline-block w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                   </Link>

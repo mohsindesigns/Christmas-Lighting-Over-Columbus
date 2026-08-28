@@ -50,18 +50,18 @@ export default function TermsPage() {
                 1. Introduction
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Welcome to Eagle Revolution. By accessing or using our website, services, or products, you agree to be bound by these Terms and Conditions.
+                Welcome to Christmas Lights Over Columbus. By accessing or using our website, services, or products, you agree to be bound by these Terms and Conditions.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Eagle Revolution provides both <span className="text-primary font-medium">roofing and exterior remodeling services</span> (primary business) and <span className="text-primary font-medium">branded merchandise</span> (secondary business). These Terms apply to both our services and products.
+                Christmas Lights Over Columbus provides <span className="text-primary font-medium">professional residential and commercial holiday lighting design, installation, maintenance, takedown, and storage services</span>. These Terms apply to all our services and interactions.
               </p>
             </div>
 
-            {/* Roofing Services */}
+            {/* Holiday Lighting Services */}
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
               <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
                 <Icon name="Home" className="w-5 h-5 text-primary" />
-                2. Roofing & Exterior Services
+                2. Lighting & Installation Services
               </h2>
               
               <h3 className="text-lg font-semibold text-foreground mt-4 mb-2">2.1 Service Estimates</h3>
@@ -72,11 +72,11 @@ export default function TermsPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Final pricing may vary based on actual job conditions discovered during work</span>
+                  <span>Final pricing may vary based on actual layout or electrical requirements discovered on site</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>A written contract will be provided before any work begins</span>
+                  <span>A written quote and scope of work will be provided before installation begins</span>
                 </li>
               </ul>
 
@@ -84,151 +84,27 @@ export default function TermsPage() {
               <ul className="space-y-2 text-muted-foreground mb-4">
                 <li className="flex items-start gap-2">
                   <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>A deposit may be required before work commences</span>
+                  <span>A deposit or schedule reservation may be required before work commences</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Final payment is due upon completion of work</span>
+                  <span>Final payment is due upon completion of installation</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Accepted payment methods: Cash, Check, Credit Card, Financing (if available)</span>
+                  <span>Accepted payment methods: Credit Card, Debit Card, Check, Electronic Transfer</span>
                 </li>
               </ul>
 
-              <h3 className="text-lg font-semibold text-foreground mt-4 mb-2">2.3 Warranties</h3>
+              <h3 className="text-lg font-semibold text-foreground mt-4 mb-2">2.3 Maintenance & Season Support</h3>
               <ul className="space-y-2 text-muted-foreground mb-4">
                 <li className="flex items-start gap-2">
                   <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Workmanship warranty details are specified in your service contract</span>
+                  <span>Complimentary in-season bulb and timer maintenance is included with all full-service installations</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Material warranties are provided by the manufacturer</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Warranty claims must be reported in writing within the warranty period</span>
-                </li>
-              </ul>
-
-              <h3 className="text-lg font-semibold text-foreground mt-4 mb-2">2.4 Cancellation & Refunds</h3>
-              <ul className="space-y-2 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>You may cancel services within 3 business days of signing the contract</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Cancellation after materials have been ordered may incur restocking fees</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Completed work is non-refundable</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Merchandise */}
-            <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
-                <Icon name="ShoppingBag" className="w-5 h-5 text-primary" />
-                3. Branded Merchandise
-              </h2>
-              
-              <h3 className="text-lg font-semibold text-foreground mt-4 mb-2">3.1 Made-to-Order Products</h3>
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                All merchandise (hoodies, tees, hats, bags, etc.) is made-to-order. Each item is custom crafted specifically for you upon purchase.
-              </p>
-              <ul className="space-y-2 text-muted-foreground mb-4">
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Product images are for illustration purposes; actual products may vary slightly</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Please allow 7-14 business days for production and shipping</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>For fastest turnaround, order by Sunday at 11:59 PM</span>
-                </li>
-              </ul>
-
-              <h3 className="text-lg font-semibold text-foreground mt-4 mb-2">3.2 Returns & Refunds</h3>
-              <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-4">
-                <p className="text-primary font-semibold text-sm flex items-center gap-2">
-                  <Icon name="AlertCircle" className="w-4 h-4" />
-                  Important Notice
-                </p>
-                <p className="text-muted-foreground text-sm mt-1">
-                  All sales are final due to the made-to-order nature of our products. This ensures each item is crafted specifically for you.
-                </p>
-              </div>
-              <ul className="space-y-2 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Exceptions may be made for defective or damaged products</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Defective items must be reported within 7 days with photo evidence</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Refunds for approved defects will be processed within 7-10 business days</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Orders & Payment */}
-            <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
-                <Icon name="CreditCard" className="w-5 h-5 text-primary" />
-                4. Orders & Payment
-              </h2>
-              <ul className="space-y-2 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Payment is due at the time of order for merchandise</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>We accept major credit cards and other payment methods as provided by our payment processor</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Order confirmation will be sent via email after purchase</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>We reserve the right to refuse or cancel any order for any reason</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Shipping */}
-            <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
-                <Icon name="Truck" className="w-5 h-5 text-primary" />
-                5. Shipping & Delivery
-              </h2>
-              <ul className="space-y-2 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Tracking information will be provided once your order ships</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Eagle Revolution is not responsible for delays caused by carriers or customs</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Shipping costs are calculated at checkout</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="Check" className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Risk of loss passes to you upon delivery to the carrier</span>
+                  <span>Prompt response times for any weather-related outages or issues</span>
                 </li>
               </ul>
             </div>
@@ -237,10 +113,10 @@ export default function TermsPage() {
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
               <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
                 <Icon name="Copyright" className="w-5 h-5 text-primary" />
-                6. Intellectual Property
+                3. Intellectual Property
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                All content on this website, including but not limited to text, graphics, logos, images, and software, is the property of Eagle Revolution and is protected by United States copyright and trademark laws. You may not reproduce, distribute, or create derivative works without our express written permission.
+                All content on this website, including but not limited to text, graphics, logos, images, and software, is the property of Christmas Lights Over Columbus and is protected by United States copyright and trademark laws. You may not reproduce, distribute, or create derivative works without our express written permission.
               </p>
             </div>
 
@@ -248,10 +124,10 @@ export default function TermsPage() {
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
               <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
                 <Icon name="Shield" className="w-5 h-5 text-primary" />
-                7. Limitation of Liability
+                4. Limitation of Liability
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                To the fullest extent permitted by law, Eagle Revolution shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of our website, services, or products. Our total liability shall not exceed the amount you paid to us.
+                To the fullest extent permitted by law, Christmas Lights Over Columbus shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of our website or services. Our total liability shall not exceed the amount you paid to us.
               </p>
             </div>
 
@@ -259,10 +135,10 @@ export default function TermsPage() {
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
               <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
                 <Icon name="Globe" className="w-5 h-5 text-primary" />
-                8. Governing Law
+                5. Governing Law
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                These Terms shall be governed by and construed in accordance with the laws of the United States. Any legal action arising out of these Terms shall be brought exclusively in the courts located in the United States.
+                These Terms shall be governed by and construed in accordance with the laws of the State of Ohio and the United States. Any legal action arising out of these Terms shall be brought exclusively in the courts located in Franklin County, Ohio.
               </p>
             </div>
 
@@ -270,18 +146,18 @@ export default function TermsPage() {
             <div className="bg-gradient-to-r from-primary/5 via-card to-primary/5 rounded-2xl border border-primary/20 p-6 md:p-8">
               <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
                 <Icon name="MessageCircle" className="w-5 h-5 text-primary" />
-                9. SMS/Text Messaging Terms
+                6. SMS/Text Messaging Terms
               </h2>
               <div className="space-y-3 text-muted-foreground text-sm">
-                <p>By providing your phone number, you consent to receive SMS messages from Eagle Revolution regarding:</p>
+                <p>By providing your phone number, you consent to receive SMS messages from Christmas Lights Over Columbus regarding:</p>
                 <ul className="space-y-2 ml-4">
                   <li className="flex items-start gap-2">
                     <Icon name="Check" className="w-3 h-3 text-primary mt-1 flex-shrink-0" />
-                    <span>Service updates and appointment reminders (roofing customers)</span>
+                    <span>Installation scheduling, service updates, and appointment reminders</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Icon name="Check" className="w-3 h-3 text-primary mt-1 flex-shrink-0" />
-                    <span>Order confirmations and shipping updates (merchandise customers)</span>
+                    <span>Takedown scheduling and annual renewal notifications</span>
                   </li>
                 </ul>
                 <p className="mt-3">Message frequency varies. Message and data rates may apply.</p>
@@ -298,17 +174,17 @@ export default function TermsPage() {
                 If you have any questions about these Terms & Conditions, please contact us:
               </p>
               <a 
-                href="mailto:info@eaglerevolution.com" 
+                href="mailto:info@lightsovercolumbus.com" 
                 className="inline-flex items-center gap-2 text-primary hover:underline font-semibold"
               >
-                info@eaglerevolution.com
+                info@lightsovercolumbus.com
                 <Icon name="ArrowRight" className="w-4 h-4" />
               </a>
             </div>
 
             {/* Footer */}
             <p className="text-center text-xs text-muted-foreground/60 pt-8">
-              © {new Date().getFullYear()} Eagle Revolution. All rights reserved.
+              © {new Date().getFullYear()} Christmas Lights Over Columbus. All rights reserved.
             </p>
           </motion.div>
         </div>
