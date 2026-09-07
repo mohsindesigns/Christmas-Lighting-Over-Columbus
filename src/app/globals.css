@@ -1030,4 +1030,42 @@
   border-color: rgba(255, 255, 255, 0.25);
 }
 
+/* ── Authentic Commercial C9 Luminescent Light Wave (Zero Scale, Pure Light Glow) ── */
+@keyframes commercialBulbWave {
+  0%, 100% {
+    opacity: 0.5;
+    filter: brightness(0.8) drop-shadow(0 0 5px var(--bulb-glow, rgba(239, 68, 68, 0.5)));
+  }
+  35% {
+    opacity: 1;
+    filter: brightness(1.75) drop-shadow(0 0 16px var(--bulb-glow, rgba(239, 68, 68, 0.95))) drop-shadow(0 0 28px var(--bulb-glow, rgba(239, 68, 68, 0.8)));
+  }
+  70% {
+    opacity: 0.65;
+    filter: brightness(0.95) drop-shadow(0 0 7px var(--bulb-glow, rgba(239, 68, 68, 0.6)));
+  }
+}
+
+.animate-bulb-sync-wave {
+  animation: commercialBulbWave 2.6s ease-in-out infinite;
+}
+
+/* ── Calendar Page Flip Upside Down 3D Styles ── */
+.perspective-calendar {
+  perspective: 700px;
+  -webkit-perspective: 700px;
+}
+
+.calendar-leaf {
+  transform-origin: bottom center;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+
 
