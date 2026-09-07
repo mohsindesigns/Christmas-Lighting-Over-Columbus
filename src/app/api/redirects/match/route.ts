@@ -9,7 +9,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Missing url parameter' }, { status: 400 });
     }
 
-    await connectToDatabase();
+    const conn = await connectToDatabase();
+    if (!conn) {
+      return NextResponse.json({ status: 'no_match' });
+    }
     const redirects = await Redirect.find({ status: 'active' }).lean();
 
     // Parse the requested URL (the path and search query to match)

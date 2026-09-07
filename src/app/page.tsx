@@ -12,8 +12,15 @@ import ServiceDetailTemplate from "@/components/templates/ServiceDetailTemplate"
 import { BASE_URL } from "@/lib/constants";
 
 export async function generateMetadata(): Promise<Metadata> {
-  await connectToDatabase();
-  const content = await SiteContent.findOne({ key: "complete_data" }).lean() as any;
+  let content: any = null;
+  try {
+    const conn = await connectToDatabase();
+    if (conn) {
+      content = await SiteContent.findOne({ key: "complete_data" }).lean() as any;
+    }
+  } catch (e) {
+    console.error("Failed to query SiteContent in generateMetadata:", e);
+  }
   const settings = content?.data?.settings;
   const homepageId = settings?.homepageId;
 
@@ -129,8 +136,16 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Index() {
-  await connectToDatabase();
-  const content = await SiteContent.findOne({ key: "complete_data" }).lean() as any;
+  let content: any = null;
+  let conn: any = null;
+  try {
+    conn = await connectToDatabase();
+    if (conn) {
+      content = await SiteContent.findOne({ key: "complete_data" }).lean() as any;
+    }
+  } catch (e) {
+    console.error("Failed to query SiteContent in Index:", e);
+  }
   const settings = content?.data?.settings;
   const homepageId = settings?.homepageId;
 
@@ -141,7 +156,7 @@ export default async function Index() {
     (item.visibility === 'specific' && item.targetPages?.includes('home'))
   );
 
-  if (homepageId) {
+  if (conn && homepageId) {
     // Check if it's a page
     // Check if it's a page and ensure it's published and not trashed
     const pageDoc = await Page.findOne({ 

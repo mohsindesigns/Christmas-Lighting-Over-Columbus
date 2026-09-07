@@ -5,6 +5,7 @@ import { FaArrowRight } from 'react-icons/fa';
 import { HiOutlineSparkles } from 'react-icons/hi';
 import Image from 'next/image';
 import { useContent } from '../hooks/useContent';
+import ChristmasCountdown from './ChristmasCountdown';
 
 const Hero = () => {
   const content = useContent();
@@ -102,7 +103,7 @@ const Hero = () => {
   return (
     <section
       ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden px-3 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 lg:py-24"
     >
       {/* Ultra-immersive background */}
       <div className="absolute inset-0 z-0">
@@ -154,7 +155,7 @@ const Hero = () => {
       </div>
 
       {/* Christmas Trees - Bottom Corners */}
-      <div className="absolute bottom-0 left-0 z-40 pointer-events-none">
+      <div className="absolute bottom-0 left-0 z-20 pointer-events-none">
         <div
           ref={leftTreeRef}
           className="will-change-transform"
@@ -184,7 +185,7 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-0 right-0 z-40 pointer-events-none">
+      <div className="absolute bottom-0 right-0 z-20 pointer-events-none">
         <div
           ref={rightTreeRef}
           className="will-change-transform"
@@ -249,19 +250,24 @@ const Hero = () => {
           </p>
 
           {/* CTA Button */}
-          <div className="animate-fade-up animation-delay-800 w-full px-3 sm:px-0">
+          <div className="animate-fade-up animation-delay-600 w-full px-3 sm:px-0 mb-4 sm:mb-6">
             <a
               href={ctaLink}
               onClick={handleCtaClick}
-              className="relative overflow-hidden group inline-flex items-center justify-center px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 bg-gradient-to-r from-yellow-500 to-red-500 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base md:text-lg w-auto min-w-[140px] sm:min-w-[160px] md:min-w-[180px] cursor-pointer"
+              className="relative overflow-hidden group inline-flex items-center justify-center px-6 sm:px-8 md:px-10 py-3 sm:py-3.5 md:py-4 bg-gradient-to-r from-yellow-500 via-amber-500 to-red-500 text-white font-bold rounded-xl hover:from-yellow-400 hover:to-red-600 transition-all duration-300 shadow-xl hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] hover:scale-105 active:scale-95 text-base sm:text-lg cursor-pointer"
             >
-              <span className="relative z-10 flex items-center justify-center gap-1.5 sm:gap-2">
-                <HiOutlineSparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                <HiOutlineSparkles className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-200 animate-spin-slow" />
                 <span>{ctaText}</span>
-                <FaArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform" />
+                <FaArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-yellow-400 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-yellow-400 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
             </a>
+          </div>
+
+          {/* Award-Level Interactive Christmas Countdown Section */}
+          <div className="w-full max-w-4xl mx-auto animate-fade-up animation-delay-800">
+            <ChristmasCountdown />
           </div>
 
         </div>

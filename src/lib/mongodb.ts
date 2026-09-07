@@ -11,8 +11,9 @@ try {
 const MONGODB_URI = process.env.MONGODB_URI || "";
 const MONGODB_DB = process.env.MONGODB_DB || "cloc_cms";
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+// If MONGODB_URI is not set, log warning instead of crashing module import
+if (!MONGODB_URI && process.env.NODE_ENV === 'production') {
+  console.warn('Notice: MONGODB_URI environment variable is not defined.');
 }
 
 /**
@@ -27,6 +28,10 @@ if (!cached) {
 }
 
 async function connectToDatabase() {
+  if (!MONGODB_URI) {
+    return null;
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
