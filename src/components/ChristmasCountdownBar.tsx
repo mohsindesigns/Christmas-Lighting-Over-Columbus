@@ -158,7 +158,7 @@ const ChristmasCountdownBar: React.FC = () => {
   return (
     <div className="relative w-full bg-gradient-to-b from-[#0a1128] to-[#060a1a] border-b border-[#ffd700]/20 py-1.5 sm:py-2 flex items-center justify-center overflow-hidden">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#ffd700]/50 to-transparent" />
-      <div className="flex items-center gap-2 sm:gap-2.5 px-3">
+      <div className="flex items-center gap-1.5 sm:gap-2.5 px-2 sm:px-3">
         <svg
           className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#ffd700] flex-shrink-0"
           fill="currentColor"
@@ -173,10 +173,13 @@ const ChristmasCountdownBar: React.FC = () => {
           </span>
         ) : (
           <>
-            <span className="hidden sm:inline text-[10px] uppercase tracking-[0.15em] text-[#f5f5dc]/60 font-bold">
+            <span className="sm:hidden text-[8px] uppercase tracking-wide text-[#f5f5dc]/60 font-bold whitespace-nowrap">
+              Christmas
+            </span>
+            <span className="hidden sm:inline text-[10px] uppercase tracking-[0.15em] text-[#f5f5dc]/60 font-bold whitespace-nowrap">
               Christmas Countdown
             </span>
-            <div className="flex items-end gap-1.5 sm:gap-2">
+            <div className="flex items-end gap-1 sm:gap-2">
               {UNITS.map((u) => (
                 <MiniFlipUnit key={u.key} value={timeLeft[u.key]} suffix={u.suffix} mounted={mounted} />
               ))}
