@@ -65,7 +65,7 @@ const MiniFlipUnit: React.FC<MiniFlipUnitProps> = ({ value, suffix, mounted }) =
       <div className="relative w-8 h-9 sm:w-9 sm:h-10 md:w-10 md:h-11 perspective-calendar flex-shrink-0">
         <div className="relative w-full h-full rounded-[5px] overflow-hidden bg-gradient-to-b from-[#182545] to-[#080d1f] border border-[#ffd700]/20 flex flex-col shadow-[0_3px_8px_rgba(0,0,0,0.6)]">
           {/* Static top half (next value) */}
-          <div className="relative w-full h-1/2 overflow-hidden border-b border-black/50 flex items-end justify-center">
+          <div className="relative w-full h-1/2 overflow-hidden flex items-end justify-center">
             <span className={digitClass} style={{ ...digitStyle, transform: 'translateY(50%)' }}>
               {currentVal}
             </span>
@@ -89,7 +89,7 @@ const MiniFlipUnit: React.FC<MiniFlipUnitProps> = ({ value, suffix, mounted }) =
                 className="absolute top-0 inset-x-0 h-1/2 calendar-leaf z-30"
               >
                 {/* Front (old value folding down) */}
-                <div className="absolute inset-0 backface-hidden overflow-hidden bg-gradient-to-b from-[#20305c] to-[#101a38] border-b border-black/60 flex items-end justify-center">
+                <div className="absolute inset-0 backface-hidden overflow-hidden bg-gradient-to-b from-[#20305c] to-[#101a38] flex items-end justify-center">
                   <span className={digitClass} style={{ ...digitStyle, transform: 'translateY(50%)' }}>
                     {prevVal}
                   </span>
@@ -119,11 +119,6 @@ const MiniFlipUnit: React.FC<MiniFlipUnitProps> = ({ value, suffix, mounted }) =
             )}
           </AnimatePresence>
 
-          {/* Crease with tiny hinge dots */}
-          <div className="absolute top-1/2 inset-x-0 h-px bg-black/70 -translate-y-1/2 z-40 flex items-center justify-between px-0.5">
-            <div className="w-[3px] h-[3px] rounded-full bg-[#ffd700]/40" />
-            <div className="w-[3px] h-[3px] rounded-full bg-[#ffd700]/40" />
-          </div>
         </div>
       </div>
       <span className="text-[9px] sm:text-[10px] text-[#f5f5dc]/45 font-bold mb-0.5 select-none uppercase">
