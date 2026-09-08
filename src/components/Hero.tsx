@@ -265,10 +265,10 @@ const Hero = () => {
             </a>
           </div>
 
-          {/* Award-Level Interactive Christmas Countdown Section */}
+          {/* Award-Level Interactive Christmas Countdown Section
           <div className="w-full max-w-4xl mx-auto animate-fade-up animation-delay-800">
             <ChristmasCountdown />
-          </div>
+          </div> */}
 
         </div>
       </div>
