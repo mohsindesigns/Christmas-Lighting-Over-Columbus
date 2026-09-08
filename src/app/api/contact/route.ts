@@ -25,7 +25,6 @@ export async function POST(request: Request) {
     const message = `
 Quote Request Details:
 ${address || city ? `Address: ${address}${city ? `, ${city}` : ''}\n` : ''}Lighting Areas: ${selectedAreas}
-Budget: ${body.budget || "Not specified"}
 Notes / Project Details: ${notes}
 ${attachmentUrls.length > 0 ? `\nAttached Photos: ${attachmentUrls.length} file(s)` : ''}
     `.trim();
@@ -47,7 +46,6 @@ ${attachmentUrls.length > 0 ? `\nAttached Photos: ${attachmentUrls.length} file(
         lastName: body.lname,
         address,
         city,
-        budget: body.budget,
         notes,
         lightingAreas: selectedAreas,
         colorPref: body.colorPref,
@@ -71,7 +69,6 @@ ${attachmentUrls.length > 0 ? `\nAttached Photos: ${attachmentUrls.length} file(
               <tr><td style="padding: 8px 0; color: #64748b;"><strong>Phone:</strong></td><td><a href="tel:${phone}" style="color: #2563eb; font-weight: 600;">${phone || 'Not provided'}</a></td></tr>
               ${address || city ? `<tr><td style="padding: 8px 0; color: #64748b;"><strong>Address:</strong></td><td>${address} ${city}</td></tr>` : ''}
               <tr><td style="padding: 8px 0; color: #64748b;"><strong>Lighting Areas:</strong></td><td>${selectedAreas}</td></tr>
-              ${body.budget ? `<tr><td style="padding: 8px 0; color: #64748b;"><strong>Budget:</strong></td><td>${body.budget}</td></tr>` : ''}
             </table>
 
             <div style="background: #f8fafc; border-left: 4px solid #16a34a; padding: 16px; border-radius: 4px; margin-bottom: 20px;">

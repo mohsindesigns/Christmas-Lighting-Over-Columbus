@@ -333,12 +333,17 @@ export default function SubmissionsPage() {
                       </div>
                    </div>
  
-                   {selectedSubmission.extraData && Object.keys(selectedSubmission.extraData).length > 0 && (() => {
-                     // Filter out media fields that are rendered in the media gallery
-                     const displayEntries = Object.entries(selectedSubmission.extraData).filter(
-                       ([key]) => !['images', 'photos', 'attachmentUrls', 'attachments', 'attachment'].includes(key)
-                     );
-                     if (displayEntries.length === 0) return null;
+                    {selectedSubmission.extraData && Object.keys(selectedSubmission.extraData).length > 0 && (() => {
+                      // Filter out media fields that are rendered in the media gallery and unused fields
+                      const displayEntries = Object.entries(selectedSubmission.extraData).filter(
+                        ([key, val]) => {
+                          const k = key.toLowerCase();
+                          if (['images', 'photos', 'attachmenturls', 'attachments', 'attachment', 'budget'].includes(k)) return false;
+                          if (val === '' || val === null || val === undefined) return false;
+                          return true;
+                        }
+                      );
+                      if (displayEntries.length === 0) return null;
 
                      const formatValue = (key: string, val: any) => {
                        if (val === null || val === undefined) return 'N/A';

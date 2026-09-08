@@ -34,7 +34,6 @@ const ModernQuoteForm = () => {
     phone: "",
     address: "",
     city: "",
-    budget: "",
     notes: "",
     colorPref: "",
     lightingAreas: {
@@ -233,7 +232,6 @@ const ModernQuoteForm = () => {
           phone: "",
           address: "",
           city: "",
-          budget: "",
           notes: "",
           colorPref: "",
           lightingAreas: {

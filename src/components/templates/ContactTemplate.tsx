@@ -14,23 +14,11 @@ import {
   FaUpload,
   FaStar,
   FaClock,
-  FaDollarSign,
   FaImage
 } from "react-icons/fa";
 import { GiSparkles } from "react-icons/gi";
 import { useContent } from "@/hooks/useContent";
 import { compressImage } from "@/lib/imageCompression";
-
-// Move ALL static data outside component
-const DEFAULT_BUDGET_OPTIONS = [
-  "What Is Your Lighting Budget",
-  "$900 - $1200 (Standard Front Rooflines)",
-  "$1200 - $1500",
-  "$1500 - $2500",
-  "$2500 - $4000",
-  "$4000 and up",
-  "Give me your best lighting design, money is not a factor."
-];
 
 const LIGHTING_AREAS = [
   { id: "house", label: "House", emoji: "🏠" },
@@ -49,7 +37,7 @@ const DEFAULT_BENEFITS = [
 
 const INITIAL_FORM_STATE = {
   fname: "", lname: "", email: "", phone: "", address: "", city: "",
-  budget: "", notes: "", lightingAreas: { house: false, ground: false, trees: false, shrubs: false } as Record<string, boolean>
+  notes: "", lightingAreas: { house: false, ground: false, trees: false, shrubs: false } as Record<string, boolean>
 };
 
 // Pre-defined classNames for better performance
@@ -75,9 +63,6 @@ export default function ContactTemplate({ pageData }: { pageData?: any }) {
   const benefits: string[] = Array.isArray(contactData.benefits) && contactData.benefits.length > 0
     ? contactData.benefits.map((b: any) => typeof b === 'string' ? b : (b.text || b.title))
     : DEFAULT_BENEFITS;
-  const budgetOptions: string[] = Array.isArray(contactData.budgetOptions) && contactData.budgetOptions.length > 0
-    ? contactData.budgetOptions
-    : DEFAULT_BUDGET_OPTIONS;
 
   // Ultra-fast handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -327,26 +312,6 @@ export default function ContactTemplate({ pageData }: { pageData?: any }) {
                     placeholder="Columbus"
                     required
                   />
-                </div>
-
-                {/* Budget Select */}
-                <div>
-                  <label className={LABEL_CLASSES}>Budget Range *</label>
-                  <div className="relative">
-                    <FaDollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm z-10" />
-                    <select
-                      name="budget"
-                      value={formData.budget}
-                      onChange={handleChange}
-                      required
-                      className="w-full pl-10 pr-8 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none appearance-none text-gray-900"
-                    >
-                      <option value="">Select your budget...</option>
-                      {budgetOptions.map((option, index) => (
-                        <option key={index} value={option}>{option}</option>
-                      ))}
-                    </select>
-                  </div>
                 </div>
 
                 {/* Lighting Areas */}

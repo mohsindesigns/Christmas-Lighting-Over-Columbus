@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, Type, Globe, CheckCircle, Search, HelpCircle,
   Plus, Trash2, ShieldCheck, Mail, Phone, MapPin, Award,
-  Sparkles, DollarSign, Check, ListChecks
+  Sparkles, Check, ListChecks
 } from "lucide-react";
 import { UI } from "./styles";
 
@@ -15,16 +15,6 @@ const DEFAULT_BENEFITS = [
   "Commercial-grade LEDs",
   "Maintenance included",
   "Take-down & storage"
-];
-
-const DEFAULT_BUDGET_OPTIONS = [
-  "What Is Your Lighting Budget",
-  "$900 - $1200 (Standard Front Rooflines)",
-  "$1200 - $1500",
-  "$1500 - $2500",
-  "$2500 - $4000",
-  "$4000 and up",
-  "Give me your best lighting design, money is not a factor."
 ];
 
 export default function ContactEditor({ pageId, data, setData }: { pageId: string, data: any, setData: (d: any) => void }) {
@@ -41,7 +31,6 @@ export default function ContactEditor({ pageId, data, setData }: { pageId: strin
             description: "We look forward to helping light up your property 🙂"
           },
           benefits: DEFAULT_BENEFITS,
-          budgetOptions: DEFAULT_BUDGET_OPTIONS,
           info: {
             phone: "(614) 301-7100",
             email: "Info@lightsovercolumbus.com"
@@ -56,7 +45,6 @@ export default function ContactEditor({ pageId, data, setData }: { pageId: strin
   const contactPage = data.contactPage || {};
   const header = contactPage.header || {};
   const benefits: string[] = Array.isArray(contactPage.benefits) ? contactPage.benefits : DEFAULT_BENEFITS;
-  const budgetOptions: string[] = Array.isArray(contactPage.budgetOptions) ? contactPage.budgetOptions : DEFAULT_BUDGET_OPTIONS;
   const info = contactPage.info || {};
 
   const updateHeader = (field: string, value: any) => {
@@ -95,21 +83,10 @@ export default function ContactEditor({ pageId, data, setData }: { pageId: strin
     });
   };
 
-  const updateBudgetOptions = (newOptions: string[]) => {
-    setData({
-      ...data,
-      contactPage: {
-        ...contactPage,
-        budgetOptions: newOptions
-      }
-    });
-  };
-
   const tabs = [
     { id: "header", label: "Page Header & Intro", icon: Type, title: "Header & Narrative" },
     { id: "benefits", label: "What You Get (Benefits)", icon: ListChecks, title: "Benefits Card List" },
     { id: "info", label: "Direct Contact Info", icon: Phone, title: "Contact Numbers & Email" },
-    { id: "budget", label: "Budget Ranges", icon: DollarSign, title: "Budget Dropdown Options" },
   ];
 
   const activeTabTitle = tabs.find(t => t.id === activeTab)?.title;
@@ -268,53 +245,6 @@ export default function ContactEditor({ pageId, data, setData }: { pageId: strin
                       placeholder="Info@lightsovercolumbus.com"
                     />
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* ========================================================================= */}
-            {/* TAB 4: BUDGET OPTIONS */}
-            {/* ========================================================================= */}
-            {activeTab === "budget" && (
-              <div className="max-w-3xl space-y-4">
-                <div className="flex items-center justify-between bg-[#f6f7f7] p-3 border border-[#c3c4c7] rounded-sm">
-                  <div>
-                    <h3 className="text-sm font-bold text-[#1d2327]">Budget Dropdown Options</h3>
-                    <p className="text-xs text-[#646970]">Available tiers selectable in the quote request dropdown.</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => updateBudgetOptions([...budgetOptions, "$5000 - $7500"])}
-                    className="bg-[#2271b1] text-white text-xs font-semibold px-3 py-1.5 rounded-[3px] hover:bg-[#135e96] transition-colors cursor-pointer"
-                  >
-                    + Add Option
-                  </button>
-                </div>
-
-                <div className="space-y-2">
-                  {budgetOptions.map((opt, idx) => (
-                    <div key={idx} className="flex items-center gap-2 p-2 bg-white border border-[#c3c4c7] rounded-sm">
-                      <span className="text-xs text-slate-400 font-mono w-6">#{idx + 1}</span>
-                      <input
-                        type="text"
-                        value={opt}
-                        onChange={(e) => {
-                          const updated = [...budgetOptions];
-                          updated[idx] = e.target.value;
-                          updateBudgetOptions(updated);
-                        }}
-                        className="w-full border border-[#c3c4c7] px-2.5 py-1 text-xs font-medium rounded-[3px] outline-none focus:border-[#2271b1]"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => updateBudgetOptions(budgetOptions.filter((_, i) => i !== idx))}
-                        className="p-1 text-red-500 hover:bg-red-50 rounded cursor-pointer"
-                        title="Delete Option"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
                 </div>
               </div>
             )}
