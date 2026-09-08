@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useContent } from "../hooks/useContent";
+import ChristmasCountdownBar from "./ChristmasCountdownBar";
 
 interface DropdownItem {
   path: string;
@@ -204,7 +205,7 @@ const Navbar = () => {
   return (
     <>
       {/* Floating Logo */}
-      <div className="fixed left-4 sm:left-6 lg:left-8 xl:left-12 z-[60] pointer-events-none top-2">
+      <div className="fixed left-4 sm:left-6 lg:left-8 xl:left-12 z-[60] pointer-events-none top-14 sm:top-16 md:top-[4.25rem]">
         <Link
           href="/"
           className="pointer-events-auto block"
@@ -231,10 +232,12 @@ const Navbar = () => {
         </Link>
       </div>
 
-      {/* Navbar */}
+      {/* Sticky wrapper: Christmas countdown strip + main navigation */}
+      <div className="sticky top-0 z-50 w-full">
+      <ChristmasCountdownBar />
       <nav
         ref={navbarRef}
-        className={`sticky top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
+        className={`relative w-full transition-all duration-300 ${
           scrolled
             ? "bg-[#0a1128]/95 backdrop-blur-lg shadow-lg shadow-[#ffd700]/10 py-2"
             : "bg-[#0a1128]/90 backdrop-blur-md py-3"
@@ -697,6 +700,7 @@ const Navbar = () => {
         {/* Decorative bottom gradient line */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#ffd700]/30 to-transparent"></div>
       </nav>
+      </div>
     </>
   );
 };
