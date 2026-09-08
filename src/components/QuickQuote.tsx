@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Sparkles, Mail, User, Phone, Home, MessageSquare, Zap, Award, ChevronRight } from 'lucide-react';
+import { X, Send, Sparkles, Mail, User, Phone, Home, MessageSquare, Zap, Award, ChevronRight, Calendar, CheckCircle } from 'lucide-react';
 
 const QuickQuote = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -20,20 +20,46 @@ const QuickQuote = () => {
 
     // Project types for dropdown
     const projectTypes = [
-        { value: 'residential', label: 'Residential Lighting' },
-        { value: 'commercial', label: 'Commercial Lighting' },
-        { value: 'holiday', label: 'Holiday Decor' },
-        { value: 'permanent', label: 'Permanent Installation' },
-        { value: 'repair', label: 'Repair & Maintenance' },
-        { value: 'consultation', label: 'Free Consultation' }
+        { value: 'Christmas Lighting', label: 'Christmas Lighting' },
+        { value: 'Permanent Lighting', label: 'Permanent Lighting' }
     ];
+
+    const [errorMsg, setErrorMsg] = useState('');
 
     // Handle input changes
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        setErrorMsg('');
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
+    };
+
+    const validateStep = (currentStep: number): boolean => {
+        if (currentStep === 1) {
+            if (!formData.name.trim()) {
+                setErrorMsg('Please enter your name.');
+                return false;
+            }
+            if (!formData.email.trim() || !formData.email.includes('@')) {
+                setErrorMsg('Please enter a valid email address.');
+                return false;
+            }
+        }
+        if (currentStep === 3) {
+            if (!formData.message.trim()) {
+                setErrorMsg('Please tell us a little about your project.');
+                return false;
+            }
+        }
+        setErrorMsg('');
+        return true;
+    };
+
+    const handleNextStep = () => {
+        if (validateStep(step)) {
+            setStep(prev => Math.min(prev + 1, 3));
+        }
     };
 
     const showSuccess = () => {
@@ -46,92 +72,79 @@ const QuickQuote = () => {
             message: ''
         });
         setStep(1);
+        setErrorMsg('');
 
         setTimeout(() => {
             setIsSuccess(false);
             setIsOpen(false);
-        }, 3000);
+        }, 3500);
     };
 
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // If not on step 3 yet, do not submit! Advance to next step
+        if (step < 3) {
+            handleNextStep();
+            return;
+        }
+
+        if (!validateStep(3)) {
+            return;
+        }
+
         setIsSubmitting(true);
+        setErrorMsg('');
 
-        const emailContent = `
-🎄 NEW QUICK QUOTE REQUEST - CHRISTMAS LIGHTING
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📋 CUSTOMER INFORMATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
-Project Type: ${projectTypes.find(t => t.value === formData.projectType)?.label || 'Not specified'}
-
-📝 MESSAGE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-${formData.message}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⏱️ Submitted: ${new Date().toLocaleString()}
-🌐 Source: Quick Quote Widget
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    `;
+        const projectTypeLabel = projectTypes.find(t => t.value === formData.projectType)?.label || formData.projectType || 'Not specified';
 
         try {
-            // Also send to internal contact API for CRM storage
-            fetch('/api/contact', {
+            const response = await fetch('/api/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    fname: formData.name.split(' ')[0] || formData.name,
-                    lname: formData.name.split(' ').slice(1).join(' ') || '',
+                    name: formData.name,
                     email: formData.email,
                     phone: formData.phone,
-                    service: projectTypes.find(t => t.value === formData.projectType)?.label || formData.projectType,
+                    type: 'Quote Request',
+                    subject: `🎄 Quick Quote Request - ${formData.name}`,
                     message: formData.message,
+                    project_type: projectTypeLabel,
                     source: 'Quick Quote Widget'
                 })
-            }).catch(() => {});
+            });
 
-            // Try FormSubmit
-            try {
-                const response = await fetch('https://formsubmit.co/ajax/Info@lightsovercolumbus.com', {
+            const result = await response.json().catch(() => ({}));
+
+            if (response.ok || result.success || result.submissionId) {
+                showSuccess();
+            } else {
+                // Fallback to internal contact API
+                const contactRes = await fetch('/api/contact', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        _subject: `🎄 Quick Quote - ${formData.name}`,
-                        name: formData.name,
+                        fname: formData.name.split(' ')[0] || formData.name,
+                        lname: formData.name.split(' ').slice(1).join(' ') || '',
                         email: formData.email,
                         phone: formData.phone,
-                        project_type: projectTypes.find(t => t.value === formData.projectType)?.label,
+                        service: projectTypeLabel,
                         message: formData.message,
-                        _template: 'table',
-                        _captcha: 'false'
+                        notes: formData.message,
+                        source: 'Quick Quote Widget'
                     })
                 });
 
-                if (response.ok) {
+                if (contactRes.ok) {
                     showSuccess();
-                    return;
+                } else {
+                    setErrorMsg('Something went wrong. Please try again or call (614) 301-7100.');
                 }
-            } catch (fetchError) {
-                console.log('FormSubmit failed, using mailto fallback', fetchError);
             }
-
-            // Fallback to mailto
-            const mailtoLink = `mailto:Info@lightsovercolumbus.com?subject=🎄 Quick Quote - ${encodeURIComponent(formData.name)}&body=${encodeURIComponent(emailContent)}`;
-            window.location.href = mailtoLink;
-            showSuccess();
-
         } catch (error) {
             console.error('Submission error:', error);
-            alert('Please email us directly at Info@lightsovercolumbus.com');
+            setErrorMsg('Network error. Please try again or call (614) 301-7100.');
         } finally {
             setIsSubmitting(false);
         }
@@ -476,7 +489,12 @@ ${formData.message}
                                                 {[1, 2, 3].map((i) => (
                                                     <motion.div
                                                         key={i}
-                                                        className="flex flex-col items-center"
+                                                        className="flex flex-col items-center cursor-pointer"
+                                                        onClick={() => {
+                                                            if (i < step || validateStep(step)) {
+                                                                setStep(i);
+                                                            }
+                                                        }}
                                                         initial={{ y: 20, opacity: 0 }}
                                                         animate={{ y: 0, opacity: 1 }}
                                                         transition={{ delay: 0.2 + i * 0.1 }}
@@ -497,15 +515,18 @@ ${formData.message}
                                                                 ]
                                                             } : {}}
                                                             transition={{
-                                                                duration: 2,
-                                                                repeat: Infinity,
-                                                                ease: "easeInOut"
+                                                                duration: 1.5,
+                                                                repeat: i === step ? Infinity : 0,
+                                                                repeatType: "reverse"
                                                             }}
                                                         >
-                                                            {i}
+                                                            {i === 1 && <Sparkles className="w-5 h-5" />}
+                                                            {i === 2 && <Calendar className="w-5 h-5" />}
+                                                            {i === 3 && <CheckCircle className="w-5 h-5" />}
                                                         </motion.div>
-                                                        <span className="text-xs font-medium text-gray-500 hidden md:block">
-                                                            {i === 1 ? 'Details' : i === 2 ? 'Project' : 'Message'}
+                                                        <span className={`text-xs font-medium ${i <= step ? 'text-gray-900' : 'text-gray-400'
+                                                            }`}>
+                                                            {i === 1 ? 'Your Info' : i === 2 ? 'Project' : 'Details'}
                                                         </span>
                                                     </motion.div>
                                                 ))}
@@ -522,6 +543,12 @@ ${formData.message}
                                             </div>
                                         </motion.div>
 
+                                        {errorMsg && (
+                                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 font-medium">
+                                                {errorMsg}
+                                            </div>
+                                        )}
+
                                         {/* Form */}
                                         <form onSubmit={handleSubmit} className="space-y-6">
                                             <AnimatePresence mode="wait">
@@ -537,13 +564,19 @@ ${formData.message}
                                                         <div>
                                                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                                                 <User className="w-4 h-4 inline mr-2 text-red-500" />
-                                                                Your Name
+                                                                Your Name *
                                                             </label>
                                                             <input
                                                                 type="text"
                                                                 name="name"
                                                                 value={formData.name}
                                                                 onChange={handleInputChange}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault();
+                                                                        handleNextStep();
+                                                                    }
+                                                                }}
                                                                 required
                                                                 className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all text-gray-900"
                                                                 placeholder="John Doe"
@@ -552,13 +585,19 @@ ${formData.message}
                                                         <div>
                                                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                                                 <Mail className="w-4 h-4 inline mr-2 text-green-500" />
-                                                                Email Address
+                                                                Email Address *
                                                             </label>
                                                             <input
                                                                 type="email"
                                                                 name="email"
                                                                 value={formData.email}
                                                                 onChange={handleInputChange}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault();
+                                                                        handleNextStep();
+                                                                    }
+                                                                }}
                                                                 required
                                                                 className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all text-gray-900"
                                                                 placeholder="john@example.com"
@@ -586,6 +625,12 @@ ${formData.message}
                                                                 name="phone"
                                                                 value={formData.phone}
                                                                 onChange={handleInputChange}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault();
+                                                                        handleNextStep();
+                                                                    }
+                                                                }}
                                                                 className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-yellow-500 focus:ring-4 focus:ring-yellow-500/10 transition-all text-gray-900"
                                                                 placeholder="(123) 456-7890"
                                                             />
@@ -599,6 +644,12 @@ ${formData.message}
                                                                 name="projectType"
                                                                 value={formData.projectType}
                                                                 onChange={handleInputChange}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault();
+                                                                        handleNextStep();
+                                                                    }
+                                                                }}
                                                                 className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all text-gray-900 appearance-none"
                                                             >
                                                                 <option value="">Select project type</option>
@@ -624,7 +675,7 @@ ${formData.message}
                                                         <div>
                                                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                                                 <MessageSquare className="w-4 h-4 inline mr-2 text-yellow-500" />
-                                                                Tell us about your project
+                                                                Tell us about your project *
                                                             </label>
                                                             <textarea
                                                                 name="message"
@@ -633,7 +684,7 @@ ${formData.message}
                                                                 required
                                                                 rows={5}
                                                                 className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all text-gray-900 resize-none"
-                                                                placeholder="Briefly describe your lighting needs..."
+                                                                placeholder="Briefly describe your lighting needs (e.g., roofline, trees, commercial property)..."
                                                             />
                                                         </div>
                                                     </motion.div>
@@ -658,7 +709,7 @@ ${formData.message}
                                                 {step < 3 ? (
                                                     <motion.button
                                                         type="button"
-                                                        onClick={() => setStep(step + 1)}
+                                                        onClick={handleNextStep}
                                                         className="ml-auto px-8 py-3 bg-gradient-to-r from-red-500 via-green-500 to-yellow-500 text-white text-sm font-medium rounded-xl shadow-lg shadow-red-500/30 hover:shadow-xl transition-all duration-300 flex items-center gap-2"
                                                         whileHover={{ scale: 1.02, x: 3 }}
                                                         whileTap={{ scale: 0.98 }}
@@ -670,7 +721,7 @@ ${formData.message}
                                                     <motion.button
                                                         type="submit"
                                                         disabled={isSubmitting}
-                                                        className="ml-auto px-8 py-3 bg-gradient-to-r from-red-500 via-green-500 to-yellow-500 text-white text-sm font-medium rounded-xl shadow-lg shadow-red-500/30 hover:shadow-xl transition-all duration-300 disabled:opacity-50 flex items-center gap-2"
+                                                        className="ml-auto px-8 py-3 bg-gradient-to-r from-red-500 via-green-500 to-yellow-500 text-white text-sm font-medium rounded-xl shadow-lg shadow-red-500/30 hover:shadow-xl transition-all duration-300 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                                                         whileHover={{ scale: 1.02 }}
                                                         whileTap={{ scale: 0.98 }}
                                                     >

@@ -174,12 +174,40 @@ const ModernQuoteForm = () => {
     setIsSubmitting(true);
 
     try {
+      // 1. Upload any selected photos first
+      let uploadedUrls: string[] = [];
+      if (files.length > 0) {
+        for (const file of files) {
+          try {
+            const uploadData = new FormData();
+            uploadData.append('file', file);
+            const uploadRes = await fetch('/api/upload', {
+              method: 'POST',
+              body: uploadData,
+            });
+            const data = await uploadRes.json();
+            if (data?.url) {
+              uploadedUrls.push(data.url);
+            }
+          } catch (uploadErr) {
+            console.warn('Photo upload warning:', uploadErr);
+          }
+        }
+      }
+
+      const payload = {
+        ...formData,
+        attachmentUrl: uploadedUrls[0] || undefined,
+        attachmentUrls: uploadedUrls,
+        images: uploadedUrls
+      };
+
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -273,8 +301,35 @@ const ModernQuoteForm = () => {
                 </div>
               </div>
 
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="p-4 xs:p-5 sm:p-6 space-y-5">
+              {isSubmitted ? (
+                <div className="p-8 sm:p-12 text-center flex flex-col items-center justify-center min-h-[420px] space-y-4">
+                  <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30">
+                    <FaCheckCircle className="text-white text-3xl" />
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 font-montserrat">
+                    Quote Request Sent Successfully!
+                  </h2>
+                  <p className="text-gray-600 max-w-md text-base sm:text-lg">
+                    Thank you! We have received your request and our holiday lighting design team will contact you within 24 hours.
+                  </p>
+                  <div className="pt-4 flex flex-col sm:flex-row gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsSubmitted(false)}
+                      className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold rounded-xl transition"
+                    >
+                      Send Another Request
+                    </button>
+                    <a
+                      href={`tel:${phone.replace(/[^0-9+]/g, '')}`}
+                      className="px-6 py-2.5 bg-gradient-to-r from-red-600 to-amber-500 hover:opacity-90 text-white text-sm font-semibold rounded-xl transition flex items-center justify-center gap-2"
+                    >
+                      <FaPhone className="text-xs" /> Call Us Now: {phone}
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="p-4 xs:p-5 sm:p-6 space-y-5">
                 {/* Name Row - First & Last */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -509,7 +564,8 @@ const ModernQuoteForm = () => {
                 <p className="text-center text-gray-500 text-xs xs:text-sm pt-2">
                   By submitting, you agree to our Privacy Policy. No obligation, free quote.
                 </p>
-              </form>
+                </form>
+              )}
             </div>
           </div>
 

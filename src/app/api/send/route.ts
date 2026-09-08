@@ -1,24 +1,19 @@
-import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Submission from '@/models/Submission';
-import Content from '@/models/Content';
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
-import { existsSync } from "fs";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { sendEmail, getReceiverEmail } from '@/lib/email';
+import { uploadFile } from '@/lib/storage';
 
 export async function POST(request: Request) {
   try {
     await connectDB();
     const contentType = request.headers.get('content-type') || '';
-    let name, email, phone, message, subject, type, attachmentUrl: string | undefined, extraData: any = {};
-    let attachments: any[] = [];
+    let name, email, phone, message, subject, type, extraData: any = {};
+    let attachmentUrls: string[] = [];
+    let emailAttachments: any[] = [];
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData();
-      console.log('Received Form Keys:', Array.from(formData.keys()));
       name = formData.get('name') as string;
       email = formData.get('email') as string;
       phone = formData.get('phone') as string;
@@ -26,226 +21,146 @@ export async function POST(request: Request) {
       subject = formData.get('subject') as string || formData.get('_subject') as string;
       type = formData.get('type') as string || 'Career Application';
 
-      // Handle file attachment
-      const file = formData.get('attachment') as File;
-      if (file && file.size > 0) {
-        const buffer = Buffer.from(await file.arrayBuffer());
-
-        // Save file to public/uploads
-        const filename = Date.now() + "_" + file.name.replace(/[^a-zA-Z0-9.]/g, "_");
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
-        if (!existsSync(uploadDir)) {
-          await mkdir(uploadDir, { recursive: true });
+      // Process any uploaded files
+      const possibleFileKeys = ['attachment', 'file', 'files', 'resume', 'photo', 'images'];
+      for (const key of possibleFileKeys) {
+        const files = formData.getAll(key);
+        for (const item of files) {
+          if (item && typeof item === 'object' && 'arrayBuffer' in item && (item as File).size > 0) {
+            const file = item as File;
+            try {
+              const buffer = Buffer.from(await file.arrayBuffer());
+              const { url } = await uploadFile(file, buffer);
+              if (url) {
+                attachmentUrls.push(url);
+                emailAttachments.push({
+                  filename: file.name,
+                  content: buffer,
+                  contentType: file.type
+                });
+              }
+            } catch (fileErr) {
+              console.warn('File processing error:', fileErr);
+            }
+          }
         }
-        const filePath = path.join(uploadDir, filename);
-        await writeFile(filePath, buffer);
-
-        attachmentUrl = `/uploads/${filename}`;
-        console.log('File saved to:', filePath);
-        console.log('Attachment URL set to:', attachmentUrl);
-
-        attachments.push({
-          filename: file.name,
-          content: buffer.toString('base64'),
-        });
-      } else {
-        console.log('No file attachment found in multipart data');
       }
 
       // Collect other fields
       formData.forEach((value, key) => {
-        if (!['name', 'email', 'phone', 'message', 'subject', '_subject', 'type', 'attachment', '_captcha', '_template'].includes(key)) {
-          extraData[key] = value;
+        if (!['name', 'email', 'phone', 'message', 'subject', '_subject', 'type', 'attachment', 'file', 'files', 'resume', 'photo', 'images', '_captcha', '_template'].includes(key)) {
+          if (typeof value === 'string') {
+            extraData[key] = value;
+          }
         }
       });
     } else {
       const body = await request.json();
       ({ name, email, phone, message, subject, type, ...extraData } = body);
+      if (body.attachmentUrl) attachmentUrls.push(body.attachmentUrl);
+      if (Array.isArray(body.attachmentUrls)) attachmentUrls.push(...body.attachmentUrls);
+      if (Array.isArray(body.images)) attachmentUrls.push(...body.images);
     }
 
-    // Resilience: ensure required fields for DB save
+    // Deduplicate attachmentUrls
+    attachmentUrls = Array.from(new Set(attachmentUrls.filter(Boolean)));
+    const attachmentUrl = attachmentUrls[0] || undefined;
+
+    // Resilience: ensure required fields
     name = name || extraData.name || extraData.fullname || extraData.fullName || extraData.contact_name || 'Anonymous';
     email = email || extraData.email || extraData.user_email || extraData.contact_email || 'no-email@provided.com';
     message = message || extraData.message || extraData.comments || extraData.inquiry || 'No message content provided.';
 
     // Save to Database
-    console.log('Saving submission with data:', { name, email, type, attachmentUrl });
     let submission;
     try {
       submission = await Submission.create({
         name,
         email,
         phone,
-        subject,
+        subject: subject || `New Submission: ${name}`,
         message,
         type: type || 'Contact Form',
         attachmentUrl,
-        extraData
+        attachmentUrls,
+        extraData: {
+          ...extraData,
+          images: attachmentUrls
+        }
       });
-      console.log('Submission saved successfully:', submission._id);
     } catch (dbError: any) {
       console.error('DATABASE SAVE ERROR:', dbError);
-      // We still try to send the email even if DB save fails, but we want to know why it failed
     }
 
-    // Fetch dynamic email from Content CMS
-    let receiverEmail = 'info@lightsovercolumbus.com';
-    try {
-      const contentDoc = await Content.findOne({ key: "complete_data" }).lean() as any;
-      if (contentDoc && contentDoc.data) {
-        if (type === 'Quote Request' && contentDoc.data.quote?.email) {
-          receiverEmail = contentDoc.data.quote.email;
-        } else if (contentDoc.data.contactPage?.email) {
-          receiverEmail = contentDoc.data.contactPage.email;
-        } else if (contentDoc.data.quote?.email) {
-          receiverEmail = contentDoc.data.quote.email;
-        }
-      }
-    } catch (e) {
-      console.error("Error fetching dynamic email", e);
-    }
+    const receiver = await getReceiverEmail(type);
+    const emailSubject = subject || `✨ Christmas Lights Over Columbus - New Lead: ${name}`;
 
-    if (receiverEmail) {
-      receiverEmail = receiverEmail.replace(/\s+/g, '').toLowerCase();
-    }
-
-    if (!receiverEmail || !receiverEmail.includes('@')) {
-      receiverEmail = 'info@lightsovercolumbus.com';
-    }
-
-    const to = receiverEmail;
-
-    // Construct email HTML
-    let html = `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
-        <h2 style="color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">✨ Christmas Lights Over Columbus - New Submission</h2>
-        <p><strong>Type:</strong> ${type || 'General Inquiry'}</p>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
-        ${subject ? `<p><strong>Subject:</strong> ${subject}</p>` : ''}
-        <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 20px;">
-          <p><strong>Message:</strong></p>
-          <p style="white-space: pre-wrap;">${message}</p>
+    // Construct Email HTML
+    const emailHtml = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+        <div style="background-color: #2563eb; padding: 20px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 20px;">✨ New ${type || 'Website'} Submission</h1>
         </div>
-    `;
+        <div style="padding: 24px; background-color: #ffffff;">
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <tr>
+              <td style="padding: 8px 0; color: #64748b; font-size: 14px; width: 100px;"><strong>Name:</strong></td>
+              <td style="padding: 8px 0; color: #0f172a; font-weight: 600; font-size: 14px;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #64748b; font-size: 14px;"><strong>Email:</strong></td>
+              <td style="padding: 8px 0; color: #0f172a; font-size: 14px;"><a href="mailto:${email}">${email}</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #64748b; font-size: 14px;"><strong>Phone:</strong></td>
+              <td style="padding: 8px 0; color: #0f172a; font-size: 14px;"><a href="tel:${phone}">${phone || 'Not provided'}</a></td>
+            </tr>
+          </table>
 
-    // Add attachment link if present
-    if (attachmentUrl) {
-      const fullUrl = `${process.env.NEXT_PUBLIC_APP_URL || ''}${attachmentUrl}`;
-      html += `<p style="margin-top: 20px;"><strong>📎 Attachment:</strong> <a href="${fullUrl}">Download File</a></p>`;
-    }
+          <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+            <p style="margin-top: 0; color: #64748b; font-size: 12px; text-transform: uppercase; font-weight: bold;">Message Content:</p>
+            <div style="color: #0f172a; line-height: 1.6; white-space: pre-wrap;">${message}</div>
+          </div>
 
-    // Add extra data if any
-    if (Object.keys(extraData).length > 0) {
-      html += `<div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
-        <p><strong>Additional Details:</strong></p>
-        <ul style="list-style: none; padding: 0;">`;
+          ${attachmentUrls.length > 0 ? `
+            <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+              <p style="margin: 0 0 10px; font-weight: bold; color: #0f172a;">📎 Attached Files & Photos (${attachmentUrls.length}):</p>
+              ${attachmentUrls.map(url => `
+                <div style="margin-bottom: 8px;">
+                  <a href="${url.startsWith('http') ? url : `${process.env.NEXT_PUBLIC_BASE_URL || ''}${url}`}" target="_blank" style="color: #2563eb; text-decoration: underline; font-weight: 500;">
+                    ${url} ↗
+                  </a>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
 
-      for (const [key, value] of Object.entries(extraData)) {
-        if (value && typeof value !== 'object') {
-          html += `<li style="margin-bottom: 5px;"><strong>${key.replace('_', ' ').toUpperCase()}:</strong> ${value}</li>`;
-        }
-      }
-
-      html += `</ul></div>`;
-    }
-
-    html += `
-        <p style="font-size: 12px; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
-          ⏱️ Submitted: ${new Date().toLocaleString()}<br>
-          🎄 Professional Holiday Lighting in Columbus, OH
-        </p>
+          <p style="font-size: 12px; color: #94a3b8; margin-top: 24px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+            ⏱️ Submitted: ${new Date().toLocaleString()} | Source: Website
+          </p>
+        </div>
       </div>
     `;
 
-    // Prepare email content
-    const emailContent = `
-NEW SUBMISSION - CHRISTMAS LIGHTS OVER COLUMBUS
-----------------------------------
-Name: ${name}
-Email: ${email}
-Phone: ${phone || 'Not provided'}
-Type: ${type || 'Contact Form'}
-Subject: ${subject || 'No Subject'}
-
-DETAILS:
-${message || 'No message provided'}
-
-${Object.entries(extraData).length > 0 ? `
-ADDITIONAL INFO:
-${Object.entries(extraData).map(([key, value]) => `${key}: ${value}`).join('\n')}
-` : ''}
-
-Submitted: ${new Date().toLocaleString()}
-Source: Website
-    `;
-
-    // Send email using Resend
-    const { data: resendData, error: resendError } = await resend.emails.send({
-      from: 'Christmas Lights Over Columbus <onboarding@resend.dev>',
-      to: [receiverEmail],
-      subject: subject || `New Lead: ${name}`,
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
-          <div style="background-color: #2430d2; padding: 20px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 20px;">New Submission</h1>
-          </div>
-          <div style="padding: 30px;">
-            <p style="margin-top: 0; color: #64748b; font-size: 14px; text-transform: uppercase; font-weight: bold; letter-spacing: 0.05em;">Customer Info</p>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-              <tr>
-                <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Name:</td>
-                <td style="padding: 8px 0; color: #0f172a; font-weight: 500; font-size: 14px;">${name}</td>
-              </tr>
-              <tr>
-                <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Email:</td>
-                <td style="padding: 8px 0; color: #0f172a; font-weight: 500; font-size: 14px;">${email}</td>
-              </tr>
-              <tr>
-                <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Phone:</td>
-                <td style="padding: 8px 0; color: #0f172a; font-weight: 500; font-size: 14px;">${phone || 'Not provided'}</td>
-              </tr>
-            </table>
-
-            <p style="margin-top: 0; color: #64748b; font-size: 14px; text-transform: uppercase; font-weight: bold; letter-spacing: 0.05em;">Message</p>
-            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; color: #0f172a; font-style: italic; line-height: 1.6;">
-              "${message || 'No message provided'}"
-            </div>
-          </div>
-        </div>
-      `,
-      attachments: attachments.length > 0 ? attachments : []
+    // Send email using unified service
+    await sendEmail({
+      to: receiver,
+      subject: emailSubject,
+      html: emailHtml,
+      text: message,
+      attachments: emailAttachments
     });
-
-    if (resendError) {
-      console.error('RESEND API ERROR:', {
-        name: resendError.name,
-        message: resendError.message,
-        receiver: receiverEmail,
-        isDefaultSender: !process.env.RESEND_DOMAIN_VERIFIED
-      });
-      return NextResponse.json({
-        error: 'Email failed but DB saved',
-        details: resendError.message,
-        submissionId: submission?._id
-      }, { status: 200 }); // Return 200 so UI doesn't show error if DB saved
-    }
 
     return NextResponse.json({
       success: true,
-      message: 'Submission saved and email sent',
+      message: 'Submission saved and email notification triggered',
       submissionId: submission?._id
     });
 
   } catch (error: any) {
-    console.error('CRITICAL API ERROR IN /api/send:', {
-      message: error.message,
-      stack: error.stack,
-      cause: error.cause
-    });
+    console.error('CRITICAL API ERROR IN /api/send:', error);
     return NextResponse.json({
-      error: 'Critical server error',
+      error: 'Server error',
       details: error.message,
     }, { status: 500 });
   }

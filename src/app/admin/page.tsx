@@ -25,6 +25,8 @@ const ACTION_LABELS: Record<string, { label: string; color: string; bg: string }
   UPDATE_SETTINGS:  { label: "Changed settings",     color: "text-amber-700",  bg: "bg-amber-100" },
   VIEW_USERS:       { label: "Viewed users",         color: "text-gray-600",   bg: "bg-gray-100"  },
   VIEW_SUBMISSIONS: { label: "Viewed submissions",   color: "text-gray-600",   bg: "bg-gray-100"  },
+  DELETE_SUBMISSION: { label: "Deleted submission",   color: "text-red-700",    bg: "bg-red-100"   },
+  BULK_DELETE_SUBMISSIONS: { label: "Bulk deleted submissions", color: "text-red-700", bg: "bg-red-100" },
 };
 
 function timeAgo(dateStr: string) {

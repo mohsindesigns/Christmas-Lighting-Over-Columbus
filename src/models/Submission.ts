@@ -9,6 +9,7 @@ export interface ISubmission extends Document {
   type: string;
   source: string;
   attachmentUrl?: string;
+  attachmentUrls?: string[];
   extraData?: Record<string, any>;
   createdAt: Date;
 }
@@ -23,6 +24,7 @@ const SubmissionSchema = new Schema<ISubmission>(
     type: { type: String, default: "Contact Form" },
     source: { type: String, default: "Website" },
     attachmentUrl: { type: String },
+    attachmentUrls: [{ type: String }],
     extraData: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
