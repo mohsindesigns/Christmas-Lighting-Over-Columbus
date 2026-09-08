@@ -15,6 +15,7 @@ import {
 } from "react-icons/fa";
 import { GiSparkles } from "react-icons/gi";
 import { useContent } from "../hooks/useContent";
+import { compressImage } from "@/lib/imageCompression";
 
 const defaultBenefits = [
   { text: "Custom Lighting Design & Layout" },
@@ -46,6 +47,7 @@ const ModernQuoteForm = () => {
 
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string>('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const content = useContent();
@@ -172,28 +174,39 @@ const ModernQuoteForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setUploadStatus('');
 
     try {
       // 1. Upload any selected photos first
       let uploadedUrls: string[] = [];
       if (files.length > 0) {
-        for (const file of files) {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          setUploadStatus(`Processing & uploading photo ${i + 1} of ${files.length}...`);
           try {
+            const compressed = await compressImage(file);
             const uploadData = new FormData();
-            uploadData.append('file', file);
+            uploadData.append('file', compressed);
             const uploadRes = await fetch('/api/upload', {
               method: 'POST',
               body: uploadData,
             });
+            if (!uploadRes.ok) {
+              const err = await uploadRes.json().catch(() => ({}));
+              throw new Error(err.error || `Upload failed (status ${uploadRes.status})`);
+            }
             const data = await uploadRes.json();
             if (data?.url) {
               uploadedUrls.push(data.url);
             }
-          } catch (uploadErr) {
-            console.warn('Photo upload warning:', uploadErr);
+          } catch (uploadErr: any) {
+            console.error('Photo upload error:', uploadErr);
+            alert(`Warning: Photo "${file.name}" failed to upload (${uploadErr.message || 'Network error'}). Your quote request will still be sent, but please email your photo to info@lightsovercolumbus.com if needed.`);
           }
         }
       }
+
+      setUploadStatus('Submitting your quote request...');
 
       const payload = {
         ...formData,
@@ -240,6 +253,7 @@ const ModernQuoteForm = () => {
       alert('There was a network error. Please try again.');
     } finally {
       setIsSubmitting(false);
+      setUploadStatus('');
     }
   };
 
@@ -546,7 +560,7 @@ const ModernQuoteForm = () => {
                       <>
                         <div className="w-4 h-4 xs:w-5 xs:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                         <span className="text-sm xs:text-base">
-                          Processing...
+                          {uploadStatus || 'Processing...'}
                         </span>
                       </>
                     ) : (

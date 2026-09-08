@@ -19,6 +19,7 @@ import {
 } from "react-icons/fa";
 import { GiSparkles } from "react-icons/gi";
 import { useContent } from "@/hooks/useContent";
+import { compressImage } from "@/lib/imageCompression";
 
 // Move ALL static data outside component
 const DEFAULT_BUDGET_OPTIONS = [
@@ -63,6 +64,7 @@ export default function ContactTemplate({ pageData }: { pageData?: any }) {
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string>('');
 
   // Dynamic CMS fields with defaults
   const badge = contactData.header?.badge || "Get A Fast Quote";
@@ -99,27 +101,38 @@ export default function ContactTemplate({ pageData }: { pageData?: any }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setUploadStatus('');
 
     try {
       let uploadedUrls: string[] = [];
       if (files.length > 0) {
-        for (const file of files) {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          setUploadStatus(`Processing & uploading photo ${i + 1} of ${files.length}...`);
           try {
+            const compressed = await compressImage(file);
             const uploadData = new FormData();
-            uploadData.append('file', file);
+            uploadData.append('file', compressed);
             const uploadRes = await fetch('/api/upload', {
               method: 'POST',
               body: uploadData,
             });
+            if (!uploadRes.ok) {
+              const err = await uploadRes.json().catch(() => ({}));
+              throw new Error(err.error || `Upload failed (status ${uploadRes.status})`);
+            }
             const data = await uploadRes.json();
             if (data?.url) {
               uploadedUrls.push(data.url);
             }
-          } catch (uploadErr) {
-            console.warn('File upload warning:', uploadErr);
+          } catch (uploadErr: any) {
+            console.error('File upload warning:', uploadErr);
+            alert(`Warning: Photo "${file.name}" failed to upload (${uploadErr.message || 'Network error'}). Your quote request will still be sent.`);
           }
         }
       }
+
+      setUploadStatus('Submitting your quote request...');
 
       const payload = {
         ...formData,
@@ -149,6 +162,7 @@ export default function ContactTemplate({ pageData }: { pageData?: any }) {
       alert('Network error. Please try again.');
     } finally {
       setIsSubmitting(false);
+      setUploadStatus('');
     }
   };
 
@@ -389,7 +403,7 @@ export default function ContactTemplate({ pageData }: { pageData?: any }) {
                 </div>
 
                 {/* Submit Button */}
-                <SubmitButton isSubmitting={isSubmitting} />
+                <SubmitButton isSubmitting={isSubmitting} uploadStatus={uploadStatus} />
 
                 <p className="text-center text-gray-500 text-xs sm:text-sm">
                   By submitting, you agree to our Privacy Policy.
@@ -449,7 +463,7 @@ const FileUpload = memo(({ files, onFileChange, hasFiles, fileCount }: any) => (
 FileUpload.displayName = 'FileUpload';
 
 // Submit Button
-const SubmitButton = memo(({ isSubmitting }: { isSubmitting: boolean }) => (
+const SubmitButton = memo(({ isSubmitting, uploadStatus }: { isSubmitting: boolean; uploadStatus?: string }) => (
   <button
     type="submit"
     disabled={isSubmitting}
@@ -459,7 +473,7 @@ const SubmitButton = memo(({ isSubmitting }: { isSubmitting: boolean }) => (
       {isSubmitting ? (
         <>
           <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-          <span>Processing...</span>
+          <span>{uploadStatus || 'Processing...'}</span>
         </>
       ) : (
         <>

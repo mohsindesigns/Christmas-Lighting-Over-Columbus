@@ -375,29 +375,61 @@ export default function SubmissionsPage() {
 
                    <div className="space-y-1 pt-4 border-t border-[#c3c4c7]">
                       <label className="text-[11px] font-bold text-[#646970] uppercase">Message</label>
-                      <div className="bg-white border border-[#c3c4c7] p-4 text-[14px] text-[#2c3338] rounded-[3px] italic leading-relaxed shadow-inner">
+          <div className="bg-white border border-[#c3c4c7] p-4 text-[14px] text-[#2c3338] rounded-[3px] italic leading-relaxed shadow-inner">
                          "{selectedSubmission.message}"
                       </div>
                    </div>
 
-                   {(() => {
-                     // Collect all attached images and files
-                     const attachments: string[] = [];
-                     if (selectedSubmission.attachmentUrl) attachments.push(selectedSubmission.attachmentUrl);
-                     if (Array.isArray(selectedSubmission.attachmentUrls)) {
-                       selectedSubmission.attachmentUrls.forEach((u: any) => { if (typeof u === 'string') attachments.push(u); });
-                     }
-                     if (selectedSubmission.extraData) {
-                       if (Array.isArray(selectedSubmission.extraData.images)) {
-                         selectedSubmission.extraData.images.forEach((u: any) => { if (typeof u === 'string') attachments.push(u); });
-                       }
-                       if (Array.isArray(selectedSubmission.extraData.photos)) {
-                         selectedSubmission.extraData.photos.forEach((u: any) => { if (typeof u === 'string') attachments.push(u); });
-                       }
-                       if (typeof selectedSubmission.extraData.attachment === 'string') attachments.push(selectedSubmission.extraData.attachment);
-                     }
-                     const uniqueAttachments = Array.from(new Set(attachments.filter(Boolean)));
-                     if (uniqueAttachments.length === 0) return null;
+                    {(() => {
+                      // Collect all attached images and files
+                      const attachments: string[] = [];
+                      const addUrl = (u: any) => {
+                        if (!u) return;
+                        if (typeof u === 'string' && u.trim()) {
+                          attachments.push(u.trim());
+                        } else if (typeof u === 'object' && typeof u.url === 'string') {
+                          attachments.push(u.url.trim());
+                        } else if (typeof u === 'object' && typeof u.secure_url === 'string') {
+                          attachments.push(u.secure_url.trim());
+                        }
+                      };
+
+                      addUrl(selectedSubmission.attachmentUrl);
+                      if (Array.isArray(selectedSubmission.attachmentUrls)) {
+                        selectedSubmission.attachmentUrls.forEach(addUrl);
+                      }
+                      if (Array.isArray((selectedSubmission as any).attachments)) {
+                        (selectedSubmission as any).attachments.forEach(addUrl);
+                      }
+                      if (selectedSubmission.extraData) {
+                        addUrl(selectedSubmission.extraData.attachment);
+                        addUrl(selectedSubmission.extraData.attachmentUrl);
+                        if (Array.isArray(selectedSubmission.extraData.images)) {
+                          selectedSubmission.extraData.images.forEach(addUrl);
+                        }
+                        if (Array.isArray(selectedSubmission.extraData.photos)) {
+                          selectedSubmission.extraData.photos.forEach(addUrl);
+                        }
+                        if (Array.isArray(selectedSubmission.extraData.attachments)) {
+                          selectedSubmission.extraData.attachments.forEach(addUrl);
+                        }
+                        if (Array.isArray(selectedSubmission.extraData.attachmentUrls)) {
+                          selectedSubmission.extraData.attachmentUrls.forEach(addUrl);
+                        }
+                      }
+                      const uniqueAttachments = Array.from(new Set(attachments.filter(Boolean)));
+                      if (uniqueAttachments.length === 0) {
+                        return (
+                          <div className="pt-4 border-t border-[#c3c4c7] space-y-1">
+                            <label className="text-[11px] font-bold text-[#646970] uppercase block">
+                              Attached Photos & Files (0)
+                            </label>
+                            <div className="p-3 bg-white border border-[#c3c4c7] rounded text-[13px] text-[#8c8f94] italic">
+                              No photos or files attached to this submission.
+                            </div>
+                          </div>
+                        );
+                      }
 
                      return (
                        <div className="pt-4 border-t border-[#c3c4c7] space-y-3">
