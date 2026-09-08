@@ -16,7 +16,7 @@ export interface EmailOptions {
 }
 
 export async function getReceiverEmail(type?: string): Promise<string> {
-  let receiverEmail = process.env.SMTP_USER || 'info@lightsovercolumbus.com';
+  let receiverEmail = process.env.SMTP_USER || process.env.GMAIL_USER || 'info@lightsovercolumbus.com';
   try {
     const contentDoc = await Content.findOne({ key: 'complete_data' }).lean() as any;
     if (contentDoc && contentDoc.data) {
@@ -44,8 +44,8 @@ export async function sendEmail(options: EmailOptions): Promise<{ success: boole
   console.log(`[Email Service] Attempting to send email to: ${recipient}`);
 
   // 1. Try Nodemailer if SMTP configured
-  const smtpUser = process.env.SMTP_USER;
-  let smtpPass = process.env.SMTP_PASS || '';
+  const smtpUser = process.env.SMTP_USER || process.env.GMAIL_USER;
+  let smtpPass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || '';
   if (smtpPass.startsWith('"') && smtpPass.endsWith('"')) {
     smtpPass = smtpPass.slice(1, -1);
   }
