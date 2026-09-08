@@ -435,12 +435,12 @@ const Navbar = () => {
             </div>
 
             {/* Mobile menu button and CTA */}
-            <div className="lg:hidden flex items-center gap-2 sm:gap-3">
+            <div className="lg:hidden flex items-center gap-2 sm:gap-3 flex-shrink-0">
               <a
                 href={ctaLink}
-                className="relative overflow-hidden group inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-[#ff0000] to-[#ffd700] text-white font-semibold text-xs sm:text-sm hover:shadow-lg transition-all duration-300"
+                className="relative overflow-hidden group inline-flex items-center justify-center px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-[#ff0000] to-[#ffd700] text-white font-semibold text-xs sm:text-sm hover:shadow-lg transition-all duration-300 flex-shrink-0 whitespace-nowrap"
               >
-                <span className="relative z-10 flex items-center justify-center gap-1.5 sm:gap-2">
+                <span className="relative z-10 flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap">
                   <svg
                     className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0"
                     fill="none"
@@ -454,7 +454,7 @@ const Navbar = () => {
                       d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                     />
                   </svg>
-                  <span className="truncate max-w-[130px] sm:max-w-none">{ctaText}</span>
+                  <span className="whitespace-nowrap">{ctaText}</span>
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-[#ff0000] via-[#ffd700] to-[#00ff00] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
               </a>
