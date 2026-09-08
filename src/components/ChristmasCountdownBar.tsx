@@ -173,9 +173,16 @@ const ChristmasCountdownBar: React.FC = () => {
           </span>
         ) : (
           <>
-            <span className="sm:hidden text-[8px] uppercase tracking-wide text-[#f5f5dc]/60 font-bold whitespace-nowrap">
-              Christmas
-            </span>
+            {/* Mobile: label stacked in two short lines to save horizontal room */}
+            <div className="flex sm:hidden flex-col items-start leading-[1.15]">
+              <span className="text-[9px] uppercase tracking-wide text-[#f5f5dc]/60 font-bold">
+                Christmas
+              </span>
+              <span className="text-[9px] uppercase tracking-wide text-[#f5f5dc]/60 font-bold">
+                Countdown
+              </span>
+            </div>
+            {/* sm and up: single-line label */}
             <span className="hidden sm:inline text-[10px] uppercase tracking-[0.15em] text-[#f5f5dc]/60 font-bold whitespace-nowrap">
               Christmas Countdown
             </span>
