@@ -47,18 +47,22 @@ export default function SubmissionsPage() {
     if (selectedIds.length === filteredSubmissions.length && filteredSubmissions.length > 0) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(filteredSubmissions.map((s) => s._id));
+      setSelectedIds(filteredSubmissions.map((s) => String(s._id)));
     }
   };
 
   const toggleSelectOne = (id: string) => {
+    const sId = String(id);
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(sId) ? prev.filter((item) => item !== sId) : [...prev, sId]
     );
   };
 
   const deleteSubmissions = async (idsToDelete: string[], confirmMessage?: string) => {
-    if (!idsToDelete.length) return;
+    if (!idsToDelete.length) {
+      alert("Please select at least one submission to delete.");
+      return;
+    }
     if (confirmMessage && !window.confirm(confirmMessage)) return;
 
     setIsDeleting(true);
@@ -74,9 +78,10 @@ export default function SubmissionsPage() {
         throw new Error(data.error || "Failed to delete submission(s)");
       }
 
-      setSubmissions((prev) => prev.filter((s) => !idsToDelete.includes(s._id)));
-      setSelectedIds((prev) => prev.filter((id) => !idsToDelete.includes(id)));
-      if (selectedSubmission && idsToDelete.includes(selectedSubmission._id)) {
+      const idStrings = idsToDelete.map(id => String(id));
+      setSubmissions((prev) => prev.filter((s) => !idStrings.includes(String(s._id))));
+      setSelectedIds((prev) => prev.filter((id) => !idStrings.includes(String(id))));
+      if (selectedSubmission && idStrings.includes(String(selectedSubmission._id))) {
         setSelectedSubmission(null);
       }
       setActionNotice({
@@ -86,6 +91,7 @@ export default function SubmissionsPage() {
       setTimeout(() => setActionNotice(null), 4000);
     } catch (err: any) {
       console.error("Delete Submissions Error:", err);
+      alert(err.message || "Failed to delete submission(s).");
       setActionNotice({
         type: 'error',
         message: err.message || "Failed to delete submission(s)."
@@ -96,15 +102,20 @@ export default function SubmissionsPage() {
   };
 
   const handleBulkApply = () => {
-    if (bulkAction !== 'delete') return;
-    if (selectedIds.length === 0) {
-      alert("Please select at least one submission to delete.");
+    if (!bulkAction) {
+      alert("Please select 'Delete Permanently' from the Bulk actions dropdown first.");
       return;
     }
-    deleteSubmissions(
-      selectedIds,
-      `Are you sure you want to permanently delete ${selectedIds.length} submission${selectedIds.length > 1 ? 's' : ''}? This action cannot be undone.`
-    );
+    if (bulkAction === 'delete') {
+      if (selectedIds.length === 0) {
+        alert("Please select at least one submission by checking the box next to it.");
+        return;
+      }
+      deleteSubmissions(
+        selectedIds,
+        `Are you sure you want to permanently delete ${selectedIds.length} submission${selectedIds.length > 1 ? 's' : ''}? This action cannot be undone.`
+      );
+    }
   };
 
   const handleDeleteSingle = (id: string, name?: string) => {
@@ -165,21 +176,22 @@ export default function SubmissionsPage() {
           <select
             value={bulkAction}
             onChange={(e) => setBulkAction(e.target.value)}
-            className="border border-[#8c8f94] bg-white text-[#2c3338] px-2 py-1 text-[13px] rounded-[3px] outline-none focus:border-[#2271b1] focus:ring-1 focus:ring-[#2271b1]"
+            className="border border-[#8c8f94] bg-white text-[#2c3338] px-2 py-1 text-[13px] rounded-[3px] outline-none focus:border-[#2271b1] focus:ring-1 focus:ring-[#2271b1] cursor-pointer"
           >
             <option value="">Bulk actions</option>
             <option value="delete">Delete Permanently</option>
           </select>
           <button
+            type="button"
             onClick={handleBulkApply}
-            disabled={isDeleting || !bulkAction || selectedIds.length === 0}
-            className="bg-white border border-[#8c8f94] text-[#2c3338] px-3 py-1 text-[13px] rounded-[3px] hover:bg-[#f6f7f7] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isDeleting}
+            className="bg-white border border-[#8c8f94] text-[#2c3338] px-3 py-1 text-[13px] rounded-[3px] hover:bg-[#f6f7f7] transition-colors disabled:opacity-50 cursor-pointer font-medium"
           >
             {isDeleting ? "Applying..." : "Apply"}
           </button>
           {selectedIds.length > 0 && (
-            <span className="text-[12px] text-[#646970] font-medium ml-1">
-              {selectedIds.length} selected
+            <span className="text-[12px] text-[#2271b1] font-semibold ml-1">
+              ({selectedIds.length} selected)
             </span>
           )}
         </div>
@@ -222,32 +234,46 @@ export default function SubmissionsPage() {
               filteredSubmissions.map((sub, idx) => (
                 <tr
                   key={sub._id}
-                  className={`border-b border-[#f0f0f1] group ${selectedIds.includes(sub._id) ? "bg-[#f0f6fc]" : idx % 2 === 0 ? "bg-[#f9f9f9]" : "bg-white"} hover:bg-[#f0f0f1] transition-colors cursor-pointer`}
-                  onClick={() => setSelectedSubmission(sub)}
+                  className={`border-b border-[#f0f0f1] ${selectedIds.includes(String(sub._id)) ? "bg-[#f0f6fc]" : idx % 2 === 0 ? "bg-[#f9f9f9]" : "bg-white"} hover:bg-[#f0f0f1] transition-colors`}
                 >
-                  <td className="py-3 px-3 align-top" onClick={e => e.stopPropagation()}>
+                  <td className="py-3 px-3 align-top w-8">
                     <input
                       type="checkbox"
-                      checked={selectedIds.includes(sub._id)}
+                      checked={selectedIds.includes(String(sub._id))}
                       onChange={() => toggleSelectOne(sub._id)}
                       className="w-4 h-4 border-[#8c8f94] rounded-[3px] cursor-pointer"
                     />
                   </td>
                   <td className="py-3 px-3 align-top">
-                    <strong className="text-[#2271b1] block text-[14px]">{sub.name}</strong>
-                    <span className="text-[#646970]">{sub.email}</span>
-                    <div className="flex items-center gap-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => setSelectedSubmission(sub)} className="text-[#2271b1] hover:underline text-[12px]">View Details</button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSubmission(sub)}
+                      className="text-[#2271b1] block text-[14px] font-bold hover:underline text-left cursor-pointer"
+                    >
+                      {sub.name}
+                    </button>
+                    <span className="text-[#646970] block text-[12px]">{sub.email}</span>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSubmission(sub)}
+                        className="text-[#2271b1] hover:underline text-[12px] cursor-pointer font-medium"
+                      >
+                        View Details
+                      </button>
                       <span className="text-[#a7aaad]">|</span>
-                      <a href={`mailto:${sub.email}`} onClick={e => e.stopPropagation()} className="text-[#2271b1] hover:underline text-[12px]">Email</a>
+                      <a
+                        href={`mailto:${sub.email}`}
+                        className="text-[#2271b1] hover:underline text-[12px]"
+                      >
+                        Email
+                      </a>
                       <span className="text-[#a7aaad]">|</span>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteSingle(sub._id, sub.name);
-                        }}
+                        type="button"
+                        onClick={() => handleDeleteSingle(sub._id, sub.name)}
                         disabled={isDeleting}
-                        className="text-[#d63638] hover:underline text-[12px] font-medium disabled:opacity-50 cursor-pointer"
+                        className="text-[#d63638] hover:underline text-[12px] font-semibold disabled:opacity-50 cursor-pointer"
                       >
                         Delete
                       </button>

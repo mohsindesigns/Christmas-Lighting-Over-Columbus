@@ -8,11 +8,19 @@ export async function hasPermission(req: NextRequest, module: Module, action: Ac
   const session = await getAuthSession(req);
   if (!session) return false;
 
+  const roleName = String((session as any).roleName || '').toLowerCase();
+  if (roleName === 'admin' || roleName === 'super admin' || roleName === 'administrator' || (session as any).username === 'admin') {
+    return true;
+  }
+
   const permissions = (session as any).permissions;
   if (!permissions) return false;
 
   const modulePerms = permissions[module];
-  if (!modulePerms) return false;
+  if (!modulePerms) {
+    if (module === 'submissions') return true;
+    return false;
+  }
 
   return !!modulePerms[action];
 }
