@@ -16,7 +16,17 @@ export interface EmailOptions {
 }
 
 export async function getReceiverEmail(type?: string): Promise<string> {
-  let receiverEmail = process.env.SMTP_USER || process.env.GMAIL_USER || 'info@lightsovercolumbus.com';
+  let receiverEmail = process.env.RECEIVER_EMAIL || process.env.NOTIFICATION_EMAIL;
+
+  if (!receiverEmail) {
+    const defaultUser = process.env.SMTP_USER || process.env.GMAIL_USER;
+    if (defaultUser && !defaultUser.includes('smtp-brevo') && !defaultUser.includes('brevo.com')) {
+      receiverEmail = defaultUser;
+    } else {
+      receiverEmail = 'info@lightsovercolumbus.com';
+    }
+  }
+
   try {
     const contentDoc = await Content.findOne({ key: 'complete_data' }).lean() as any;
     if (contentDoc && contentDoc.data) {
@@ -52,20 +62,25 @@ export async function sendEmail(options: EmailOptions): Promise<{ success: boole
 
   if (smtpUser && smtpPass) {
     try {
+      const port = parseInt(process.env.SMTP_PORT || '587');
+      const isSecure = port === 465;
       const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: parseInt(process.env.SMTP_PORT || '465'),
-        secure: (process.env.SMTP_PORT || '465') === '465',
+        host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
+        port: port,
+        secure: isSecure,
         auth: {
           user: smtpUser,
           pass: smtpPass,
         },
-        connectionTimeout: 8000,
-        greetingTimeout: 8000,
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
       });
 
+      const fromAddress = process.env.SMTP_FROM || (smtpUser.includes('smtp-brevo') ? 'info@lightsovercolumbus.com' : smtpUser);
+      const fromName = process.env.SMTP_FROM_NAME || 'Christmas Lights Over Columbus';
+
       const info = await transporter.sendMail({
-        from: `"Christmas Lights Over Columbus" <${smtpUser}>`,
+        from: `"${fromName}" <${fromAddress}>`,
         to: recipient,
         subject: options.subject,
         html: options.html,
