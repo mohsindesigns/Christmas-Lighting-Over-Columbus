@@ -106,6 +106,10 @@ export const ConsultationModal = ({ isOpen, onClose }: { isOpen: boolean; onClos
       });
 
       if (response.ok) {
+        if (typeof window !== 'undefined') {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ event: 'quote_form_success' });
+        }
         setIsSubmitted(true);
         setTimeout(() => {
           setIsSubmitted(false);

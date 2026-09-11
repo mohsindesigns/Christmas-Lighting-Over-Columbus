@@ -63,6 +63,10 @@ const QuickQuote = () => {
     };
 
     const showSuccess = () => {
+        if (typeof window !== 'undefined') {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ event: 'quote_form_success' });
+        }
         setIsSuccess(true);
         setFormData({
             name: '',

@@ -223,6 +223,10 @@ const ModernQuoteForm = () => {
       });
 
       if (response.ok) {
+        if (typeof window !== 'undefined') {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ event: 'quote_form_success' });
+        }
         setIsSubmitted(true);
         // Reset form
         setFormData({

@@ -135,6 +135,10 @@ export default function ContactTemplate({ pageData }: { pageData?: any }) {
       });
 
       if (response.ok) {
+        if (typeof window !== 'undefined') {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ event: 'quote_form_success' });
+        }
         setIsSubmitted(true);
         setFormData(INITIAL_FORM_STATE);
         setFiles([]);

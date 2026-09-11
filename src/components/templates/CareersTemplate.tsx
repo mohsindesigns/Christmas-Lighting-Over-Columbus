@@ -39,6 +39,10 @@ export default function CareersTemplate({ pageData, params }: { pageData?: any, 
       });
       const data = await response.json().catch(() => ({}));
       if (response.ok || data.success || data.submissionId) {
+        if (typeof window !== 'undefined') {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ event: 'quote_form_success' });
+        }
         setIsSuccess(true);
       } else {
         // Log the specific error from API
