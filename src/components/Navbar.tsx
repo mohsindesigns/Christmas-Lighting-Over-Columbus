@@ -205,13 +205,13 @@ const Navbar = () => {
   return (
     <>
       {/* Floating Logo */}
-      <div className="fixed left-4 sm:left-6 lg:left-8 xl:left-12 z-[60] pointer-events-none top-14 sm:top-16 md:top-[4.25rem]">
+      <div className="fixed left-6 sm:left-10 md:left-12 lg:left-16 xl:left-20 z-[60] pointer-events-none top-14 sm:top-16 md:top-[4.25rem]">
         <Link
           href="/"
           className="pointer-events-auto block"
           onClick={() => setIsOpen(false)}
         >
-          <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32">
+          <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 xl:w-40 xl:h-40">
             {logoSrc.startsWith("http") || logoSrc.startsWith("/uploads") || logoSrc.startsWith("/cdn-images") ? (
               <img
                 src={logoSrc}
@@ -224,7 +224,7 @@ const Navbar = () => {
                 alt={siteTitle}
                 fill
                 className="object-contain drop-shadow-xl"
-                sizes="(max-width: 640px) 96px, (max-width: 768px) 112px, (max-width: 1024px) 128px, 144px"
+                sizes="(max-width: 640px) 112px, (max-width: 768px) 128px, (max-width: 1024px) 144px, 160px"
                 priority
               />
             )}
@@ -246,7 +246,7 @@ const Navbar = () => {
         <div className="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
           <div className="flex items-center justify-between">
             {/* Empty div with original logo size for spacing */}
-            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18"></div>
+            <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32"></div>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center justify-center flex-1 max-w-4xl mx-8">

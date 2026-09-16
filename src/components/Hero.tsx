@@ -136,16 +136,6 @@ const Hero = () => {
         <div className="absolute top-0 -right-4 w-48 sm:w-64 md:w-80 lg:w-96 h-48 sm:h-64 md:h-80 lg:h-96 bg-yellow-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-20 w-48 sm:w-64 md:w-80 lg:w-96 h-48 sm:h-64 md:h-80 lg:h-96 bg-red-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
 
-        {/* Particle grid */}
-        <div className="absolute inset-0 opacity-20 sm:opacity-30 pointer-events-none">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-              backgroundSize: '30px 30px',
-            }}
-          ></div>
-        </div>
 
         {/* Dynamic light streaks */}
         <div className="absolute inset-0 overflow-hidden hidden sm:block pointer-events-none">
@@ -273,21 +263,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Floating particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(16)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-white/25 rounded-full animate-float"
-            style={{
-              top: `${(i * 19) % 100}%`,
-              left: `${(i * 23) % 100}%`,
-              animationDelay: `${(i * 0.7) % 5}s`,
-              animationDuration: `${6 + ((i * 1.3) % 6)}s`,
-            }}
-          />
-        ))}
-      </div>
     </section>
   );
 };
