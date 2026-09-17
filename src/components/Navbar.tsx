@@ -249,7 +249,7 @@ const Navbar = () => {
             <div className="flex-shrink-0 w-14 sm:w-16 md:w-20 lg:w-24 h-10 sm:h-12"></div>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center justify-center flex-1 max-w-4xl mx-8">
+            <div className="hidden lg:flex items-center justify-center flex-1 max-w-5xl mx-4 xl:mx-8">
               <div className="flex items-center space-x-1">
                 {navItems.map((item) =>
                   item.dropdown ? (
@@ -262,7 +262,7 @@ const Navbar = () => {
                     >
                       <Link
                         href={item.path}
-                        className={`relative px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 group flex items-center gap-1.5 ${
+                        className={`relative px-3.5 xl:px-4.5 py-2.5 text-base xl:text-lg font-semibold rounded-lg transition-all duration-300 group flex items-center gap-1.5 ${
                           isActive(item.path)
                             ? "text-[#ffd700]"
                             : "text-[#f5f5dc] hover:text-[#ffd700]"
@@ -344,7 +344,7 @@ const Navbar = () => {
 
                                   <div className="flex-1">
                                     <div
-                                      className={`text-sm font-semibold transition-colors duration-300 ${
+                                      className={`text-base font-semibold transition-colors duration-300 ${
                                         isDropdownItemActive(dropdownItem.path)
                                           ? "text-[#ffd700]"
                                           : "text-[#f5f5dc] group-hover/dropdown:text-[#ffd700]"
@@ -392,7 +392,7 @@ const Navbar = () => {
                     <Link
                       key={item.path}
                       href={item.path}
-                      className={`relative px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 group ${
+                      className={`relative px-3.5 xl:px-4.5 py-2.5 text-base xl:text-lg font-semibold rounded-lg transition-all duration-300 group ${
                         isActive(item.path)
                           ? "text-[#ffd700]"
                           : "text-[#f5f5dc] hover:text-[#ffd700]"
@@ -506,7 +506,7 @@ const Navbar = () => {
                       {/* Mobile Services Button */}
                       <button
                         onClick={toggleMobileServices}
-                        className={`relative px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 flex items-center justify-between w-full ${
+                        className={`relative px-4 py-3 rounded-xl text-lg font-semibold transition-all duration-300 flex items-center justify-between w-full ${
                           isActive(item.path) || mobileServicesOpen
                             ? "text-[#ffd700] bg-gradient-to-r from-[#ff0000]/5 to-[#ffd700]/5 border border-[#ffd700]/20"
                             : "text-[#f5f5dc] hover:text-[#ffd700] hover:bg-[#0a1128]/50"
@@ -624,7 +624,7 @@ const Navbar = () => {
                       key={item.path}
                       href={item.path}
                       onClick={() => setIsOpen(false)}
-                      className={`relative px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 group ${
+                      className={`relative px-4 py-3 rounded-xl text-lg font-semibold transition-all duration-300 group ${
                         isActive(item.path)
                           ? "text-[#ffd700] bg-gradient-to-r from-[#ff0000]/5 to-[#ffd700]/5 border border-[#ffd700]/20"
                           : "text-[#f5f5dc] hover:text-[#ffd700] hover:bg-[#0a1128]/50"

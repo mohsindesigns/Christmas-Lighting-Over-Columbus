@@ -269,9 +269,9 @@ const ModernQuoteForm = () => {
             <span className="text-sm font-medium text-gray-800 uppercase">{badge}</span>
           </div>
 
-          <h1 className="text-2xl font-montserrat xs:text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">
+          <h2 className="text-2xl font-montserrat xs:text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">
             {renderTitle()}
-          </h1>
+          </h2>
           <p className="text-sm font-montserrat xs:text-base text-gray-600 max-w-2xl mx-auto px-2">
             {subtitle}
           </p>
@@ -346,240 +346,240 @@ const ModernQuoteForm = () => {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="p-4 xs:p-5 sm:p-6 space-y-5">
-                {/* Name Row - First & Last */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-1.5">
-                      First Name *
-                    </label>
-                    <div className="relative group">
-                      <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
-                      <input
-                        type="text"
-                        name="fname"
-                        value={formData.fname}
-                        onChange={handleChange}
-                        required
-                        className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
-                        placeholder="John"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-1.5">
-                      Last Name *
-                    </label>
-                    <div className="relative group">
-                      <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
-                      <input
-                        type="text"
-                        name="lname"
-                        value={formData.lname}
-                        onChange={handleChange}
-                        required
-                        className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
-                        placeholder="Smith"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Email & Phone */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-1.5">
-                      Email *
-                    </label>
-                    <div className="relative group">
-                      <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
-                        placeholder="john@example.com"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-1.5">
-                      Phone *
-                    </label>
-                    <div className="relative group">
-                      <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                        className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
-                        placeholder="(614) 301-7100"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Address & City */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="sm:col-span-2">
-                    <label className="block text-gray-700 text-sm font-medium mb-1.5">
-                      Address *
-                    </label>
-                    <div className="relative group">
-                      <FaHome className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
-                      <input
-                        type="text"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        required
-                        className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
-                        placeholder="123 Main St"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-1.5">
-                      City *
-                    </label>
-                    <div className="relative group">
-                      <FaMapMarkerAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
-                      <input
-                        type="text"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                        required
-                        className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
-                        placeholder="Columbus"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Lighting Areas */}
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-3">
-                    Select Areas To Be Lit Up
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {lightingAreas.map((area) => (
-                      <div
-                        key={area.id}
-                        className={`relative group cursor-pointer transition-all duration-300`}
-                        onClick={() => handleAreaChange(area.id)}
-                      >
-                        <div className={`p-3 sm:p-4 bg-gray-50 border-2 rounded-xl text-center transition-all duration-300 ${formData.lightingAreas[area.id]
-                          ? 'border-amber-500 bg-amber-50'
-                          : 'border-gray-200 hover:border-amber-200'
-                          }`}>
-                          <div className={`text-2xl sm:text-3xl mb-2 ${formData.lightingAreas[area.id] ? 'scale-110 text-amber-600' : 'text-gray-600'
-                            } transition-transform`}>
-                            {area.emoji}
-                          </div>
-                          <p className="text-xs sm:text-sm text-gray-900 font-medium">
-                            {area.label}
-                          </p>
-                          {formData.lightingAreas[area.id] && (
-                            <div className="absolute top-1 right-1 w-4 h-4 bg-amber-500 rounded-full flex items-center justify-center">
-                              <FaCheckCircle className="text-white text-xs" />
-                            </div>
-                          )}
-                        </div>
+                  {/* Name Row - First & Last */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-1.5">
+                        First Name *
+                      </label>
+                      <div className="relative group">
+                        <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
+                        <input
+                          type="text"
+                          name="fname"
+                          value={formData.fname}
+                          onChange={handleChange}
+                          required
+                          className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
+                          placeholder="John"
+                        />
                       </div>
-                    ))}
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-1.5">
+                        Last Name *
+                      </label>
+                      <div className="relative group">
+                        <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
+                        <input
+                          type="text"
+                          name="lname"
+                          value={formData.lname}
+                          onChange={handleChange}
+                          required
+                          className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
+                          placeholder="Smith"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Additional Notes */}
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-1.5">
-                    Additional Notes
-                  </label>
-                  <textarea
-                    name="notes"
-                    value={formData.notes}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full px-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base resize-none text-gray-900 placeholder-gray-500"
-                    placeholder="Please let us know any details you would like to share to help us create your quote..."
-                  />
-                </div>
+                  {/* Email & Phone */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-1.5">
+                        Email *
+                      </label>
+                      <div className="relative group">
+                        <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                          className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
+                          placeholder="john@example.com"
+                        />
+                      </div>
+                    </div>
 
-                {/* Photo Upload Section */}
-                <div>
-                  <p className="text-gray-700 text-sm mb-2 bg-amber-50 p-2 rounded-lg">
-                    For the quickest turn-around time, upload a front facing photo of your home below 🙂
-                  </p>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      id="file-upload"
-                      onChange={handleFileChange}
-                      multiple
-                      accept="image/*"
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="file-upload"
-                      className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-amber-500 hover:bg-amber-50/50 transition-all group"
-                    >
-                      <FaUpload className="text-gray-400 group-hover:text-amber-500 transition-colors" />
-                      <span className="text-gray-900 text-sm">
-                        {files.length > 0 ? `${files.length} file(s) selected` : 'Click to upload photos'}
-                      </span>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-1.5">
+                        Phone *
+                      </label>
+                      <div className="relative group">
+                        <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          required
+                          className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
+                          placeholder="(614) 301-7100"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Address & City */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="sm:col-span-2">
+                      <label className="block text-gray-700 text-sm font-medium mb-1.5">
+                        Address *
+                      </label>
+                      <div className="relative group">
+                        <FaHome className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
+                        <input
+                          type="text"
+                          name="address"
+                          value={formData.address}
+                          onChange={handleChange}
+                          required
+                          className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
+                          placeholder="123 Main St"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-1.5">
+                        City *
+                      </label>
+                      <div className="relative group">
+                        <FaMapMarkerAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-amber-500 transition-colors text-sm" />
+                        <input
+                          type="text"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleChange}
+                          required
+                          className="w-full pl-10 pr-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base text-gray-900 placeholder-gray-500"
+                          placeholder="Columbus"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Lighting Areas */}
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-3">
+                      Select Areas To Be Lit Up
                     </label>
-                  </div>
-                  {files.length > 0 && (
-                    <div className="mt-2 space-y-1">
-                      {files.map((file, index) => (
-                        <div key={index} className="flex items-center gap-2 text-xs text-gray-900 bg-gray-50 p-2 rounded">
-                          <FaImage className="text-amber-500" />
-                          <span className="truncate flex-1">{file.name}</span>
-                          <span className="text-gray-600">
-                            {(file.size / 1024).toFixed(0)}KB
-                          </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {lightingAreas.map((area) => (
+                        <div
+                          key={area.id}
+                          className={`relative group cursor-pointer transition-all duration-300`}
+                          onClick={() => handleAreaChange(area.id)}
+                        >
+                          <div className={`p-3 sm:p-4 bg-gray-50 border-2 rounded-xl text-center transition-all duration-300 ${formData.lightingAreas[area.id]
+                            ? 'border-amber-500 bg-amber-50'
+                            : 'border-gray-200 hover:border-amber-200'
+                            }`}>
+                            <div className={`text-2xl sm:text-3xl mb-2 ${formData.lightingAreas[area.id] ? 'scale-110 text-amber-600' : 'text-gray-600'
+                              } transition-transform`}>
+                              {area.emoji}
+                            </div>
+                            <p className="text-xs sm:text-sm text-gray-900 font-medium">
+                              {area.label}
+                            </p>
+                            {formData.lightingAreas[area.id] && (
+                              <div className="absolute top-1 right-1 w-4 h-4 bg-amber-500 rounded-full flex items-center justify-center">
+                                <FaCheckCircle className="text-white text-xs" />
+                              </div>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
-                  )}
-                </div>
+                  </div>
 
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-red-600 via-amber-500 to-red-600 hover:from-red-500 hover:via-amber-400 hover:to-red-500 text-white font-semibold rounded-lg py-3 xs:py-3.5 px-4 shadow-lg hover:shadow-xl active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                  <div className="relative flex items-center justify-center gap-2 xs:gap-3">
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 xs:w-5 xs:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span className="text-sm xs:text-base">
-                          {uploadStatus || 'Processing...'}
+                  {/* Additional Notes */}
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1.5">
+                      Additional Notes
+                    </label>
+                    <textarea
+                      name="notes"
+                      value={formData.notes}
+                      onChange={handleChange}
+                      rows={3}
+                      className="w-full px-3 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition text-sm xs:text-base resize-none text-gray-900 placeholder-gray-500"
+                      placeholder="Please let us know any details you would like to share to help us create your quote..."
+                    />
+                  </div>
+
+                  {/* Photo Upload Section */}
+                  <div>
+                    <p className="text-gray-700 text-sm mb-2 bg-amber-50 p-2 rounded-lg">
+                      For the quickest turn-around time, upload a front facing photo of your home below 🙂
+                    </p>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        id="file-upload"
+                        onChange={handleFileChange}
+                        multiple
+                        accept="image/*"
+                        className="hidden"
+                      />
+                      <label
+                        htmlFor="file-upload"
+                        className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-amber-500 hover:bg-amber-50/50 transition-all group"
+                      >
+                        <FaUpload className="text-gray-400 group-hover:text-amber-500 transition-colors" />
+                        <span className="text-gray-900 text-sm">
+                          {files.length > 0 ? `${files.length} file(s) selected` : 'Click to upload photos'}
                         </span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-sm xs:text-base font-bold">
-                          Submit: Get My Lighting Quote
-                        </span>
-                        <FaArrowRight className="text-sm xs:text-base transition-transform group-hover:translate-x-1" />
-                      </>
+                      </label>
+                    </div>
+                    {files.length > 0 && (
+                      <div className="mt-2 space-y-1">
+                        {files.map((file, index) => (
+                          <div key={index} className="flex items-center gap-2 text-xs text-gray-900 bg-gray-50 p-2 rounded">
+                            <FaImage className="text-amber-500" />
+                            <span className="truncate flex-1">{file.name}</span>
+                            <span className="text-gray-600">
+                              {(file.size / 1024).toFixed(0)}KB
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
-                </button>
 
-                {/* Form Footer */}
-                <p className="text-center text-gray-500 text-xs xs:text-sm pt-2">
-                  By submitting, you agree to our Privacy Policy. No obligation, free quote.
-                </p>
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-red-600 via-amber-500 to-red-600 hover:from-red-500 hover:via-amber-400 hover:to-red-500 text-white font-semibold rounded-lg py-3 xs:py-3.5 px-4 shadow-lg hover:shadow-xl active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                    <div className="relative flex items-center justify-center gap-2 xs:gap-3">
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-4 h-4 xs:w-5 xs:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span className="text-sm xs:text-base">
+                            {uploadStatus || 'Processing...'}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-sm xs:text-base font-bold">
+                            Submit: Get My Lighting Quote
+                          </span>
+                          <FaArrowRight className="text-sm xs:text-base transition-transform group-hover:translate-x-1" />
+                        </>
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Form Footer */}
+                  <p className="text-center text-gray-500 text-xs xs:text-sm pt-2">
+                    By submitting, you agree to our Privacy Policy. No obligation, free quote.
+                  </p>
                 </form>
               )}
             </div>

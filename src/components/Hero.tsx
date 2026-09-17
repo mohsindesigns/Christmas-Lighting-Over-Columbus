@@ -213,7 +213,7 @@ const Hero = () => {
         <div className="flex flex-col textdiv items-center justify-center text-center">
 
           {/* Main Title */}
-          <h1 className="font-extrabold text-5xl xs:text-6xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-4 sm:mb-6 tracking-tight">
+          <h1 className="font-extrabold text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black mb-4 sm:mb-6 tracking-tight leading-[1.08] sm:leading-[1.03]">
             <span className="block text-white/90 mb-1 sm:mb-2 animate-title-slide-up">
               {titlePart1}
             </span>
@@ -227,7 +227,7 @@ const Hero = () => {
                 </span>
                 <span className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 to-red-400/30 blur-3xl -z-10 scale-150"></span>
               </span>
-              <span className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 sm:w-20 md:w-24 h-0.5 sm:h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></span>
+              <span className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 sm:w-28 md:w-36 h-0.5 sm:h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></span>
             </span>
           </h1>
 

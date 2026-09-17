@@ -223,7 +223,7 @@ const RefinedWorkShowcase = () => {
           )}
 
           {/* Enhanced Main Title */}
-          <motion.h1
+          <motion.h2
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
@@ -252,7 +252,7 @@ const RefinedWorkShowcase = () => {
                 </svg>
               </span>
             </span>
-          </motion.h1>
+          </motion.h2>
 
           {/* Enhanced Description */}
           {description && (
