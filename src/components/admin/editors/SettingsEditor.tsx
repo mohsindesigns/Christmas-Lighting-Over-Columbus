@@ -290,37 +290,91 @@ export default function SettingsEditor({ pageId, data, setData }: { pageId: stri
                     <div className="space-y-4">
                        <label className={UI.label}>Social Media Profiles</label>
                        <div className={UI.card + " space-y-3"}>
-                          {(data.footer?.social || []).map((s: any, idx: number) => (
-                            <div key={idx} className="flex gap-2 items-center">
-                               <select 
-                                 value={s.icon || s.platform || "FaFacebookF"} 
-                                 onChange={(e) => {
-                                   const newS = [...(data.footer?.social || [])];
-                                   newS[idx].icon = e.target.value;
-                                   newS[idx].platform = e.target.value;
-                                   updateNested(["footer", "social"], newS);
-                                 }}
-                                 className={UI.input + " py-1 text-[11px] w-36"}
-                               >
-                                  <option value="FaFacebookF">Facebook</option>
-                                  <option value="FaInstagram">Instagram</option>
-                                  <option value="FaTwitter">Twitter / X</option>
-                                  <option value="BsPinterest">Pinterest</option>
-                                  <option value="SiTiktok">TikTok</option>
-                                  <option value="FaLinkedinIn">LinkedIn</option>
-                                  <option value="FaYoutube">YouTube</option>
-                               </select>
-                               <input type="text" placeholder="https://..." value={s.href || ""} onChange={(e) => {
-                                  const newS = [...(data.footer?.social || [])];
-                                  newS[idx].href = e.target.value;
+                          {(data.footer?.social || []).map((s: any, idx: number) => {
+                            const raw = `${s.icon || ""} ${s.platform || ""} ${s.href || ""}`.toLowerCase();
+                            let currentVal = "FaFacebookF";
+                            if (raw.includes("insta") || raw.includes("ig")) currentVal = "FaInstagram";
+                            else if (raw.includes("twit") || raw.includes("x.com")) currentVal = "FaTwitter";
+                            else if (raw.includes("pin")) currentVal = "BsPinterest";
+                            else if (raw.includes("tik")) currentVal = "SiTiktok";
+                            else if (raw.includes("link")) currentVal = "FaLinkedinIn";
+                            else if (raw.includes("yout")) currentVal = "FaYoutube";
+                            else if (raw.includes("face") || raw.includes("fb")) currentVal = "FaFacebookF";
+
+                            return (
+                             <div key={idx} className="flex gap-2 items-center">
+                                <select 
+                                  value={currentVal} 
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    const platformName = 
+                                      val === "FaInstagram" ? "Instagram" :
+                                      val === "FaFacebookF" ? "Facebook" :
+                                      val === "FaTwitter" ? "Twitter" :
+                                      val === "BsPinterest" ? "Pinterest" :
+                                      val === "SiTiktok" ? "TikTok" :
+                                      val === "FaLinkedinIn" ? "LinkedIn" :
+                                      val === "FaYoutube" ? "YouTube" : val;
+                                    const newS = (data.footer?.social || []).map((item: any, i: number) =>
+                                      i === idx ? { ...item, icon: val, platform: platformName } : item
+                                    );
+                                    updateNested(["footer", "social"], newS);
+                                  }}
+                                  className={UI.input + " py-1 text-[11px] w-36"}
+                                >
+                                   <option value="FaFacebookF">Facebook</option>
+                                   <option value="FaInstagram">Instagram</option>
+                                   <option value="FaTwitter">Twitter / X</option>
+                                   <option value="BsPinterest">Pinterest</option>
+                                   <option value="SiTiktok">TikTok</option>
+                                   <option value="FaLinkedinIn">LinkedIn</option>
+                                   <option value="FaYoutube">YouTube</option>
+                                </select>
+                                <input 
+                                  type="text" 
+                                  placeholder="https://..." 
+                                  value={s.href || ""} 
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    const lower = val.toLowerCase();
+                                    let autoIcon = s.icon;
+                                    let autoPlatform = s.platform;
+                                    if (lower.includes("instagram.com") || lower.includes("instagr.am")) {
+                                      autoIcon = "FaInstagram";
+                                      autoPlatform = "Instagram";
+                                    } else if (lower.includes("facebook.com") || lower.includes("fb.com")) {
+                                      autoIcon = "FaFacebookF";
+                                      autoPlatform = "Facebook";
+                                    } else if (lower.includes("twitter.com") || lower.includes("x.com")) {
+                                      autoIcon = "FaTwitter";
+                                      autoPlatform = "Twitter";
+                                    } else if (lower.includes("tiktok.com")) {
+                                      autoIcon = "SiTiktok";
+                                      autoPlatform = "TikTok";
+                                    } else if (lower.includes("pinterest.com")) {
+                                      autoIcon = "BsPinterest";
+                                      autoPlatform = "Pinterest";
+                                    } else if (lower.includes("linkedin.com")) {
+                                      autoIcon = "FaLinkedinIn";
+                                      autoPlatform = "LinkedIn";
+                                    } else if (lower.includes("youtube.com") || lower.includes("youtu.be")) {
+                                      autoIcon = "FaYoutube";
+                                      autoPlatform = "YouTube";
+                                    }
+                                    const newS = (data.footer?.social || []).map((item: any, i: number) =>
+                                      i === idx ? { ...item, href: val, icon: autoIcon, platform: autoPlatform } : item
+                                    );
+                                    updateNested(["footer", "social"], newS);
+                                  }} 
+                                  className={UI.input + " py-1 text-[11px] flex-1"} 
+                                />
+                                <button onClick={() => {
+                                  const newS = (data.footer?.social || []).filter((_: any, i: number) => i !== idx);
                                   updateNested(["footer", "social"], newS);
-                               }} className={UI.input + " py-1 text-[11px] flex-1"} />
-                               <button onClick={() => {
-                                 const newS = (data.footer?.social || []).filter((_: any, i: number) => i !== idx);
-                                 updateNested(["footer", "social"], newS);
-                               }} className="text-slate-400 hover:text-[#d63638]"><Trash2 className="w-4 h-4" /></button>
-                            </div>
-                          ))}
+                                }} className="text-slate-400 hover:text-[#d63638]"><Trash2 className="w-4 h-4" /></button>
+                             </div>
+                            );
+                          })}
                           <button onClick={() => updateNested(["footer", "social"], [...(data.footer?.social || []), { key: `social-${Date.now()}`, icon: "FaFacebookF", platform: "Facebook", href: "https://" }])} className="text-[10px] font-bold text-[#2271b1] uppercase hover:underline">+ Add Social Profile</button>
                        </div>
                     </div>

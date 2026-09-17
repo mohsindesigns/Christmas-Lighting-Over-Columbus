@@ -210,13 +210,13 @@ const Navbar = () => {
   return (
     <>
       {/* Floating Logo */}
-      <div className="fixed left-6 sm:left-8 md:left-10 lg:left-12 xl:left-14 z-[60] pointer-events-none top-14 sm:top-16 md:top-[4.25rem]">
+      <div className="floating-logo-container fixed left-6 sm:left-8 md:left-10 lg:left-12 xl:left-14 z-[60] pointer-events-none top-14 sm:top-16 md:top-[4.25rem]">
         <Link
           href="/"
           className="pointer-events-auto block"
           onClick={() => setIsOpen(false)}
         >
-          <div className="relative w-[5.5rem] h-[5.5rem] sm:w-[6.75rem] sm:h-[6.75rem] md:w-[7.5rem] md:h-[7.5rem] lg:w-[8.5rem] lg:h-[8.5rem]">
+          <div className="floating-logo-img relative w-[5.5rem] h-[5.5rem] sm:w-[6.75rem] sm:h-[6.75rem] md:w-[7.5rem] md:h-[7.5rem] lg:w-[8.5rem] lg:h-[8.5rem]">
             {logoSrc.startsWith("http") || logoSrc.startsWith("/uploads") || logoSrc.startsWith("/cdn-images") ? (
               <img
                 src={logoSrc}
@@ -229,7 +229,7 @@ const Navbar = () => {
                 alt={siteTitle}
                 fill
                 className="object-contain drop-shadow-xl"
-                sizes="(max-width: 640px) 100px, (max-width: 768px) 120px, (max-width: 1024px) 136px, 144px"
+                sizes="(max-width: 640px) 100px, (max-width: 768px) 120px, (max-width: 1024px) 136px, (max-width: 2560px) 180px, 800px"
                 priority
               />
             )}

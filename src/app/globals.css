@@ -1067,5 +1067,57 @@
   -webkit-backface-visibility: hidden;
 }
 
+/* ── Ultra-large screens & 33% zoom scaling for Brand Logos ── */
+@media (min-width: 2500px) {
+  .floating-logo-img {
+    width: 14rem !important;
+    height: 14rem !important;
+  }
+  .footer-logo-img {
+    width: 14rem !important;
+    height: 14rem !important;
+  }
+}
 
+@media (min-width: 3200px) {
+  .floating-logo-container {
+    left: 4.5rem !important;
+  }
+  .floating-logo-img {
+    width: 19rem !important;
+    height: 19rem !important;
+  }
+  .footer-logo-img {
+    width: 18rem !important;
+    height: 18rem !important;
+  }
+}
 
+/* 33% zoom on standard laptop/desktop or 4K/5K displays */
+@media (min-width: 3800px), (max-resolution: 0.55dppx), (-webkit-max-device-pixel-ratio: 0.55) {
+  .floating-logo-container {
+    left: 5.5rem !important;
+  }
+  .floating-logo-img {
+    width: 25rem !important;
+    height: 25rem !important;
+  }
+  .footer-logo-img {
+    width: 24rem !important;
+    height: 24rem !important;
+  }
+}
+
+@media (min-width: 4800px), (max-resolution: 0.38dppx), (-webkit-max-device-pixel-ratio: 0.38) {
+  .floating-logo-container {
+    left: 7rem !important;
+  }
+  .floating-logo-img {
+    width: 32rem !important;
+    height: 32rem !important;
+  }
+  .footer-logo-img {
+    width: 30rem !important;
+    height: 30rem !important;
+  }
+}

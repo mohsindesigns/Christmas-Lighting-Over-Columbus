@@ -35,13 +35,55 @@ const iconMap: Record<string, any> = {
   BsFillTelephoneFill,
   SiTiktok,
   facebook: FaFacebookF,
+  Facebook: FaFacebookF,
+  fb: FaFacebookF,
   instagram: FaInstagram,
+  Instagram: FaInstagram,
+  insta: FaInstagram,
+  ig: FaInstagram,
   twitter: FaTwitter,
+  Twitter: FaTwitter,
+  x: FaTwitter,
+  X: FaTwitter,
   pinterest: BsPinterest,
+  Pinterest: BsPinterest,
   tiktok: SiTiktok,
+  TikTok: SiTiktok,
   linkedin: FaLinkedinIn,
+  LinkedIn: FaLinkedinIn,
   youtube: FaYoutube,
+  YouTube: FaYoutube,
 };
+
+function getSocialIcon(social: any) {
+  if (!social) return FaFacebookF;
+
+  // 1. Direct match in iconMap
+  if (social.icon && iconMap[social.icon]) return iconMap[social.icon];
+  if (social.platform && iconMap[social.platform]) return iconMap[social.platform];
+
+  // 2. Case-insensitive key/platform/icon detection
+  const identifier = `${social.icon || ""} ${social.platform || ""} ${social.label || ""} ${social.key || ""}`.toLowerCase();
+  if (identifier.includes("insta") || identifier.includes("ig")) return FaInstagram;
+  if (identifier.includes("face") || identifier.includes("fb")) return FaFacebookF;
+  if (identifier.includes("twit") || identifier.includes("twitter") || identifier.includes(" x")) return FaTwitter;
+  if (identifier.includes("pin")) return BsPinterest;
+  if (identifier.includes("tik")) return SiTiktok;
+  if (identifier.includes("link")) return FaLinkedinIn;
+  if (identifier.includes("yout") || identifier.includes("yt")) return FaYoutube;
+
+  // 3. Fallback: Detect from URL href
+  const href = (social.href || "").toLowerCase();
+  if (href.includes("instagram.com") || href.includes("instagr.am")) return FaInstagram;
+  if (href.includes("facebook.com") || href.includes("fb.com")) return FaFacebookF;
+  if (href.includes("twitter.com") || href.includes("x.com")) return FaTwitter;
+  if (href.includes("pinterest.com")) return BsPinterest;
+  if (href.includes("tiktok.com")) return SiTiktok;
+  if (href.includes("linkedin.com")) return FaLinkedinIn;
+  if (href.includes("youtube.com") || href.includes("youtu.be")) return FaYoutube;
+
+  return FaFacebookF;
+}
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -176,7 +218,7 @@ const Footer = () => {
           {/* Column 1: Brand Column - Logo only */}
           <div className="lg:col-span-3 flex flex-col items-center lg:items-start">
             <Link href="/" className="block">
-              <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36">
+              <div className="footer-logo-img relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36">
                 {logoSrc.startsWith("http") || logoSrc.startsWith("/uploads") || logoSrc.startsWith("/cdn-images") ? (
                   <img
                     src={logoSrc}
@@ -272,8 +314,7 @@ const Footer = () => {
             </h4>
             <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
               {socialMediaList.map((social: any, sIdx: number) => {
-                const IconComponent =
-                  iconMap[social.icon] || iconMap[social.platform] || FaFacebookF;
+                const IconComponent = getSocialIcon(social);
                 return (
                   <a
                     key={social.key || social.platform || sIdx}
