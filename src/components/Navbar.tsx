@@ -48,12 +48,14 @@ const Navbar = () => {
 
   // Dynamic or Default Navigation items
   const defaultServicesDropdown: DropdownItem[] = publishedServices.length > 0
-    ? publishedServices.map((s: any) => ({
-        path: `/services/${s.slug}`,
-        label: s.title,
-        description: s.shortDescription || s.description ? s.description.replace(/<[^>]*>/g, "").slice(0, 45) + "..." : "Professional lighting solution",
-        icon: s.icon === "Home" ? "🏠" : s.icon === "Building" ? "🏢" : "✨",
-      }))
+    ? publishedServices
+        .filter((s: any) => !s.slug?.toLowerCase().includes("permanent") && !s.title?.toLowerCase().includes("permanent"))
+        .map((s: any) => ({
+          path: `/services/${s.slug}`,
+          label: s.title,
+          description: s.shortDescription || s.description ? s.description.replace(/<[^>]*>/g, "").slice(0, 45) + "..." : "Professional lighting solution",
+          icon: s.icon === "Home" ? "🏠" : s.icon === "Building" ? "🏢" : "✨",
+        }))
     : [
         {
           path: "/services/residential-lighting",
@@ -67,12 +69,13 @@ const Navbar = () => {
           description: "Professional business installations",
           icon: "🏢",
         },
-        {
-          path: "/services/permanent-lighting",
-          label: "Permanent Lighting",
-          description: "Year-round architectural lighting",
-          icon: "✨",
-        },
+        // Permanent Lighting disabled for 2026:
+        // {
+        //   path: "/services/permanent-lighting",
+        //   label: "Permanent Lighting",
+        //   description: "Year-round architectural lighting",
+        //   icon: "✨",
+        // },
       ];
 
   const defaultNavItems: NavItem[] = [
@@ -93,12 +96,14 @@ const Navbar = () => {
     ? navbar.companyLinks.map((link: any) => {
         if (link.useMegaMenu || link.href === "/services" || (link.subLinks && link.subLinks.length > 0)) {
           const dropdown: DropdownItem[] = (link.subLinks && link.subLinks.length > 0)
-            ? link.subLinks.map((sub: any) => ({
-                path: sub.href,
-                label: sub.label,
-                description: sub.description || "Custom lighting solution",
-                icon: sub.icon || "✨",
-              }))
+            ? link.subLinks
+                .filter((sub: any) => !sub.href?.toLowerCase().includes("permanent") && !sub.label?.toLowerCase().includes("permanent"))
+                .map((sub: any) => ({
+                  path: sub.href,
+                  label: sub.label,
+                  description: sub.description || "Custom lighting solution",
+                  icon: sub.icon || "✨",
+                }))
             : defaultServicesDropdown;
           return {
             path: link.href || "/services",

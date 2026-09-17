@@ -72,9 +72,11 @@ const Footer = () => {
   const email = footer?.contact?.email || navbar?.email || settings?.email || "Info@lightsovercolumbus.com";
   const emailSupport = footer?.contact?.support || "24/7 Customer Support";
 
-  // Published services from CMS
+  // Published services from CMS (excluding permanent lighting for 2026)
   const publishedServices = (servicesData?.services || []).filter(
-    (s: any) => !s.status || s.status === "published"
+    (s: any) => (!s.status || s.status === "published") &&
+      !s.slug?.toLowerCase().includes("permanent") &&
+      !s.title?.toLowerCase().includes("permanent")
   );
 
   const dynamicServicesLinks = publishedServices.length > 0
@@ -85,7 +87,8 @@ const Footer = () => {
     : [
         { label: "Residential Lighting", href: "/services/residential-lighting" },
         { label: "Commercial Lighting", href: "/services/commercial-lighting" },
-        { label: "Permanent Lighting", href: "/services/permanent-lighting" },
+        // Permanent Lighting disabled for 2026:
+        // { label: "Permanent Lighting", href: "/services/permanent-lighting" },
       ];
 
   const quickLinks = (footer?.bottom?.links && footer.bottom.links.length > 0)
@@ -98,11 +101,22 @@ const Footer = () => {
         { label: "Contact Us", href: "/contact" },
       ];
 
-  // Dynamic link categories
-  const categoriesLinks: Record<string, { label: string; href: string }[]> = footer?.links || {
-    "Our Services": dynamicServicesLinks,
-    "Quick Links": quickLinks,
-  };
+  // Dynamic link categories - sanitize any permanent lighting links
+  const categoriesLinks: Record<string, { label: string; href: string }[]> = footer?.links
+    ? (Object.fromEntries(
+        Object.entries(footer.links).map(([cat, links]) => [
+          cat,
+          Array.isArray(links)
+            ? (links as any[]).filter(
+                (l: any) => !l.href?.toLowerCase().includes("permanent") && !l.label?.toLowerCase().includes("permanent")
+              )
+            : links
+        ])
+      ) as Record<string, { label: string; href: string }[]>)
+    : {
+        "Our Services": dynamicServicesLinks,
+        "Quick Links": quickLinks,
+      };
 
   // Social media links
   const socialMediaList = (footer?.social && Array.isArray(footer.social) && footer.social.length > 0)

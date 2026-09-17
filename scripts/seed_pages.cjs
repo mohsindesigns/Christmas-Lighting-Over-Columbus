@@ -33,7 +33,7 @@ async function seedPages() {
                 status: 'published',
                 metadata: {
                     title: 'Christmas Lights Over Columbus | Premier Holiday Lighting',
-                    description: 'Professional holiday and permanent lighting design, installation, maintenance, and storage in Columbus, Ohio.'
+                    description: 'Professional holiday lighting design, installation, maintenance, and storage in Columbus, Ohio.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -57,7 +57,7 @@ async function seedPages() {
                 status: 'published',
                 metadata: {
                     title: 'Holiday Lighting Services | Christmas Lights Over Columbus',
-                    description: 'Explore our residential, commercial, permanent, and landscape holiday lighting services.'
+                    description: 'Explore our residential, commercial, and landscape holiday lighting services.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -117,7 +117,7 @@ async function seedPages() {
                 status: 'published',
                 metadata: {
                     title: 'Lighting Gallery | Christmas Lights Over Columbus',
-                    description: 'View our portfolio of completed holiday and permanent lighting installations in Columbus, OH.'
+                    description: 'View our portfolio of completed holiday lighting installations in Columbus, OH.'
                 },
                 createdAt: new Date(),
                 updatedAt: new Date()

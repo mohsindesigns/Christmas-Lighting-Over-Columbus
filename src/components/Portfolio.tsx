@@ -32,8 +32,8 @@ const RefinedWorkShowcase = () => {
   const badge = workShowcase.badge || workShowcase.section?.badge || "OUR WORK";
   const titlePrefix = workShowcase.title?.prefix || workShowcase.section?.prefix || workShowcase.section?.headlinePrefix || "EXPERIENCE THE MAGIC";
   const titleMain = workShowcase.title?.main || workShowcase.title?.headline || workShowcase.section?.headline || workShowcase.section?.title || "PORTFOLIO";
-  const rawDescription = workShowcase.description || workShowcase.section?.description || "Browse our recent holiday lighting displays and permanent architectural lighting installations across Columbus.";
-  const description = typeof rawDescription === "string" ? rawDescription.replace(/<[^>]*>?/gm, '') : "";
+  const rawDescription = workShowcase.description || workShowcase.section?.description || "Browse our recent holiday lighting displays and custom architectural installations across Columbus.";
+  const description = typeof rawDescription === "string" ? rawDescription.replace(/<[^>]*>?/gm, '').replace(/\s*and permanent architectural lighting installations/gi, '') : "";
   const ctaText = workShowcase.cta || workShowcase.button?.text || "View Full Gallery";
   const ctaLink = workShowcase.ctaLink || workShowcase.button?.link || "/gallery";
 

@@ -116,7 +116,7 @@ export const useContent = () => {
                     prefix: ws.title?.prefix || p.section?.prefix || p.section?.headlinePrefix || "EXPERIENCE THE MAGIC",
                     main: ws.title?.main || ws.title?.headline || p.section?.headline || p.section?.title || "PORTFOLIO"
                 },
-                description: ws.description || p.section?.description || "Browse our recent holiday lighting displays and permanent architectural lighting installations across Columbus.",
+                description: ws.description || p.section?.description || "Browse our recent holiday lighting displays and custom architectural installations across Columbus.",
                 cta: ws.cta || p.button?.text || "View Full Gallery",
                 ctaLink: ws.ctaLink || p.button?.link || "/gallery",
                 images: Array.isArray(ws.images) && ws.images.length > 0
@@ -138,7 +138,7 @@ export const useContent = () => {
                     prefix: ws.title?.prefix || p.section?.prefix || p.section?.headlinePrefix || "EXPERIENCE THE MAGIC",
                     main: ws.title?.main || ws.title?.headline || p.section?.headline || p.section?.title || "PORTFOLIO"
                 },
-                description: ws.description || p.section?.description || "Browse our recent holiday lighting displays and permanent architectural lighting installations across Columbus.",
+                description: ws.description || p.section?.description || "Browse our recent holiday lighting displays and custom architectural installations across Columbus.",
                 cta: ws.cta || p.button?.text || "View Full Gallery",
                 ctaLink: ws.ctaLink || p.button?.link || "/gallery",
                 images: Array.isArray(ws.images) && ws.images.length > 0

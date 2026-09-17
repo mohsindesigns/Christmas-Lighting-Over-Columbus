@@ -61,21 +61,22 @@ const DEFAULT_SERVICES = [
     ],
     image: "/images/gallery2.jpg",
     link: "/services/commercial-lighting"
-  },
-  {
-    number: "03",
-    title: "Permanent Smart Lighting",
-    color: "#ef4444",
-    description: "Enjoy stunning architectural lighting year-round with our invisible, track-mounted permanent LED systems. Control millions of colors, animations, and timers directly from your smartphone for any holiday or special occasion.",
-    features: [
-      "Invisible daytime profile matching your trim",
-      "Smartphone app with 16+ million colors",
-      "Year-round preset patterns for all holidays",
-      "Commercial-grade weatherproof longevity"
-    ],
-    image: "/images/gallery4.jpg",
-    link: "/services/permanent-lighting"
   }
+  // Permanent Lighting disabled for 2026:
+  // {
+  //   number: "03",
+  //   title: "Permanent Smart Lighting",
+  //   color: "#ef4444",
+  //   description: "Enjoy stunning architectural lighting year-round with our invisible, track-mounted permanent LED systems. Control millions of colors, animations, and timers directly from your smartphone for any holiday or special occasion.",
+  //   features: [
+  //     "Invisible daytime profile matching your trim",
+  //     "Smartphone app with 16+ million colors",
+  //     "Year-round preset patterns for all holidays",
+  //     "Commercial-grade weatherproof longevity"
+  //   ],
+  //   image: "/images/gallery4.jpg",
+  //   link: "/services/permanent-lighting"
+  // }
 ];
 
 export default function ServicesTemplate({ pageData }: { pageData?: any }) {
@@ -124,9 +125,15 @@ export default function ServicesTemplate({ pageData }: { pageData?: any }) {
     ? content.services.services
     : [];
 
-  const rawItems: any[] = Array.isArray(servicesPageData.items) && servicesPageData.items.length > 0
+  const rawItems: any[] = (Array.isArray(servicesPageData.items) && servicesPageData.items.length > 0
     ? servicesPageData.items
-    : (masterServices.length > 0 ? masterServices : DEFAULT_SERVICES);
+    : (masterServices.length > 0 ? masterServices : DEFAULT_SERVICES)
+  ).filter((service: any) => {
+    const slug = (service.slug || "").toLowerCase();
+    const title = (service.title || service.name || "").toLowerCase();
+    const link = (service.link || "").toLowerCase();
+    return !slug.includes("permanent") && !title.includes("permanent") && !link.includes("permanent");
+  });
 
   const placeholderImage = "/images/hero-background2.jpg";
 
@@ -330,8 +337,8 @@ export default function ServicesTemplate({ pageData }: { pageData?: any }) {
                     ? "/services/residential-lighting"
                     : service.title?.toLowerCase().includes("commercial")
                     ? "/services/commercial-lighting"
-                    : service.title?.toLowerCase().includes("permanent")
-                    ? "/services/permanent-lighting"
+                    // : service.title?.toLowerCase().includes("permanent")
+                    // ? "/services/permanent-lighting"
                     : `/services/${(service.slug || service.title || "").toLowerCase().replace(/\s+/g, "-")}`
                 );                const imageSrc = imageErrors[index] ? placeholderImage : (service.image || service.heroImage || placeholderImage);
 
@@ -659,7 +666,8 @@ function ConsultationModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
 
   const serviceTypes = [
     { value: "seasonal", label: "Seasonal Christmas Lighting" },
-    { value: "permanent", label: "Permanent Lighting Installation" },
+    // Permanent lighting disabled for 2026:
+    // { value: "permanent", label: "Permanent Lighting Installation" },
     { value: "commercial", label: "Commercial Property" },
     { value: "consultation", label: "General Consultation" }
   ];

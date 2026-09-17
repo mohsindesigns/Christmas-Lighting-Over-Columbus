@@ -12,7 +12,7 @@ const defaultFaqItems = [
   },
   {
     question: "What kind of lights do you install?",
-    answer: "We install commercial-grade LED lights in C9 and C7 sizes, mini lights for trees and bushes, lit wreaths, garland, and permanent smart lighting systems. All commercial-grade LEDs are custom-cut to your roofline for a clean, professional finish."
+    answer: "We install commercial-grade LED lights in C9 and C7 sizes, mini lights for trees and bushes, lit wreaths, and garland. All commercial-grade LEDs are custom-cut to your roofline for a clean, professional finish."
   },
   {
     question: "When should I schedule my holiday lighting installation?",
@@ -25,11 +25,12 @@ const defaultFaqItems = [
   {
     question: "When do you take the lights down in January?",
     answer: "Takedown service begins the first week of January and continues through the month. We carefully label, pack, and store all lighting and equipment in our climate-controlled warehouse until next season."
-  },
-  {
-    question: "Do you offer permanent year-round lighting options?",
-    answer: "Yes! We install premium smart architectural permanent lighting (such as Celebright & Trimlight systems) that sit discreetly under your eaves. You can control colors, patterns, and timers directly from your smartphone for any holiday or occasion all year long."
   }
+  // Permanent lighting FAQ disabled for 2026:
+  // {
+  //   question: "Do you offer permanent year-round lighting options?",
+  //   answer: "Yes! We install premium smart architectural permanent lighting (such as Celebright & Trimlight systems) that sit discreetly under your eaves. You can control colors, patterns, and timers directly from your smartphone for any holiday or occasion all year long."
+  // }
 ];
 
 interface FAQSectionProps {
@@ -54,10 +55,18 @@ const FAQSection = ({ customData }: FAQSectionProps = {}) => {
     ? faqData.items
     : (Array.isArray((faqData as any).faqs) && (faqData as any).faqs.length > 0 ? (faqData as any).faqs : defaultFaqItems);
 
-  const items = rawItems.map((item: any) => ({
-    question: item.question || item.q || "Common Question?",
-    answer: typeof item.answer === "string" ? item.answer.replace(/<[^>]*>?/gm, "") : (typeof item.a === "string" ? item.a.replace(/<[^>]*>?/gm, "") : "")
-  }));
+  const items = rawItems
+    .filter((item: any) => {
+      const q = (item.question || item.q || "").toLowerCase();
+      const a = (item.answer || item.a || "").toLowerCase();
+      return !q.includes("permanent") && !a.includes("permanent year-round");
+    })
+    .map((item: any) => ({
+      question: item.question || item.q || "Common Question?",
+      answer: typeof item.answer === "string" 
+        ? item.answer.replace(/<[^>]*>?/gm, "").replace(/,?\s*and permanent smart lighting systems/gi, "") 
+        : (typeof item.a === "string" ? item.a.replace(/<[^>]*>?/gm, "").replace(/,?\s*and permanent smart lighting systems/gi, "") : "")
+    }));
 
   // Generate subtle background sparkles on mount
   useEffect(() => {

@@ -58,8 +58,8 @@ const defaultTestimonialsList = [
     role: "Homeowner",
     company: "",
     location: "Bexley, OH",
-    service: "Permanent Lighting",
-    quote: "We upgraded to the permanent lighting system and couldn't be happier. We switch between holiday colors and warm architectural lighting with the phone app!",
+    service: "Tree & Shrub Lighting",
+    quote: "The warm tree wraps and perimeter roofline lighting completely elevated our property this winter. Professional, clean, and completely stress-free!",
     rating: 5,
     image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
   },
@@ -138,8 +138,10 @@ const Testimonials = () => {
     role: item.role || item.position || "Homeowner",
     company: item.company || "",
     location: item.location || "Columbus, OH",
-    service: item.service || (index % 3 === 0 ? "Residential Lighting" : index % 3 === 1 ? "Commercial Display" : "Permanent Lighting"),
-    quote: typeof item.quote === "string" ? item.quote.replace(/<[^>]*>?/gm, '') : (typeof item.text === "string" ? item.text.replace(/<[^>]*>?/gm, '') : ""),
+    service: item.service?.toLowerCase().includes("permanent") ? "Custom Lighting" : (item.service || (index % 2 === 0 ? "Residential Lighting" : "Commercial Display")),
+    quote: typeof item.quote === "string" 
+      ? item.quote.replace(/<[^>]*>?/gm, '').replace(/permanent lighting system/gi, "holiday lighting system") 
+      : (typeof item.text === "string" ? item.text.replace(/<[^>]*>?/gm, '').replace(/permanent lighting system/gi, "holiday lighting system") : ""),
     rating: Number(item.rating) || 5,
     image: item.image || item.avatar || defaultTestimonialsList[index % defaultTestimonialsList.length]?.image,
     color: getColorForIndex(index),

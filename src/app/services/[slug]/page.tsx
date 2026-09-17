@@ -16,6 +16,8 @@ function getAbsoluteUrl(path: string | undefined) {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
+  if (slug === "permanent-lighting") return {};
+
   await connectToDatabase();
   const content = await SiteContent.findOne({ key: "complete_data" }).lean() as any;
   const services = content?.data?.services?.services || [];
@@ -47,6 +49,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
+  if (resolvedParams.slug === "permanent-lighting") {
+    return notFound();
+  }
 
   await connectToDatabase();
   console.log(`[Service Debug] Fetching content for: ${resolvedParams.slug}`);

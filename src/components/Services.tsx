@@ -53,15 +53,16 @@ const defaultServices = [
     description: "Eye-catching commercial holiday displays that draw customers, increase foot traffic, and spread holiday cheer.",
     features: ["Storefronts & Plazas", "Fully Insured Installers", "Scheduled Maintenance"]
   },
-  {
-    title: "Permanent Year-Round Lighting",
-    slug: "permanent-lighting",
-    color: "#10b981",
-    image: "/images/portfolio/portfolio-3.jpg",
-    icon: "Star",
-    description: "Invisible daytime lighting tracks with millions of programmable colors and patterns controlled from your phone.",
-    features: ["Invisible Architectural Tracks", "App-Controlled Automation", "Celebrations for Every Occasion"]
-  },
+  // Permanent lighting disabled for 2026:
+  // {
+  //   title: "Permanent Year-Round Lighting",
+  //   slug: "permanent-lighting",
+  //   color: "#10b981",
+  //   image: "/images/portfolio/portfolio-3.jpg",
+  //   icon: "Star",
+  //   description: "Invisible daytime lighting tracks with millions of programmable colors and patterns controlled from your phone.",
+  //   features: ["Invisible Architectural Tracks", "App-Controlled Automation", "Celebrations for Every Occasion"]
+  // },
   {
     title: "Tree & Landscape Lighting",
     slug: "tree-landscape-lighting",
@@ -99,11 +100,17 @@ const AwardWinningServicesSection = () => {
     "Custom residential and commercial holiday lighting designed, installed, maintained, and stored for you in Columbus, OH.";
   const subtitle = typeof rawSubtitle === "string" ? rawSubtitle.replace(/<[^>]*>?/gm, '') : "";
 
-  // Get dynamic services from CMS or fallback
-  const rawList = 
+  // Get dynamic services from CMS or fallback (excluding permanent lighting for 2026)
+  const unfilteredList = 
     servicesContent?.services || 
     (Array.isArray(servicesContent) ? servicesContent : []) || 
     [];
+
+  const rawList = unfilteredList.filter((item: any) => {
+    const slug = (item.slug || "").toLowerCase();
+    const title = (item.title || item.name || "").toLowerCase();
+    return !slug.includes("permanent") && !title.includes("permanent");
+  });
 
   const extractImage = (item: any, idx: number) => {
     if (typeof item.image === "string" && item.image.trim()) return item.image;

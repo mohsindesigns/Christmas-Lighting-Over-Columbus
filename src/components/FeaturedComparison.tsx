@@ -46,7 +46,7 @@ export default function FeaturedComparison({ data }: FeaturedComparisonProps) {
 
   const {
     badge = "Premium Holiday Lighting",
-    titleLine1 = "Holiday vs Permanent:",
+    titleLine1 = "Residential vs Commercial:",
     titleLine2 = "Custom Installed",
     description = "Two premium paths to illuminate your property with elegance. Discover why our holiday lighting is Central Ohio's top choice.",
     image = "",

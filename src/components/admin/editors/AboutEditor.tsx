@@ -45,7 +45,7 @@ const DEFAULT_FAQS = [
   },
   {
     question: "What kind of lights do you install?",
-    answer: "We install commercial-grade LED lights in C9 and C7 sizes, mini lights for trees and bushes, lit wreaths, garland, and permanent smart lighting systems. All commercial-grade LEDs are custom-cut to your roofline for a clean, professional finish."
+    answer: "We install commercial-grade LED lights in C9 and C7 sizes, mini lights for trees and bushes, lit wreaths, and garland. All commercial-grade LEDs are custom-cut to your roofline for a clean, professional finish."
   },
   {
     question: "When should I schedule my holiday lighting installation?",

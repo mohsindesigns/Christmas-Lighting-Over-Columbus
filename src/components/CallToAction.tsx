@@ -146,7 +146,8 @@ export const ConsultationModal = ({ isOpen, onClose }: { isOpen: boolean; onClos
 
   const serviceTypes = [
     { value: 'seasonal', label: 'Seasonal Christmas Lighting' },
-    { value: 'permanent', label: 'Permanent Lighting Installation' },
+    // Permanent Lighting disabled for 2026:
+    // { value: 'permanent', label: 'Permanent Lighting Installation' },
     { value: 'commercial', label: 'Commercial Property' },
     { value: 'consultation', label: 'General Consultation' }
   ];

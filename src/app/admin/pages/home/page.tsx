@@ -43,8 +43,8 @@ const defaultTestimonialsList = [
     role: "Homeowner",
     company: "",
     location: "Bexley, OH",
-    service: "Permanent Lighting",
-    quote: "We upgraded to the permanent lighting system and couldn't be happier. We switch between holiday colors and warm architectural lighting with the phone app!",
+    service: "Tree & Shrub Lighting",
+    quote: "The warm tree wraps and perimeter roofline lighting completely elevated our property this winter. Professional, clean, and completely stress-free!",
     rating: 5,
     image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
   },
@@ -79,7 +79,7 @@ const defaultFaqItems = [
   },
   {
     question: "What kind of lights do you install?",
-    answer: "We install commercial-grade LED lights in C9 and C7 sizes, mini lights for trees and bushes, lit wreaths, garland, and permanent smart lighting systems. All commercial-grade LEDs are custom-cut to your roofline for a clean, professional finish."
+    answer: "We install commercial-grade LED lights in C9 and C7 sizes, mini lights for trees and bushes, lit wreaths, and garland. All commercial-grade LEDs are custom-cut to your roofline for a clean, professional finish."
   },
   {
     question: "When should I schedule my holiday lighting installation?",
@@ -92,10 +92,6 @@ const defaultFaqItems = [
   {
     question: "When do you take the lights down in January?",
     answer: "Takedown service begins the first week of January and continues through the month. We carefully label, pack, and store all lighting and equipment in our climate-controlled warehouse until next season."
-  },
-  {
-    question: "Do you offer permanent year-round lighting options?",
-    answer: "Yes! We install premium smart architectural permanent lighting (such as Celebright & Trimlight systems) that sit discreetly under your eaves. You can control colors, patterns, and timers directly from your smartphone for any holiday or occasion all year long."
   }
 ];
 
@@ -910,7 +906,7 @@ export default function HomeEditor() {
                       <label className="text-xs uppercase tracking-widest text-gray-500 font-bold">Section Description</label>
                       <textarea
                         rows={3}
-                        value={data.workShowcase?.description ?? data.portfolio?.section?.description ?? "Browse our recent holiday lighting displays and permanent architectural lighting installations across Columbus."}
+                        value={data.workShowcase?.description ?? data.portfolio?.section?.description ?? "Browse our recent holiday lighting displays and custom architectural installations across Columbus."}
                         onChange={(e) => {
                           setData((prev: any) => ({
                             ...prev,

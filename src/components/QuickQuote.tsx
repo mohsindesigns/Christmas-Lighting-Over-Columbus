@@ -18,10 +18,11 @@ const QuickQuote = () => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [step, setStep] = useState(1);
 
-    // Project types for dropdown
+    // Project types for dropdown (Permanent Lighting disabled for 2026)
     const projectTypes = [
-        { value: 'Christmas Lighting', label: 'Christmas Lighting' },
-        { value: 'Permanent Lighting', label: 'Permanent Lighting' }
+        { value: 'Residential Christmas Lighting', label: 'Residential Christmas Lighting' },
+        { value: 'Commercial Christmas Lighting', label: 'Commercial Christmas Lighting' }
+        // { value: 'Permanent Lighting', label: 'Permanent Lighting' }
     ];
 
     const [errorMsg, setErrorMsg] = useState('');

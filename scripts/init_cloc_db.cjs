@@ -127,8 +127,8 @@ async function initialize() {
             footer: {
                 company: {
                     name: "Luminous Holiday",
-                    tagline: "Professional Holiday & Architectural Lighting",
-                    description: "Bringing magical holiday lights and permanent architectural lighting to homes and businesses across the greater area.",
+                    tagline: "Professional Holiday & Christmas Lighting",
+                    description: "Bringing magical holiday lights to homes and businesses across the greater area.",
                     logo: "/images/mainlogo.png"
                 },
                 contact: {
@@ -174,15 +174,16 @@ async function initialize() {
                         shortDescription: "Attract customers and spread holiday cheer with eye-catching commercial displays.",
                         description: "<p>Commercial grade exterior lighting for storefronts, offices, and plazas.</p>",
                         status: "published"
-                    },
-                    {
-                        title: "Permanent Lighting",
-                        slug: "permanent-lighting",
-                        icon: "Sparkles",
-                        shortDescription: "Year-round architectural smart lighting hidden under the eaves for all occasions.",
-                        description: "<p>Year-round RGB smart lighting seamlessly integrated into your home trim.</p>",
-                        status: "published"
                     }
+                    // Permanent Lighting disabled for 2026:
+                    // {
+                    //     title: "Permanent Lighting",
+                    //     slug: "permanent-lighting",
+                    //     icon: "Sparkles",
+                    //     shortDescription: "Year-round architectural smart lighting hidden under the eaves for all occasions.",
+                    //     description: "<p>Year-round RGB smart lighting seamlessly integrated into your home trim.</p>",
+                    //     status: "published"
+                    // }
                 ]
             }
         };
