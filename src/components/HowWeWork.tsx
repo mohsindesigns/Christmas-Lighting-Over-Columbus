@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import CallToAction, { ConsultationModal } from "./CallToAction";
+import CallToAction from "./CallToAction";
 import {
   FaPhoneAlt,
   FaCalendarAlt,
@@ -99,7 +99,6 @@ const HowWeWorkSection = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [gradientPositions, setGradientPositions] = useState<Array<{ left: number; top: number; width: number; height: number }>>([]);
   const [isClient, setIsClient] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const content = useContent();
   const workData = content.howWeWork || content.whyChooseUs || {};
@@ -349,7 +348,7 @@ const HowWeWorkSection = () => {
 
           {/* Bottom CTA Banner */}
           <section className="mt-8">
-            <CallToAction onOpenConsultation={() => setIsModalOpen(true)} />
+            <CallToAction />
           </section>
         </div>
 
@@ -387,11 +386,6 @@ const HowWeWorkSection = () => {
         `}</style>
       </section>
 
-      {/* Consultation Modal */}
-      <ConsultationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </>
   );
 };

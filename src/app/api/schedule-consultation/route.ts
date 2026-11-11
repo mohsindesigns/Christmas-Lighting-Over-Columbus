@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     } = body;
 
     const subject = `Free Consultation Request: ${serviceType || 'Seasonal Lighting'} - ${name || 'Lead'}`;
-    const formattedMessage = message || `Preferred Date: ${preferredDate || 'Flexible'}, Preferred Time: ${preferredTime || 'Flexible'}, Address: ${address || 'Not provided'}`;
+    const formattedMessage = message || `Address: ${address || 'Not provided'}`;
 
     const submission = await Submission.create({
       name: name || 'Consultation Lead',
@@ -52,7 +52,6 @@ export async function POST(request: Request) {
             <p><strong>Phone:</strong> ${phone}</p>
             <p><strong>Address:</strong> ${address}</p>
             <p><strong>Service Type:</strong> ${serviceType}</p>
-            <p><strong>Preferred Schedule:</strong> ${preferredDate} at ${preferredTime}</p>
             <p><strong>How they heard of us:</strong> ${hearAbout || 'Not specified'}</p>
             <div style="background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 15px;">
               <p><strong>Notes:</strong> ${message || 'None'}</p>

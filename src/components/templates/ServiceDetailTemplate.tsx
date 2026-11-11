@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import CallToAction, { ConsultationModal } from '@/components/CallToAction';
+import CallToAction from '@/components/CallToAction';
 import {
     FaCheckCircle,
     FaArrowRight,
@@ -110,7 +110,6 @@ export default function ServiceDetailTemplate({ pageData, params }: { pageData?:
     const [mounted, setMounted] = useState(false);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [scrollProgress, setScrollProgress] = useState(0);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const heroRef = useRef<HTMLElement | null>(null);
 
     const content = useContent();
@@ -175,11 +174,11 @@ export default function ServiceDetailTemplate({ pageData, params }: { pageData?:
 
     const handleCtaClick = (link?: string) => {
         if (!link || link === '#quote' || link === 'quote' || link === 'modal' || link === '#') {
-            setIsModalOpen(true);
+            (window.location.href = "/contact");
         } else if (link.startsWith('tel:') || link.startsWith('mailto:') || link.startsWith('http') || link.startsWith('/')) {
             window.location.href = link;
         } else {
-            setIsModalOpen(true);
+            (window.location.href = "/contact");
         }
     };
 
@@ -460,14 +459,9 @@ export default function ServiceDetailTemplate({ pageData, params }: { pageData?:
 
                 {/* Call To Action Banner */}
                 <section className="p-4 sm:p-8">
-                    <CallToAction customData={service.bottomCta} onOpenConsultation={() => setIsModalOpen(true)} />
+                    <CallToAction customData={service.bottomCta} />
                 </section>
 
-                {/* Consultation Quote Modal */}
-                <ConsultationModal 
-                    isOpen={isModalOpen} 
-                    onClose={() => setIsModalOpen(false)} 
-                />
 
                 <style jsx global>{`
                     @keyframes blob { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-50px) scale(1.1)} 66%{transform:translate(-20px,20px) scale(0.9)} }
